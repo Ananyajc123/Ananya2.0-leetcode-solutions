@@ -1,0 +1,59 @@
+Problem 2: Convert the Temperature (LeetCode #2469)
+Difficulty: Easy
+Link: https://leetcode.com/problems/convert-the-temperature/
+Problem Statement
+You are given a non-negative floating point number rounded to two decimal places celsius, that denotes the temperature in Celsius.
+You should convert Celsius into Kelvin and Fahrenheit and return it as an array [kelvin, fahrenheit].
+Conversion formulas:
+
+Kelvin = Celsius + 273.15
+Fahrenheit = Celsius × 1.80 + 32.00
+
+Example 1:
+Input: celsius = 36.50
+Output: [309.65000, 97.70000]
+Explanation: 
+- Temperature in Kelvin = 36.50 + 273.15 = 309.65
+- Temperature in Fahrenheit = 36.50 × 1.80 + 32.00 = 97.70
+Example 2:
+Input: celsius = 122.11
+Output: [395.26000, 251.79800]
+Constraints:
+
+0 <= celsius <= 1000
+
+Solution
+javaclass Solution {
+    public double[] convertTemperature(double celsius) {
+        // Calculate Kelvin using the formula
+        double kelvin = celsius + 273.15;
+        
+        // Calculate Fahrenheit using the formula
+        double fahrenheit = celsius * 1.80 + 32.00;
+        
+        // Return both values as an array
+        return new double[]{kelvin, fahrenheit};
+    }
+}
+Explanation
+Approach:
+
+We receive the temperature in Celsius as a double parameter
+Calculate Kelvin by adding 273.15 to Celsius
+Calculate Fahrenheit using the formula: (Celsius × 1.80) + 32.00
+Create and return a new array containing both converted temperatures
+
+Understanding the return statement:
+
+double[] means we're returning an array of doubles
+new double[]{kelvin, fahrenheit} creates a new array with 2 elements
+The order matters: Kelvin first, then Fahrenheit
+
+Time Complexity: O(1) - Fixed number of arithmetic operations
+Space Complexity: O(1) - Only creating a fixed-size array of 2 elements
+Key Concepts Used:
+
+Working with double data type for decimal numbers
+Array creation and initialization in Java
+Multiple arithmetic operations
+Returning arrays from methods

@@ -1,0 +1,38 @@
+Problem 1: Add Two Integers (LeetCode #2235)
+Difficulty: Easy
+Link: https://leetcode.com/problems/add-two-integers/
+Problem Statement
+Given two integers num1 and num2, return the sum of the two integers.
+Example 1:
+Input: num1 = 12, num2 = 5
+Output: 17
+Explanation: num1 is 12, num2 is 5, and their sum is 12 + 5 = 17
+Example 2:
+Input: num1 = -10, num2 = 4
+Output: -6
+Explanation: num1 + num2 = -6
+Constraints:
+
+-100 <= num1, num2 <= 100
+
+Solution
+javaclass Solution {
+    public int sum(int num1, int num2) {
+        return num1 + num2;
+    }
+}
+Explanation
+Approach:
+
+This is a straightforward problem that requires basic arithmetic operation
+We simply add the two given integers using the + operator
+The return keyword sends the result back to whoever called this method
+
+Time Complexity: O(1) - Constant time, as we're performing a single addition operation
+Space Complexity: O(1) - No extra space is used
+Key Concepts Used:
+
+Basic arithmetic operators in Java
+Method with return type int
+Parameters and return statements
+
