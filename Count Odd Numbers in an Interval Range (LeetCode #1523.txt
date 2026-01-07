@@ -1,0 +1,111 @@
+Problem 4: Count Odd Numbers in an Interval Range (LeetCode #1523)
+Difficulty: Easy
+Link: https://leetcode.com/problems/count-odd-numbers-in-an-interval-range/
+Topics: Math, Conditionals
+Problem Statement
+Given two non-negative integers low and high, return the count of odd numbers between low and high (inclusive).
+Example 1:
+Input: low = 3, high = 7
+Output: 3
+Explanation: The odd numbers between 3 and 7 are [3, 5, 7].
+Example 2:
+Input: low = 8, high = 10
+Output: 1
+Explanation: The odd numbers between 8 and 10 are [9].
+Constraints:
+
+0 <= low <= high <= 10^9
+
+
+Solution
+javaclass Solution {
+    public int countOdds(int low, int high) {
+        // Calculate count using formula
+        int count = (high - low) / 2;
+        
+        // Add 1 if either low or high is odd
+        if (low % 2 == 1 || high % 2 == 1) {
+            count++;
+        }
+        
+        return count;
+    }
+}
+
+Explanation
+Approach:
+
+Calculate the basic count using formula: (high - low) / 2
+If either low or high is odd, add 1 to the count
+Return the final count
+
+Why this formula works?
+Let's understand with examples:
+Case 1: Both even (low=2, high=8)
+Numbers: 2, 3, 4, 5, 6, 7, 8
+Odd: 3, 5, 7 (count = 3)
+
+Formula: (8-2)/2 = 3 ✅
+No need to add 1 (both are even)
+Case 2: Both odd (low=3, high=7)
+Numbers: 3, 4, 5, 6, 7
+Odd: 3, 5, 7 (count = 3)
+
+Formula: (7-3)/2 = 2
+Add 1 (both are odd) → 2 + 1 = 3 ✅
+Case 3: low even, high odd (low=2, high=7)
+Numbers: 2, 3, 4, 5, 6, 7
+Odd: 3, 5, 7 (count = 3)
+
+Formula: (7-2)/2 = 2
+Add 1 (high is odd) → 2 + 1 = 3 ✅
+Case 4: low odd, high even (low=3, high=8)
+Numbers: 3, 4, 5, 6, 7, 8
+Odd: 3, 5, 7 (count = 3)
+
+Formula: (8-3)/2 = 2
+Add 1 (low is odd) → 2 + 1 = 3 ✅
+Mathematical Explanation:
+
+In any range, approximately half the numbers are odd
+(high - low) / 2 gives us the base count
+If either endpoint is odd, it's included, so we add 1
+
+Dry Run (low = 3, high = 7):
+count = (7 - 3) / 2 = 4 / 2 = 2
+
+Check: low % 2 = 3 % 2 = 1 (odd) ✅
+Add 1: count = 2 + 1 = 3
+
+Return 3
+Why not use a loop?
+Naive approach with loop:
+java// This works but is SLOW for large ranges
+int count = 0;
+for (int i = low; i <= high; i++) {
+    if (i % 2 == 1) {
+        count++;
+    }
+}
+Problem: If low = 0 and high = 10^9, this would iterate 1 billion times! ❌
+Our formula solution: O(1) time - instant calculation ✅
+Time Complexity: O(1) - Constant time, just arithmetic operations
+Space Complexity: O(1) - Only using a few variables
+Edge Cases:
+
+low = high = 5: One odd number → returns 1 ✅
+low = high = 4: No odd numbers → returns 0 ✅
+low = 0, high = 10^9: Works instantly with formula ✅
+
+Alternative Cleaner Solution:
+javaclass Solution {
+    public int countOdds(int low, int high) {
+        return (high + 1) / 2 - low / 2;
+    }
+}
+This is mathematically equivalent and even more concise!
+How it works:
+
+(high + 1) / 2 gives count of odd numbers from 0 to high
+low / 2 gives count of odd numbers from 0 to low-1
+Subtract to get count in range [low, high]

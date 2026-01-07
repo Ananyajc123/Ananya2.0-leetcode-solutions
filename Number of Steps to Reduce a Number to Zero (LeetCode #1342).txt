@@ -1,0 +1,118 @@
+Problem 2: Number of Steps to Reduce a Number to Zero (LeetCode #1342)
+Difficulty: Easy
+Link: https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/
+Topics: While Loop, Conditionals, Bit Manipulation
+Problem Statement
+Given an integer num, return the number of steps to reduce it to zero.
+In one step:
+
+If the current number is even, divide it by 2
+If the current number is odd, subtract 1 from it
+
+Example 1:
+Input: num = 14
+Output: 6
+Explanation: 
+Step 1) 14 is even; divide by 2 and obtain 7
+Step 2) 7 is odd; subtract 1 and obtain 6
+Step 3) 6 is even; divide by 2 and obtain 3
+Step 4) 3 is odd; subtract 1 and obtain 2
+Step 5) 2 is even; divide by 2 and obtain 1
+Step 6) 1 is odd; subtract 1 and obtain 0
+Example 2:
+Input: num = 8
+Output: 4
+Explanation: 
+Step 1) 8 is even; divide by 2 and obtain 4
+Step 2) 4 is even; divide by 2 and obtain 2
+Step 3) 2 is even; divide by 2 and obtain 1
+Step 4) 1 is odd; subtract 1 and obtain 0
+Example 3:
+Input: num = 123
+Output: 12
+Constraints:
+
+0 <= num <= 10^6
+
+
+Solution
+javaclass Solution {
+    public int numberOfSteps(int num) {
+        // Counter for number of steps
+        int steps = 0;
+        
+        // Continue until num becomes 0
+        while (num > 0) {
+            // Check if number is even
+            if (num % 2 == 0) {
+                num = num / 2;  // Divide by 2
+            } else {
+                num = num - 1;   // Subtract 1
+            }
+            steps++;  // Increment step counter
+        }
+        
+        return steps;
+    }
+}
+
+Explanation
+Approach:
+
+Initialize a counter variable steps to 0
+Use a while loop that continues as long as num > 0
+In each iteration:
+
+Check if num is even using num % 2 == 0
+If even: divide by 2
+If odd: subtract 1
+Increment steps counter
+
+
+Return the total steps when num reaches 0
+
+Why use while loop instead of for loop?
+
+We don't know in advance how many iterations are needed
+The number of steps depends on the value and operations performed
+While loop is perfect for "repeat until condition is met" scenarios
+
+Understanding Even/Odd Check:
+
+num % 2 == 0 → Even number (divisible by 2, no remainder)
+num % 2 == 1 → Odd number (remainder 1 when divided by 2)
+
+Dry Run (num = 14):
+Initial: num = 14, steps = 0
+
+Step 1: 14 % 2 == 0 (even) → num = 14/2 = 7, steps = 1
+Step 2: 7 % 2 == 1 (odd) → num = 7-1 = 6, steps = 2
+Step 3: 6 % 2 == 0 (even) → num = 6/2 = 3, steps = 3
+Step 4: 3 % 2 == 1 (odd) → num = 3-1 = 2, steps = 4
+Step 5: 2 % 2 == 0 (even) → num = 2/2 = 1, steps = 5
+Step 6: 1 % 2 == 1 (odd) → num = 1-1 = 0, steps = 6
+
+Loop exits (num = 0)
+Return 6
+Time Complexity: O(log n) - Each division by 2 approximately halves the number, similar to binary search
+Space Complexity: O(1) - Only using a constant amount of extra space
+Edge Cases:
+
+num = 0: Loop never executes, returns 0 ✅
+num = 1: One step (subtract 1), returns 1 ✅
+Powers of 2 (8, 16, 32): Only division operations needed
+
+Alternative Solution (Using Bit Manipulation):
+javaclass Solution {
+    public int numberOfSteps(int num) {
+        if (num == 0) return 0;
+        
+        int steps = 0;
+        while (num > 0) {
+            steps += (num & 1) == 0 ? 1 : 2;  // If even: 1 step, if odd: 2 steps (subtract then divide)
+            num >>= 1;  // Right shift (divide by 2)
+        }
+        return steps - 1;  // Subtract 1 because last operation doesn't divide
+    }
+}
+This uses bitwise operations for better performance but is less intuitive.

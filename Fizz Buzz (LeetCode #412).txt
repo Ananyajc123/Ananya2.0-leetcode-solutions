@@ -1,0 +1,119 @@
+Problem 1: Fizz Buzz (LeetCode #412)
+Difficulty: Easy
+Link: https://leetcode.com/problems/fizz-buzz/
+Topics: Conditionals, Loops, String Manipulation
+Problem Statement
+Given an integer n, return a string array answer (1-indexed) where:
+
+answer[i] == "FizzBuzz" if i is divisible by 3 and 5
+answer[i] == "Fizz" if i is divisible by 3
+answer[i] == "Buzz" if i is divisible by 5
+answer[i] == i (as a string) if none of the above conditions are true
+
+Example 1:
+Input: n = 3
+Output: ["1","2","Fizz"]
+Example 2:
+Input: n = 5
+Output: ["1","2","Fizz","4","Buzz"]
+Example 3:
+Input: n = 15
+Output: ["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]
+Constraints:
+
+1 <= n <= 10^4
+
+
+Solution
+javaimport java.util.ArrayList;
+import java.util.List;
+
+class Solution {
+    public List<String> fizzBuzz(int n) {
+        // Create result list to store answers
+        List<String> result = new ArrayList<>();
+        
+        // Loop from 1 to n (inclusive)
+        for (int i = 1; i <= n; i++) {
+            // Check divisibility by both 3 and 5 first
+            if (i % 3 == 0 && i % 5 == 0) {
+                result.add("FizzBuzz");
+            } 
+            // Check divisibility by 3
+            else if (i % 3 == 0) {
+                result.add("Fizz");
+            } 
+            // Check divisibility by 5
+            else if (i % 5 == 0) {
+                result.add("Buzz");
+            } 
+            // Not divisible by 3 or 5
+            else {
+                result.add(String.valueOf(i));
+            }
+        }
+        
+        return result;
+    }
+}
+
+Explanation
+Approach:
+
+Create an ArrayList to store the results
+Iterate from 1 to n using a for loop
+For each number, check conditions in order:
+
+First check: divisible by both 3 AND 5 (i % 15 == 0 also works)
+Second check: divisible by 3 only
+Third check: divisible by 5 only
+Else: convert number to string and add it
+
+
+Return the result list
+
+Why check both 3 and 5 first?
+
+If we check only 3 first, number 15 would be added as "Fizz" and we'd never reach the FizzBuzz condition
+Order matters in if-else-if chains!
+
+Key Concepts:
+
+Modulo operator (%): Returns remainder of division
+
+15 % 3 == 0 → 15 is divisible by 3
+15 % 5 == 0 → 15 is divisible by 5
+
+
+ArrayList: Dynamic array that can grow in size
+String.valueOf(): Converts integer to string
+
+Dry Run (n = 5):
+i = 1: Not divisible by 3 or 5 → Add "1"
+i = 2: Not divisible by 3 or 5 → Add "2"
+i = 3: Divisible by 3 → Add "Fizz"
+i = 4: Not divisible by 3 or 5 → Add "4"
+i = 5: Divisible by 5 → Add "Buzz"
+
+Result: ["1", "2", "Fizz", "4", "Buzz"]
+Time Complexity: O(n) - We iterate through n numbers once
+Space Complexity: O(1) - Excluding the output array, we only use constant extra space
+Alternative Solution (String Concatenation):
+javaclass Solution {
+    public List<String> fizzBuzz(int n) {
+        List<String> result = new ArrayList<>();
+        
+        for (int i = 1; i <= n; i++) {
+            String current = "";
+            
+            if (i % 3 == 0) current += "Fizz";
+            if (i % 5 == 0) current += "Buzz";
+            if (current.equals("")) current = String.valueOf(i);
+            
+            result.add(current);
+        }
+        
+        return result;
+    }
+}
+This approach builds the string by concatenating "Fizz" and "Buzz" separately.

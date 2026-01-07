@@ -1,0 +1,141 @@
+Problem 3: Palindrome Number (LeetCode #9)
+Difficulty: Easy
+Link: https://leetcode.com/problems/palindrome-number/
+Topics: Math, While Loop, Number Manipulation
+Problem Statement
+Given an integer x, return true if x is a palindrome, and false otherwise.
+A palindrome number reads the same backward as forward.
+Example 1:
+Input: x = 121
+Output: true
+Explanation: 121 reads as 121 from left to right and from right to left.
+Example 2:
+Input: x = -121
+Output: false
+Explanation: From left to right, it reads -121. From right to left, it becomes 121-. 
+Therefore it is not a palindrome.
+Example 3:
+Input: x = 10
+Output: false
+Explanation: Reads 01 from right to left. Therefore it is not a palindrome.
+Constraints:
+
+-2^31 <= x <= 2^31 - 1
+
+Follow up: Could you solve it without converting the integer to a string?
+
+Solution
+javaclass Solution {
+    public boolean isPalindrome(int x) {
+        // Negative numbers are not palindromes
+        if (x < 0) {
+            return false;
+        }
+        
+        // Store original number for comparison
+        int original = x;
+        int reversed = 0;
+        
+        // Reverse the number
+        while (x > 0) {
+            int digit = x % 10;           // Extract last digit
+            reversed = reversed * 10 + digit;  // Build reversed number
+            x = x / 10;                   // Remove last digit
+        }
+        
+        // Compare original with reversed
+        return original == reversed;
+    }
+}
+
+Explanation
+Approach:
+
+Handle edge case: negative numbers cannot be palindromes
+Store the original number before modifying it
+Reverse the number digit by digit:
+
+Extract last digit using % 10
+Build reversed number by multiplying by 10 and adding digit
+Remove last digit using / 10
+
+
+Compare original number with reversed number
+
+Understanding Number Reversal:
+Let's reverse 1234:
+Initial: x = 1234, reversed = 0
+
+Iteration 1:
+  digit = 1234 % 10 = 4
+  reversed = 0 * 10 + 4 = 4
+  x = 1234 / 10 = 123
+
+Iteration 2:
+  digit = 123 % 10 = 3
+  reversed = 4 * 10 + 3 = 43
+  x = 123 / 10 = 12
+
+Iteration 3:
+  digit = 12 % 10 = 2
+  reversed = 43 * 10 + 2 = 432
+  x = 12 / 10 = 1
+
+Iteration 4:
+  digit = 1 % 10 = 1
+  reversed = 432 * 10 + 1 = 4321
+  x = 1 / 10 = 0
+
+Loop exits (x = 0)
+reversed = 4321
+Dry Run (x = 121):
+Initial: x = 121, original = 121, reversed = 0
+
+Step 1: digit = 1, reversed = 1, x = 12
+Step 2: digit = 2, reversed = 12, x = 1
+Step 3: digit = 1, reversed = 121, x = 0
+
+Compare: original (121) == reversed (121) → true
+Dry Run (x = 123):
+Initial: x = 123, original = 123, reversed = 0
+
+Step 1: digit = 3, reversed = 3, x = 12
+Step 2: digit = 2, reversed = 32, x = 1
+Step 3: digit = 1, reversed = 321, x = 0
+
+Compare: original (123) != reversed (321) → false
+Why negative numbers return false immediately?
+
+Negative sign cannot be at the end: -121 ≠ 121-
+Saves computation time
+
+Time Complexity: O(log₁₀(n)) - Number of digits in the number (we process each digit once)
+Space Complexity: O(1) - Only using a few integer variables
+Edge Cases:
+
+Single digit numbers (0-9): Always palindromes ✅
+Negative numbers: Always false ✅
+Numbers ending in 0 (except 0 itself): Cannot be palindromes (would start with 0) ✅
+
+Optimized Solution (Reverse Half):
+javaclass Solution {
+    public boolean isPalindrome(int x) {
+        // Edge cases
+        if (x < 0 || (x % 10 == 0 && x != 0)) {
+            return false;
+        }
+        
+        int reversedHalf = 0;
+        
+        // Reverse only half the digits
+        while (x > reversedHalf) {
+            reversedHalf = reversedHalf * 10 + x % 10;
+            x /= 10;
+        }
+        
+        // For even length: x == reversedHalf
+        // For odd length: x == reversedHalf / 10 (middle digit doesn't matter)
+        return x == reversedHalf || x == reversedHalf / 10;
+    }
+}
+This solution is more efficient as it only reverses half the number.
