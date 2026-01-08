@@ -1,0 +1,213 @@
+Problem 6: Number of Good Pairs (LeetCode #1512)
+Difficulty: Easy
+Link: https://leetcode.com/problems/number-of-good-pairs/
+Topics: Array, Hash Table, Nested Loops
+Problem Statement
+Given an array of integers nums, return the number of good pairs.
+A pair (i, j) is called good if nums[i] == nums[j] and i < j.
+Example 1:
+Input: nums = [1,2,3,1,1,3]
+Output: 4
+
+Explanation: 
+There are 4 good pairs:
+(0,3): nums[0] == nums[3] == 1, and 0 < 3 ✅
+(0,4): nums[0] == nums[4] == 1, and 0 < 4 ✅
+(3,4): nums[3] == nums[4] == 1, and 3 < 4 ✅
+(2,5): nums[2] == nums[5] == 3, and 2 < 5 ✅
+Example 2:
+Input: nums = [1,1,1,1]
+Output: 6
+
+Explanation: 
+Each pair in the array is a good pair.
+Pairs: (0,1), (0,2), (0,3), (1,2), (1,3), (2,3)
+Example 3:
+Input: nums = [1,2,3]
+Output: 0
+
+Explanation: 
+No repeated values, so no good pairs.
+Constraints:
+
+1 <= nums.length <= 100
+1 <= nums[i] <= 100
+
+
+Visual Understanding
+Example: nums = [1, 2, 3, 1, 1, 3]
+Index:           0  1  2  3  4  5
+
+Finding Good Pairs:
+
+Value 1 appears at indices: 0, 3, 4
+  Pairs: (0,3), (0,4), (3,4) → 3 pairs
+
+Value 2 appears at indices: 1
+  Pairs: None (only one occurrence)
+
+Value 3 appears at indices: 2, 5
+  Pairs: (2,5) → 1 pair
+
+Total Good Pairs: 3 + 0 + 1 = 4
+
+Visual Representation:
+Index:  0  1  2  3  4  5
+Value:  1  2  3  1  1  3
+        ↓     ↓  ↓  ↓  ↓
+        └─────┴──┘  │  │
+        └───────────┘  │
+                  └────┘
+
+Nested Loop Approach:
+i=0: Check j=1,2,3,4,5
+     j=3: nums[0]==nums[3]? 1==1 YES ✅ count++
+     j=4: nums[0]==nums[4]? 1==1 YES ✅ count++
+
+i=1: Check j=2,3,4,5
+     No matches
+
+i=2: Check j=3,4,5
+     j=5: nums[2]==nums[5]? 3==3 YES ✅ count++
+
+i=3: Check j=4,5
+     j=4: nums[3]==nums[4]? 1==1 YES ✅ count++
+
+i=4: Check j=5
+     No matches
+
+Total count = 4
+
+Solution (Brute Force with Nested Loops)
+javaclass Solution {
+    public int numIdenticalPairs(int[] nums) {
+        int count = 0;
+        
+        // Outer loop: first element of pair
+        for (int i = 0; i < nums.length; i++) {
+            // Inner loop: second element of pair (must be after i)
+            for (int j = i + 1; j < nums.length; j++) {
+                // Check if values match
+                if (nums[i] == nums[j]) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+}
+
+Line-by-Line Explanation
+Line 1-2: Method Declaration
+javaclass Solution {
+    public int numIdenticalPairs(int[] nums) {
+
+Takes integer array as input
+Returns count of good pairs
+
+
+Line 3: Initialize Counter
+javaint count = 0;
+
+Variable to track number of good pairs found
+Start at 0, increment each time we find a pair
+
+
+Line 5-6: Outer Loop
+javafor (int i = 0; i < nums.length; i++) {
+
+i represents first element of the pair
+Goes from 0 to nums.length-1
+For each i, we'll check all elements after it
+
+Why start at 0?
+
+Need to check every possible first element
+
+
+Line 7: Inner Loop
+javafor (int j = i + 1; j < nums.length; j++) {
+
+j represents second element of the pair
+KEY: Starts at i + 1 (not 0!)
+This ensures i < j (required condition)
+Avoids checking same element twice
+Avoids duplicate pairs
+
+Why j = i + 1?
+If i = 0: j starts at 1 (check positions 1,2,3,...)
+If i = 1: j starts at 2 (check positions 2,3,4,...)
+If i = 2: j starts at 3 (check positions 3,4,5,...)
+
+This ensures:
+1. i < j always
+2. No duplicate pairs (we don't check (3,0) if we already checked (0,3))
+
+Line 8-10: Check and Count
+javaif (nums[i] == nums[j]) {
+    count++;
+}
+
+Compare values at positions i and j
+If equal, we found a good pair!
+Increment counter
+
+
+Line 14: Return Result
+javareturn count;
+
+Return total number of good pairs found
+
+
+Complete Dry Run
+Input: nums = [1,2,3,1,1,3]
+Initial: count = 0
+
+═══════════════════════════════════════
+i = 0 (nums[0] = 1)
+═══════════════════════════════════════
+  j = 1: nums[1] = 2, 1 == 2? NO
+  j = 2: nums[2] = 3, 1 == 3? NO
+  j = 3: nums[3] = 1, 1 == 1? YES ✅ count = 1
+  j = 4: nums[4] = 1, 1 == 1? YES ✅ count = 2
+  j = 5: nums[5] = 3, 1 == 3? NO
+
+═══════════════════════════════════════
+i = 1 (nums[1] = 2)
+═══════════════════════════════════════
+  j = 2: nums[2] = 3, 2 == 3? NO
+  j = 3: nums[3] = 1, 2 == 1? NO
+  j = 4: nums[4] = 1, 2 == 1? NO
+  j = 5: nums[5] = 3, 2 == 3? NO
+
+═══════════════════════════════════════
+i = 2 (nums[2] = 3)
+═══════════════════════════════════════
+  j = 3: nums[3] = 1, 3 == 1? NO
+  j = 4: nums[4] = 1, 3 == 1? NO
+  j = 5: nums[5] = 3, 3 == 3? YES ✅ count = 3
+
+═══════════════════════════════════════
+i = 3 (nums[3] = 1)
+═══════════════════════════════════════
+  j = 4: nums[4] = 1, 1 == 1? YES ✅ count = 4
+  j = 5: nums[5] = 3, 1 == 3? NO
+
+═══════════════════════════════════════
+i = 4 (nums[4] = 1)
+═══════════════════════════════════════
+  j = 5: nums[5] = 3, 1 == 3? NO
+
+═══════════════════════════════════════
+i = 5 (nums[5] = 3)
+═══════════════════════════════════════
+  No j to check (j would start at 6, out of bounds)
+
+═══════════════════════════════════════
+FINAL RESULT: count = 4 ✅
+═══════════════════════════════════════
+
+Good pairs found:
+1. (0, 3): nums[0]=1, nums[3]=1
+2. (0, 4): nums[0]=1, nums

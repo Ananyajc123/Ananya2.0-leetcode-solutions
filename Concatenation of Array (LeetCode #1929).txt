@@ -1,0 +1,226 @@
+Problem 2: Concatenation of Array (LeetCode #1929)
+Difficulty: Easy
+Link: https://leetcode.com/problems/concatenation-of-array/
+Topics: Array, Simulation
+Problem Statement
+Given an integer array nums of length n, you want to create an array ans of length 2n where ans[i] == nums[i] and ans[i + n] == nums[i] for 0 <= i < n (0-indexed).
+Specifically, ans is the concatenation of two nums arrays.
+Return the array ans.
+Example 1:
+Input: nums = [1,2,1]
+Output: [1,2,1,1,2,1]
+
+Explanation: 
+The array ans is formed as follows:
+- ans = [nums[0],nums[1],nums[2],nums[0],nums[1],nums[2]]
+- ans = [1,2,1,1,2,1]
+Example 2:
+Input: nums = [1,3,2,1]
+Output: [1,3,2,1,1,3,2,1]
+
+Explanation: 
+The array ans is formed as follows:
+- ans = [nums[0],nums[1],nums[2],nums[3],nums[0],nums[1],nums[2],nums[3]]
+- ans = [1,3,2,1,1,3,2,1]
+Constraints:
+
+n == nums.length
+1 <= n <= 1000
+1 <= nums[i] <= 1000
+
+
+Visual Understanding
+Original Array:
+nums = [1, 2, 1]
+       ↓  ↓  ↓
+      n=3 elements
+
+Concatenated Array:
+ans = [1, 2, 1, 1, 2, 1]
+       \_______/  \_______/
+       First copy  Second copy
+       indices     indices
+       0, 1, 2     3, 4, 5
+
+Building Process:
+Position 0: ans[0] = nums[0] = 1
+Position 1: ans[1] = nums[1] = 2
+Position 2: ans[2] = nums[2] = 1
+Position 3: ans[3] = nums[0] = 1  (repeat from start)
+Position 4: ans[4] = nums[1] = 2
+Position 5: ans[5] = nums[2] = 1
+
+Formula:
+ans[i] = nums[i]         for i < n
+ans[i+n] = nums[i]       for i < n
+
+Solution
+javaclass Solution {
+    public int[] getConcatenation(int[] nums) {
+        int n = nums.length;
+        int[] ans = new int[2 * n];
+        
+        for (int i = 0; i < n; i++) {
+            ans[i] = nums[i];        // First half
+            ans[i + n] = nums[i];    // Second half
+        }
+        
+        return ans;
+    }
+}
+
+Line-by-Line Explanation
+Line 1-2: Method Declaration
+javaclass Solution {
+    public int[] getConcatenation(int[] nums) {
+
+Returns an integer array (concatenated result)
+Takes input array nums
+
+
+Line 3: Get Length
+javaint n = nums.length;
+
+Store the length of input array
+We'll use this to create result array of size 2n
+Also helps in placing elements in second half
+
+Example: If nums = [1,2,1], then n = 3
+
+Line 4: Create Result Array
+javaint[] ans = new int[2 * n];
+
+Create array of size 2 * n (double the input size)
+Initially all zeros: [0, 0, 0, 0, 0, 0]
+
+Why 2n?
+
+We're concatenating nums with itself
+First n positions for first copy
+Next n positions for second copy
+
+
+Line 6-9: Fill Both Halves
+javafor (int i = 0; i < n; i++) {
+    ans[i] = nums[i];        // First half
+    ans[i + n] = nums[i];    // Second half
+}
+This is the magic! In ONE loop, we fill BOTH halves:
+First half: ans[i] = nums[i]
+
+When i = 0: ans[0] = nums[0]
+When i = 1: ans[1] = nums[1]
+When i = 2: ans[2] = nums[2]
+
+Second half: ans[i + n] = nums[i]
+
+When i = 0: ans[0 + 3] = ans[3] = nums[0]
+When i = 1: ans[1 + 3] = ans[4] = nums[1]
+When i = 2: ans[2 + 3] = ans[5] = nums[2]
+
+Why i + n?
+
+To place second copy right after first copy
+If n = 3, second copy starts at index 3
+
+
+Line 11: Return Result
+javareturn ans;
+
+Complete Dry Run
+Input: nums = [1, 2, 1], n = 3
+Initial State:
+nums = [1, 2, 1]
+ans  = [0, 0, 0, 0, 0, 0]  (size = 2*3 = 6)
+
+Iteration i = 0:
+├─ ans[0] = nums[0] = 1     (first half)
+├─ ans[0+3] = ans[3] = nums[0] = 1  (second half)
+└─ ans = [1, 0, 0, 1, 0, 0]
+
+Iteration i = 1:
+├─ ans[1] = nums[1] = 2
+├─ ans[1+3] = ans[4] = nums[1] = 2
+└─ ans = [1, 2, 0, 1, 2, 0]
+
+Iteration i = 2:
+├─ ans[2] = nums[2] = 1
+├─ ans[2+3] = ans[5] = nums[2] = 1
+└─ ans = [1, 2, 1, 1, 2, 1]
+
+Final Result: [1, 2, 1, 1, 2, 1] ✅
+
+Alternative Approaches
+Approach 1: Two Separate Loops
+javaclass Solution {
+    public int[] getConcatenation(int[] nums) {
+        int n = nums.length;
+        int[] ans = new int[2 * n];
+        
+        // Fill first half
+        for (int i = 0; i < n; i++) {
+            ans[i] = nums[i];
+        }
+        
+        // Fill second half
+        for (int i = 0; i < n; i++) {
+            ans[i + n] = nums[i];
+        }
+        
+        return ans;
+    }
+}
+
+Same complexity but more verbose
+Easier to understand for beginners
+
+
+Approach 2: Single Loop with Modulo
+javaclass Solution {
+    public int[] getConcatenation(int[] nums) {
+        int n = nums.length;
+        int[] ans = new int[2 * n];
+        
+        for (int i = 0; i < 2 * n; i++) {
+            ans[i] = nums[i % n];
+        }
+        
+        return ans;
+    }
+}
+
+Uses modulo to wrap around
+i % n gives indices 0,1,2,0,1,2,... for n=3
+
+
+Complexity Analysis
+Time Complexity: O(n)
+
+Single loop from 0 to n
+Each iteration does 2 assignments (O(1) each)
+Total: O(n)
+
+Space Complexity: O(n)
+
+We create array of size 2n
+In terms of input size n, it's O(n)
+If we don't count output, auxiliary space is O(1)
+
+
+Edge Cases
+1. Single element:
+Input: nums = [1]
+Output: [1, 1]
+2. Two elements:
+Input: nums = [4, 5]
+Output: [4, 5, 4, 5]
+3. All same elements:
+Input: nums = [7, 7, 7]
+Output: [7, 7, 7, 7, 7, 7]
+
+Key Takeaways
+
+Smart indexing: Using i and i+n fills both halves simultaneously
+Array size: Result is always 2x input size
+Efficient: Only need one loop
+Concatenation: Joining two arrays end-to-end

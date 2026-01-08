@@ -1,0 +1,170 @@
+Problem 4: Shuffle the Array (LeetCode #1470)
+Difficulty: Easy
+Link: https://leetcode.com/problems/shuffle-the-array/
+Topics: Array, Index Manipulation
+Problem Statement
+Given the array nums consisting of 2n elements in the form [x₁,x₂,...,xₙ,y₁,y₂,...,yₙ].
+Return the array in the form [x₁,y₁,x₂,y₂,...,xₙ,yₙ].
+Example 1:
+Input: nums = [2,5,1,3,4,7], n = 3
+Output: [2,3,5,4,1,7] 
+
+Explanation: 
+Since x₁=2, x₂=5, x₃=1, y₁=3, y₂=4, y₃=7
+Then the answer is [x₁,y₁,x₂,y₂,x₃,y₃] = [2,3,5,4,1,7]
+Example 2:
+Input: nums = [1,2,3,4,4,3,2,1], n = 4
+Output: [1,4,2,3,3,2,4,1]
+Example 3:
+Input: nums = [1,1,2,2], n = 2
+Output: [1,2,1,2]
+Constraints:
+
+1 <= n <= 500
+nums.length == 2n
+1 <= nums[i] <= 10³
+
+
+Visual Understanding
+Original Array Structure:
+nums = [2, 5, 1, 3, 4, 7]
+        \______/  \______/
+        X values  Y values
+        (first n) (last n)
+
+Indices: 0  1  2  3  4  5
+
+First half (X):  indices 0 to n-1    → [2, 5, 1]
+Second half (Y): indices n to 2n-1   → [3, 4, 7]
+
+Shuffled Pattern:
+Result = [x₁, y₁, x₂, y₂, x₃, y₃]
+        = [2,  3,  5,  4,  1,  7]
+
+Visual mapping:
+Position 0: x₁ (nums[0]) = 2
+Position 1: y₁ (nums[3]) = 3
+Position 2: x₂ (nums[1]) = 5
+Position 3: y₂ (nums[4]) = 4
+Position 4: x₃ (nums[2]) = 1
+Position 5: y₃ (nums[5]) = 7
+
+Pattern:
+- Even positions (0,2,4,...): Take from first half
+- Odd positions (1,3,5,...): Take from second half
+
+Solution
+javaclass Solution {
+    public int[] shuffle(int[] nums, int n) {
+        int[] result = new int[2 * n];
+        
+        for (int i = 0; i < n; i++) {
+            result[2 * i] = nums[i];        // X values at even positions
+            result[2 * i + 1] = nums[i + n]; // Y values at odd positions
+        }
+        
+        return result;
+    }
+}
+
+Line-by-Line Explanation
+Line 1-2: Method Declaration
+javaclass Solution {
+    public int[] shuffle(int[] nums, int n) {
+
+Takes array nums and integer n
+nums has length 2n (given in problem)
+Returns shuffled array
+
+
+Line 3: Create Result Array
+javaint[] result = new int[2 * n];
+
+Create new array of size 2n (same as input)
+Will store shuffled elements
+
+
+Line 5-8: Shuffle Logic
+javafor (int i = 0; i < n; i++) {
+    result[2 * i] = nums[i];        // X values
+    result[2 * i + 1] = nums[i + n]; // Y values
+}
+This is the KEY part! Let's break it down:
+Loop runs from i = 0 to n-1:
+
+We iterate n times
+In each iteration, we place TWO elements
+
+Line 6: result[2 * i] = nums[i]
+
+Takes element from first half (X values)
+Places at EVEN position in result
+2 * i gives: 0, 2, 4, 6, ... (even indices)
+
+Line 7: result[2 * i + 1] = nums[i + n]
+
+Takes element from second half (Y values)
+Places at ODD position in result
+2 * i + 1 gives: 1, 3, 5, 7, ... (odd indices)
+i + n accesses second half of nums
+
+Index calculation examples (n=3):
+i=0: result[0] = nums[0], result[1] = nums[3]
+i=1: result[2] = nums[1], result[3] = nums[4]
+i=2: result[4] = nums[2], result[5] = nums[5]
+
+Line 10: Return Result
+javareturn result;
+
+Complete Dry Run
+Input: nums = [2,5,1,3,4,7], n = 3
+Initial State:
+nums   = [2, 5, 1, 3, 4, 7]
+          ↑_____↑  ↑_____↑
+          First n  Second n
+          (X vals) (Y vals)
+result = [0, 0, 0, 0, 0, 0]
+
+═══════════════════════════════════════
+Iteration i = 0:
+═══════════════════════════════════════
+├─ result[2*0] = result[0] = nums[0] = 2
+├─ result[2*0+1] = result[1] = nums[0+3] = nums[3] = 3
+└─ result = [2, 3, 0, 0, 0, 0]
+
+═══════════════════════════════════════
+Iteration i = 1:
+═══════════════════════════════════════
+├─ result[2*1] = result[2] = nums[1] = 5
+├─ result[2*1+1] = result[3] = nums[1+3] = nums[4] = 4
+└─ result = [2, 3, 5, 4, 0, 0]
+
+═══════════════════════════════════════
+Iteration i = 2:
+═══════════════════════════════════════
+├─ result[2*2] = result[4] = nums[2] = 1
+├─ result[2*2+1] = result[5] = nums[2+3] = nums[5] = 7
+└─ result = [2, 3, 5, 4, 1, 7]
+
+═══════════════════════════════════════
+Final Result: [2, 3, 5, 4, 1, 7] ✅
+═══════════════════════════════════════
+
+Understanding the Index Formulas
+Why 2 * i for X values?
+i = 0 → 2*0 = 0 (position 0)
+i = 1 → 2*1 = 2 (position 2)
+i = 2 → 2*2 = 4 (position 4)
+Pattern: All EVEN positions
+Why 2 * i + 1 for Y values?
+i = 0 → 2*0+1 = 1 (position 1)
+i = 1 → 2*1+1 = 3 (position 3)
+i = 2 → 2*2+1 = 5 (position 5)
+Pattern: All ODD positions
+Why i + n to access Y values?
+n = 3
+Y values start at index n (index 3)
+
+i = 0 → i+n = 0+3 = 3 (first Y)
+i = 1 → i+n = 1+3 = 4 (second Y)
+i = 2 → i+n = 2+3 = 5 (third Y)

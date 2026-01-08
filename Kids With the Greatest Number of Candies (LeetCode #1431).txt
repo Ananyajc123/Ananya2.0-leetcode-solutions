@@ -1,0 +1,277 @@
+Problem 5: Kids With the Greatest Number of Candies (LeetCode #1431)
+Difficulty: Easy
+Link: https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/
+Topics: Array, Comparison
+Problem Statement
+There are n kids with candies. You are given an integer array candies, where each candies[i] represents the number of candies the i-th kid has, and an integer extraCandies, denoting the number of extra candies that you have.
+Return a boolean array result of length n, where result[i] is true if, after giving the i-th kid all the extraCandies, they will have the greatest number of candies among all the kids, or false otherwise.
+Note that multiple kids can have the greatest number of candies.
+Example 1:
+Input: candies = [2,3,5,1,3], extraCandies = 3
+Output: [true,true,true,false,true] 
+
+Explanation: 
+If you give all extraCandies to:
+- Kid 1, they will have 2 + 3 = 5 candies, which is the greatest. ✅
+- Kid 2, they will have 3 + 3 = 6 candies, which is the greatest. ✅
+- Kid 3, they will have 5 + 3 = 8 candies, which is the greatest. ✅
+- Kid 4, they will have 1 + 3 = 4 candies, which is not the greatest. ❌
+- Kid 5, they will have 3 + 3 = 6 candies, which is the greatest. ✅
+Example 2:
+Input: candies = [4,2,1,1,2], extraCandies = 1
+Output: [true,false,false,false,false] 
+
+Explanation: 
+There is only one kid who can have the greatest number of candies after receiving extra.
+Example 3:
+Input: candies = [12,1,12], extraCandies = 10
+Output: [true,false,true]
+Constraints:
+
+n == candies.length
+2 <= n <= 100
+1 <= candies[i] <= 100
+1 <= extraCandies <= 50
+
+
+Visual Understanding
+Example: candies = [2,3,5,1,3], extraCandies = 3
+
+Step 1: Find the current maximum
+candies = [2, 3, 5, 1, 3]
+               ↑
+          max = 5
+
+Step 2: Check each kid
+Kid 0: 2 + 3 = 5 >= 5? YES ✅ → true
+Kid 1: 3 + 3 = 6 >= 5? YES ✅ → true
+Kid 2: 5 + 3 = 8 >= 5? YES ✅ → true
+Kid 3: 1 + 3 = 4 >= 5? NO  ❌ → false
+Kid 4: 3 + 3 = 6 >= 5? YES ✅ → true
+
+Result: [true, true, true, false, true]
+
+Key Insight:
+- We don't actually give candies to anyone
+- We just CHECK if giving them extra would make them >= max
+- Each kid is checked independently
+
+Solution
+javaimport java.util.ArrayList;
+import java.util.List;
+
+class Solution {
+    public List<Boolean> kidsWithCandies(int[] candies, int extraCandies) {
+        List<Boolean> result = new ArrayList<>();
+        
+        // Step 1: Find maximum candies any kid currently has
+        int max = 0;
+        for (int candy : candies) {
+            max = Math.max(max, candy);
+        }
+        
+        // Step 2: Check each kid
+        for (int candy : candies) {
+            result.add(candy + extraCandies >= max);
+        }
+        
+        return result;
+    }
+}
+
+Line-by-Line Explanation
+Line 1-3: Imports and Declaration
+javaimport java.util.ArrayList;
+import java.util.List;
+
+class Solution {
+    public List<Boolean> kidsWithCandies(int[] candies, int extraCandies) {
+
+Import ArrayList and List
+Method returns List<Boolean> (list of true/false values)
+Takes array of candies and extra candies count
+
+
+Line 5: Create Result List
+javaList<Boolean> result = new ArrayList<>();
+
+Create ArrayList to store boolean results
+Will have one entry per kid
+<Boolean> specifies we're storing Boolean objects (not primitive boolean)
+
+Why ArrayList instead of boolean[]?
+
+Problem requires returning List<Boolean>
+More flexible than arrays
+
+
+Line 7-10: Find Maximum
+javaint max = 0;
+for (int candy : candies) {
+    max = Math.max(max, candy);
+}
+Purpose: Find the richest kid's candy count
+Line 7: Initialize max to 0
+
+Safe because candies[i] >= 1 (from constraints)
+
+Line 8-10: Enhanced for loop
+
+Iterate through each kid's candies
+Math.max(max, candy) keeps the larger value
+After loop, max holds the highest candy count
+
+Example:
+candies = [2, 3, 5, 1, 3]
+
+Initial: max = 0
+candy = 2: max = max(0, 2) = 2
+candy = 3: max = max(2, 3) = 3
+candy = 5: max = max(3, 5) = 5 ← Maximum!
+candy = 1: max = max(5, 1) = 5
+candy = 3: max = max(5, 3) = 5
+
+Final: max = 5
+
+Line 12-14: Check Each Kid
+javafor (int candy : candies) {
+    result.add(candy + extraCandies >= max);
+}
+Purpose: For each kid, check if they could be the richest
+Line 13: The Logic
+javaresult.add(candy + extraCandies >= max);
+Breaking it down:
+
+candy + extraCandies → Kid's total if they get all extra
+>= max → Compare with current maximum
+Result is true or false
+result.add(...) → Add to result list
+
+Important: >= not > because multiple kids can tie for greatest!
+Example:
+candies = [2, 3, 5, 1, 3]
+extraCandies = 3
+max = 5
+
+Kid 0: 2 + 3 >= 5? → 5 >= 5? → true
+Kid 1: 3 + 3 >= 5? → 6 >= 5? → true
+Kid 2: 5 + 3 >= 5? → 8 >= 5? → true
+Kid 3: 1 + 3 >= 5? → 4 >= 5? → false
+Kid 4: 3 + 3 >= 5? → 6 >= 5? → true
+
+Line 16: Return Result
+javareturn result;
+
+Return the boolean list
+
+
+Complete Dry Run
+Input: candies = [2,3,5,1,3], extraCandies = 3
+═══════════════════════════════════════
+STEP 1: FIND MAXIMUM
+═══════════════════════════════════════
+candies = [2, 3, 5, 1, 3]
+max = 0
+
+Loop through candies:
+├─ candy = 2: max = max(0, 2) = 2
+├─ candy = 3: max = max(2, 3) = 3
+├─ candy = 5: max = max(3, 5) = 5 ✅
+├─ candy = 1: max = max(5, 1) = 5
+└─ candy = 3: max = max(5, 3) = 5
+
+Maximum found: max = 5
+
+═══════════════════════════════════════
+STEP 2: CHECK EACH KID
+═══════════════════════════════════════
+result = []
+
+Kid 0 (candy = 2):
+├─ 2 + 3 = 5
+├─ 5 >= 5? YES ✅
+├─ result.add(true)
+└─ result = [true]
+
+Kid 1 (candy = 3):
+├─ 3 + 3 = 6
+├─ 6 >= 5? YES ✅
+├─ result.add(true)
+└─ result = [true, true]
+
+Kid 2 (candy = 5):
+├─ 5 + 3 = 8
+├─ 8 >= 5? YES ✅
+├─ result.add(true)
+└─ result = [true, true, true]
+
+Kid 3 (candy = 1):
+├─ 1 + 3 = 4
+├─ 4 >= 5? NO ❌
+├─ result.add(false)
+└─ result = [true, true, true, false]
+
+Kid 4 (candy = 3):
+├─ 3 + 3 = 6
+├─ 6 >= 5? YES ✅
+├─ result.add(true)
+└─ result = [true, true, true, false, true]
+
+═══════════════════════════════════════
+FINAL RESULT: [true, true, true, false, true] ✅
+═══════════════════════════════════════
+
+Why Use >= Instead of >?
+Example: candies = [5, 5], extraCandies = 0
+
+Current max = 5
+
+Kid 0: 5 + 0 = 5
+  If using >: 5 > 5? NO → false ❌ WRONG!
+  If using >=: 5 >= 5? YES → true ✅ CORRECT!
+
+Kid 1: 5 + 0 = 5
+  If using >: 5 > 5? NO → false ❌ WRONG!
+  If using >=: 5 >= 5? YES → true ✅ CORRECT!
+Problem says: "multiple kids can have the greatest number"
+So we need: >= to include ties!
+
+Complexity Analysis
+Time Complexity: O(n)
+
+First loop: O(n) to find max
+Second loop: O(n) to check each kid
+Total: O(n) + O(n) = O(n)
+
+Space Complexity: O(n)
+
+Result list stores n boolean values
+Excluding output, auxiliary space is O(1)
+
+
+Edge Cases
+1. All kids have same candies:
+Input: candies = [5, 5, 5], extraCandies = 0
+Output: [true, true, true]
+(All tied for greatest)
+2. One kid much richer:
+Input: candies = [1, 1, 1, 100], extraCandies = 1
+Output: [false, false, false, true]
+(Only last kid can be richest)
+3. Extra candies make everyone richest:
+Input: candies = [2, 3], extraCandies = 10
+Output: [true, true]
+(Both can exceed current max)
+4. No extra candies:
+Input: candies = [4, 2, 1], extraCandies = 0
+Output: [true, false, false]
+(Only current richest stays richest)
+
+Key Takeaways
+
+Two-pass approach: Find max first, then check each element
+Comparison logic: Use >= for "greatest or equal"
+Boolean expressions: condition evaluates to true/false directly
+ArrayList<Boolean>: Can store boolean values as objects
+Independent checks: Each kid checked separately
+

@@ -1,0 +1,228 @@
+Problem 3: Richest Customer Wealth (LeetCode #1672)
+Difficulty: Easy
+Link: https://leetcode.com/problems/richest-customer-wealth/
+Topics: Array, 2D Array, Matrix
+Problem Statement
+You are given an m x n integer grid accounts where accounts[i][j] is the amount of money the i-th customer has in the j-th bank. Return the wealth that the richest customer has.
+A customer's wealth is the amount of money they have in all their bank accounts. The richest customer is the customer that has the maximum wealth.
+Example 1:
+Input: accounts = [[1,2,3],[3,2,1]]
+Output: 6
+
+Explanation:
+1st customer has wealth = 1 + 2 + 3 = 6
+2nd customer has wealth = 3 + 2 + 1 = 6
+Both customers are considered the richest with a wealth of 6 each, so return 6.
+Example 2:
+Input: accounts = [[1,5],[7,3],[3,5]]
+Output: 10
+
+Explanation: 
+1st customer has wealth = 1 + 5 = 6
+2nd customer has wealth = 7 + 3 = 10 
+3rd customer has wealth = 3 + 5 = 8
+The 2nd customer is the richest with a wealth of 10.
+Example 3:
+Input: accounts = [[2,8,7],[7,1,3],[1,9,5]]
+Output: 17
+
+Explanation:
+1st customer has wealth = 2 + 8 + 7 = 17
+2nd customer has wealth = 7 + 1 + 3 = 11
+3rd customer has wealth = 1 + 9 + 5 = 15
+The 1st customer is the richest with a wealth of 17.
+Constraints:
+
+m == accounts.length
+n == accounts[i].length
+1 <= m, n <= 50
+1 <= accounts[i][j] <= 100
+
+
+Visual Understanding
+Example: accounts = [[1,2,3],[3,2,1]]
+
+2D Array Visualization:
+             Bank0  Bank1  Bank2   → Row Sum (Wealth)
+Customer 0:    1      2      3    →    6
+Customer 1:    3      2      1    →    6
+                                        ↑
+                                    Maximum = 6
+
+Process:
+1. Calculate wealth for each customer (sum of their row)
+2. Track the maximum wealth seen so far
+3. Return the maximum
+
+Step-by-step:
+Customer 0: 1 + 2 + 3 = 6 → maxWealth = 6
+Customer 1: 3 + 2 + 1 = 6 → maxWealth = max(6, 6) = 6
+Result: 6
+
+Solution
+javaclass Solution {
+    public int maximumWealth(int[][] accounts) {
+        int maxWealth = 0;
+        
+        // Iterate through each customer
+        for (int i = 0; i < accounts.length; i++) {
+            int currentWealth = 0;
+            
+            // Sum all bank accounts for this customer
+            for (int j = 0; j < accounts[i].length; j++) {
+                currentWealth += accounts[i][j];
+            }
+            
+            // Update maximum wealth if current is greater
+            maxWealth = Math.max(maxWealth, currentWealth);
+        }
+        
+        return maxWealth;
+    }
+}
+
+Line-by-Line Explanation
+Line 1-2: Method Declaration
+javaclass Solution {
+    public int maximumWealth(int[][] accounts) {
+
+int[][] → 2D array (matrix) parameter
+Returns an integer (maximum wealth)
+
+
+Line 3: Initialize Maximum
+javaint maxWealth = 0;
+
+Variable to track the richest customer's wealth
+Start with 0 (minimum possible wealth is 0)
+Will update this as we find richer customers
+
+Why 0?
+
+Constraint says all values are >= 1
+Any customer will have wealth >= 1
+So 0 is safe starting point
+
+
+Line 5-6: Outer Loop (Customers)
+javafor (int i = 0; i < accounts.length; i++) {
+    int currentWealth = 0;
+Outer loop:
+
+i represents customer index (row number)
+accounts.length gives number of customers (number of rows)
+Each iteration processes one customer
+
+currentWealth:
+
+Reset to 0 for each new customer
+Will accumulate this customer's total wealth
+
+
+Line 8-10: Inner Loop (Banks)
+javafor (int j = 0; j < accounts[i].length; j++) {
+    currentWealth += accounts[i][j];
+}
+Inner loop:
+
+j represents bank index (column number)
+accounts[i].length gives number of banks for customer i
+Each iteration adds one bank account balance
+
+accounts[i][j]:
+
+i = which customer (row)
+j = which bank (column)
+Value = money in that account
+
+currentWealth += accounts[i][j]:
+
+Add each bank balance to running total
+After inner loop completes, currentWealth = sum of entire row
+
+
+Line 12-13: Update Maximum
+javamaxWealth = Math.max(maxWealth, currentWealth);
+Math.max(a, b):
+
+Built-in Java function
+Returns the larger of two numbers
+Equivalent to: if (currentWealth > maxWealth) maxWealth = currentWealth;
+
+Purpose:
+
+After calculating each customer's wealth, check if it's the highest so far
+Keep track of maximum across all customers
+
+
+Line 16: Return Result
+javareturn maxWealth;
+
+After checking all customers, return the maximum wealth found
+
+
+Complete Dry Run
+Input: accounts = [[1,5],[7,3],[3,5]]
+Initial State:
+accounts = [[1, 5],
+            [7, 3],
+            [3, 5]]
+maxWealth = 0
+
+═══════════════════════════════════════
+CUSTOMER 0 (i = 0)
+═══════════════════════════════════════
+currentWealth = 0
+
+Inner Loop (Banks):
+  j = 0: currentWealth += accounts[0][0] = 0 + 1 = 1
+  j = 1: currentWealth += accounts[0][1] = 1 + 5 = 6
+
+Customer 0 wealth: 6
+maxWealth = max(0, 6) = 6
+
+═══════════════════════════════════════
+CUSTOMER 1 (i = 1)
+═══════════════════════════════════════
+currentWealth = 0
+
+Inner Loop (Banks):
+  j = 0: currentWealth += accounts[1][0] = 0 + 7 = 7
+  j = 1: currentWealth += accounts[1][1] = 7 + 3 = 10
+
+Customer 1 wealth: 10
+maxWealth = max(6, 10) = 10  ← New maximum!
+
+═══════════════════════════════════════
+CUSTOMER 2 (i = 2)
+═══════════════════════════════════════
+currentWealth = 0
+
+Inner Loop (Banks):
+  j = 0: currentWealth += accounts[2][0] = 0 + 3 = 3
+  j = 1: currentWealth += accounts[2][1] = 3 + 5 = 8
+
+Customer 2 wealth: 8
+maxWealth = max(10, 8) = 10  ← Still 10
+
+═══════════════════════════════════════
+FINAL RESULT: 10 ✅
+═══════════════════════════════════════
+
+Understanding 2D Arrays
+What is accounts[i][j]?
+accounts = [[1, 5],
+            [7, 3],
+            [3, 5]]
+
+accounts[0][0] = 1  ← Customer 0, Bank 0
+accounts[0][1] = 5  ← Customer 0, Bank 1
+accounts[1][0] = 7  ← Customer 1, Bank 0
+accounts[1][1] = 3  ← Customer 1, Bank 1
+accounts[2][0] = 3  ← Customer 2, Bank 0
+accounts[2][1] = 5  ← Customer 2, Bank 1
+Array dimensions:
+
+accounts.length = number of rows (customers) = 3
+accounts[0].length = number of columns (banks) = 2
+Each row can have different lengths (jagged array), so we use accounts[i].length
