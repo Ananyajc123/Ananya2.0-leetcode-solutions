@@ -1,0 +1,27 @@
+Problem 3: Goal Parser Interpretation (LeetCode #1678)
+Difficulty: Easy
+Link: https://leetcode.com/problems/goal-parser-interpretation/
+Problem Statement
+Interpret command string:
+
+"G" → "G"
+"()" → "o"
+"(al)" → "al"
+
+Example:
+Input: command = "G()(al)"
+Output: "Goal"
+Solution
+javaclass Solution {
+    public String interpret(String command) {
+        return command.replace("()", "o").replace("(al)", "al");
+    }
+}
+Explanation
+
+Replace "()" with "o"
+Replace "(al)" with "al"
+"G" remains unchanged
+
+Time Complexity: O(n)
+Space Complexity: O(n)

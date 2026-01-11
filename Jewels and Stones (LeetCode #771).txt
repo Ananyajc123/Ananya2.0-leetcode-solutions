@@ -1,0 +1,31 @@
+Problem 5: Jewels and Stones (LeetCode #771)
+Difficulty: Easy
+Link: https://leetcode.com/problems/jewels-and-stones/
+Problem Statement
+Count how many characters in stones are present in jewels.
+Example:
+Input: jewels = "aA", stones = "aAAbbbb"
+Output: 3
+Explanation: 'a' appears 1 time, 'A' appears 2 times
+Solution
+javaclass Solution {
+    public int numJewelsInStones(String jewels, String stones) {
+        int count = 0;
+        
+        for (char stone : stones.toCharArray()) {
+            if (jewels.indexOf(stone) != -1) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+Explanation
+
+Loop through each character in stones
+Check if it exists in jewels using indexOf()
+If found (indexOf returns >= 0), increment count
+
+Time Complexity: O(n × m) where n=stones length, m=jewels length
+Space Complexity: O(1)

@@ -1,0 +1,40 @@
+Problem 6: Check If Two String Arrays are Equivalent (LeetCode #1662)
+Difficulty: Easy
+Link: https://leetcode.com/problems/check-if-two-string-arrays-are-equivalent/
+Problem Statement
+Check if concatenating word1 equals concatenating word2.
+Example:
+Input: word1 = ["ab", "c"], word2 = ["a", "bc"]
+Output: true
+Explanation: "ab" + "c" = "abc", "a" + "bc" = "abc"
+Solution 1 (Using String.join)
+javaclass Solution {
+    public boolean arrayStringsAreEqual(String[] word1, String[] word2) {
+        return String.join("", word1).equals(String.join("", word2));
+    }
+}
+Solution 2 (Using StringBuilder)
+javaclass Solution {
+    public boolean arrayStringsAreEqual(String[] word1, String[] word2) {
+        StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+        
+        for (String word : word1) {
+            sb1.append(word);
+        }
+        
+        for (String word : word2) {
+            sb2.append(word);
+        }
+        
+        return sb1.toString().equals(sb2.toString());
+    }
+}
+Explanation
+
+Concatenate all strings in word1
+Concatenate all strings in word2
+Compare final strings using equals()
+
+Time Complexity: O(n + m)
+Space Complexity: O(n + m)

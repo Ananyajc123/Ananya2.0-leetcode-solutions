@@ -1,0 +1,49 @@
+Problem 7: Final Value After Operations (LeetCode #2011)
+Difficulty: Easy
+Link: https://leetcode.com/problems/final-value-of-variable-after-performing-operations/
+Problem Statement
+Given operations array where each operation is "++X", "X++", "--X", or "X--", return final value starting from X=0.
+Example:
+Input: operations = ["--X","X++","X++"]
+Output: 1
+Explanation: X = 0 → -1 → 0 → 1
+Solution 1 (Using contains)
+javaclass Solution {
+    public int finalValueAfterOperations(String[] operations) {
+        int X = 0;
+        
+        for (String op : operations) {
+            if (op.contains("+")) {
+                X++;
+            } else {
+                X--;
+            }
+        }
+        
+        return X;
+    }
+}
+Solution 2 (Using charAt)
+javaclass Solution {
+    public int finalValueAfterOperations(String[] operations) {
+        int X = 0;
+        
+        for (String op : operations) {
+            if (op.charAt(1) == '+') {
+                X++;
+            } else {
+                X--;
+            }
+        }
+        
+        return X;
+    }
+}
+Explanation
+
+If operation contains '+' or middle char is '+' → increment
+If operation contains '-' or middle char is '-' → decrement
+Both "++X" and "X++" increment X (position doesn't matter here)
+
+Time Complexity: O(n)
+Space Complexity: O(1)

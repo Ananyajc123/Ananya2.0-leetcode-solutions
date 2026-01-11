@@ -1,0 +1,50 @@
+Problem 8: Split a String in Balanced Strings (LeetCode #1221)
+Difficulty: Easy
+Link: https://leetcode.com/problems/split-a-string-in-balanced-strings/
+Problem Statement
+Given a balanced string s with equal 'L' and 'R', split it into maximum balanced substrings.
+Example:
+Input: s = "RLRRLLRLRL"
+Output: 4
+Explanation: Can be split into "RL", "RRLL", "RL", "RL"
+Solution
+javaclass Solution {
+    public int balancedStringSplit(String s) {
+        int balance = 0;
+        int count = 0;
+        
+        for (char ch : s.toCharArray()) {
+            if (ch == 'R') {
+                balance++;
+            } else {
+                balance--;
+            }
+            
+            if (balance == 0) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+Explanation
+Greedy Approach:
+
+Use balance counter: R adds +1, L adds -1
+When balance = 0 → equal R's and L's → balanced substring found
+Split immediately (greedy) for maximum count
+
+Visual trace for "RLRRLLRLRL":
+R → balance=1
+L → balance=0 → count=1 (found "RL")
+R → balance=1
+R → balance=2
+L → balance=1
+L → balance=0 → count=2 (found "RRLL")
+R → balance=1
+L → balance=0 → count=3 (found "RL")
+R → balance=1
+L → balance=0 → count=4 (found "RL")
+Time Complexity: O(n)
+Space Complexity: O(1)

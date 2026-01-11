@@ -1,0 +1,33 @@
+Problem 4: To Lower Case (LeetCode #709)
+Difficulty: Easy
+Link: https://leetcode.com/problems/to-lower-case/
+Problem Statement
+Convert string to lowercase without using built-in toLowerCase() method.
+Example:
+Input: s = "Hello"
+Output: "hello"
+Solution
+javaclass Solution {
+    public String toLowerCase(String s) {
+        StringBuilder result = new StringBuilder();
+        
+        for (char ch : s.toCharArray()) {
+            if (ch >= 'A' && ch <= 'Z') {
+                result.append((char)(ch + 32));
+            } else {
+                result.append(ch);
+            }
+        }
+        
+        return result.toString();
+    }
+}
+Explanation
+
+Check if character is uppercase (A-Z)
+If yes: Add 32 to ASCII value (A=65, a=97, difference=32)
+If no: Keep as is
+Use StringBuilder for efficiency
+
+Time Complexity: O(n)
+Space Complexity: O(n)
