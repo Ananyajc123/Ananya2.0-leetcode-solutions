@@ -1,0 +1,85 @@
+LEETCODE SOLUTIONS - PROBLEMS 1 & 2
+
+PROBLEM 1: Sqrt(x) - LeetCode #69 ⭐
+📝 SHORT NOTES
+Concept: Binary Search for Answer
+Key Idea:
+
+The square root of x lies between 0 and x
+Use binary search to find the largest number whose square ≤ x
+Search space: 0 to x
+For each mid, check if mid * mid ≤ x
+
+Pattern: Binary Search on Answer Space
+Time: O(log n)
+Space: O(1)
+
+✅ SOLUTION
+javaclass Solution {
+    public int mySqrt(int x) {
+        // Edge cases
+        if (x == 0 || x == 1) return x;
+        
+        int left = 1;
+        int right = x;
+        int result = 0;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            // Use division to avoid overflow: mid * mid <= x becomes mid <= x/mid
+            if (mid <= x / mid) {
+                result = mid;  // Store potential answer
+                left = mid + 1;  // Try to find larger sqrt
+            } else {
+                right = mid - 1;  // mid is too large
+            }
+        }
+        
+        return result;
+    }
+}
+
+🔍 DRY RUN
+Example: x = 8
+Goal: Find sqrt(8) = 2 (rounded down from 2.828...)
+
+Initial: left = 1, right = 8
+
+Iteration 1:
+  mid = 1 + (8-1)/2 = 4
+  4 <= 8/4? → 4 <= 2? NO
+  right = 3
+  
+Iteration 2:
+  mid = 1 + (3-1)/2 = 2
+  2 <= 8/2? → 2 <= 4? YES
+  result = 2
+  left = 3
+  
+Iteration 3:
+  mid = 3 + (3-3)/2 = 3
+  3 <= 8/3? → 3 <= 2? NO
+  right = 2
+  
+Loop ends (left > right)
+Return result = 2 ✓
+
+💡 KEY POINTS
+
+Why mid <= x/mid instead of mid * mid <= x?
+
+Avoids integer overflow for large values
+mid * mid can exceed Integer.MAX_VALUE
+
+
+Why store result?
+
+We need the last valid mid where mid² ≤ x
+Can't return mid directly as loop continues
+
+
+Edge cases:
+
+x = 0 → return 0
+x = 1 → return 1

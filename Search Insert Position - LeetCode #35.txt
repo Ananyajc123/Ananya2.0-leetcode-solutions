@@ -1,0 +1,121 @@
+PROBLEM 2: Search Insert Position - LeetCode #35 ⭐
+📝 SHORT NOTES
+Concept: Binary Search Variation
+Key Idea:
+
+Standard binary search to find target
+If not found, left pointer gives insert position
+After loop, left is where target should be inserted
+
+Pattern: Binary Search
+Time: O(log n)
+Space: O(1)
+
+✅ SOLUTION
+javaclass Solution {
+    public int searchInsert(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            if (nums[mid] == target) {
+                return mid;  // Found target
+            } else if (nums[mid] < target) {
+                left = mid + 1;  // Search right half
+            } else {
+                right = mid - 1;  // Search left half
+            }
+        }
+        
+        // Target not found, left is the insert position
+        return left;
+    }
+}
+
+🔍 DRY RUN
+Example 1: nums = [1,3,5,6], target = 5
+Iteration 1:
+  left = 0, right = 3
+  mid = 1
+  nums[1] = 3 < 5? YES
+  left = 2
+  
+Iteration 2:
+  left = 2, right = 3
+  mid = 2
+  nums[2] = 5 == 5? YES
+  Return 2 ✓
+Example 2: nums = [1,3,5,6], target = 2
+Goal: Find insert position for 2
+
+Iteration 1:
+  left = 0, right = 3
+  mid = 1
+  nums[1] = 3 > 2? YES
+  right = 0
+  
+Iteration 2:
+  left = 0, right = 0
+  mid = 0
+  nums[0] = 1 < 2? YES
+  left = 1
+  
+Loop ends (left > right)
+Return left = 1 ✓
+(Insert 2 at index 1 → [1,2,3,5,6])
+Example 3: nums = [1,3,5,6], target = 7
+Goal: Find insert position for 7 (larger than all)
+
+Iteration 1:
+  left = 0, right = 3
+  mid = 1
+  nums[1] = 3 < 7? YES
+  left = 2
+  
+Iteration 2:
+  left = 2, right = 3
+  mid = 2
+  nums[2] = 5 < 7? YES
+  left = 3
+  
+Iteration 3:
+  left = 3, right = 3
+  mid = 3
+  nums[3] = 6 < 7? YES
+  left = 4
+  
+Loop ends (left > right)
+Return left = 4 ✓
+(Insert 7 at end → [1,3,5,6,7])
+
+💡 KEY POINTS
+
+Why does left give insert position?
+
+When target not found, left ends up at first element > target
+This is exactly where we should insert to maintain sorted order
+
+
+Magic of binary search:
+
+If target exists → returns its index
+If target doesn't exist → returns where it should be
+
+
+Visual understanding:
+
+   [1, 3, 5, 6], target = 2
+    ↑     
+    left ends here (index 1)
+    Insert 2 here → [1, 2, 3, 5, 6]
+
+Edge cases handled automatically:
+
+Insert at beginning (left = 0)
+Insert at end (left = nums.length)
+Insert in middle (left = correct position)
+
+
+
