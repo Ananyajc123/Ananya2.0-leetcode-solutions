@@ -1,0 +1,53 @@
+Problem 3: Contains Duplicate (LeetCode #217)
+Difficulty: Easy
+Link: https://leetcode.com/problems/contains-duplicate/
+Problem Statement
+Return true if any value appears at least twice in the array.
+Example:
+Input: nums = [1,2,3,1]
+Output: true
+Solution 1: Using HashSet (Best)
+javaclass Solution {
+    public boolean containsDuplicate(int[] nums) {
+        HashSet<Integer> seen = new HashSet<>();
+        
+        for (int num : nums) {
+            if (seen.contains(num)) {
+                return true;
+            }
+            seen.add(num);
+        }
+        
+        return false;
+    }
+}
+Explanation:
+
+Use HashSet to track seen numbers
+If number already exists → duplicate found
+HashSet provides O(1) lookup
+
+Time Complexity: O(n)
+Space Complexity: O(n)
+Solution 2: Using Sorting
+javaclass Solution {
+    public boolean containsDuplicate(int[] nums) {
+        Arrays.sort(nums);
+        
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (nums[i] == nums[i + 1]) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+Explanation:
+
+Sort array first
+Duplicates will be adjacent
+Check consecutive elements
+
+Time Complexity: O(n log n)
+Space Complexity: O(1)

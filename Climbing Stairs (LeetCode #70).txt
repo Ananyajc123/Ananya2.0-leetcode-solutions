@@ -1,0 +1,35 @@
+Problem 5: Climbing Stairs (LeetCode #70)
+Difficulty: Easy
+Link: https://leetcode.com/problems/climbing-stairs/
+Problem Statement
+How many ways to climb n stairs if you can take 1 or 2 steps at a time?
+Example:
+Input: n = 3
+Output: 3
+Explanation: 1+1+1, 1+2, 2+1
+Solution (With Memoization)
+javaclass Solution {
+    public int climbStairs(int n) {
+        int[] memo = new int[n + 1];
+        return climb(n, memo);
+    }
+    
+    private int climb(int n, int[] memo) {
+        if (n == 1) return 1;
+        if (n == 2) return 2;
+        
+        if (memo[n] != 0) return memo[n];
+        
+        memo[n] = climb(n - 1, memo) + climb(n - 2, memo);
+        return memo[n];
+    }
+}
+Explanation:
+
+To reach step n: come from n-1 (1 step) or n-2 (2 steps)
+Total ways = ways(n-1) + ways(n-2)
+Same pattern as Fibonacci!
+Memoization prevents recalculation
+
+Time Complexity: O(n)
+Space Complexity: O(n)

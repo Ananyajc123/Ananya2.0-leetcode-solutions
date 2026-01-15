@@ -1,0 +1,35 @@
+Problem 3: Reverse String (LeetCode #344)
+Difficulty: Easy
+Link: https://leetcode.com/problems/reverse-string/
+Problem Statement
+Reverse a character array in-place.
+Example:
+Input: s = ["h","e","l","l","o"]
+Output: ["o","l","l","e","h"]
+Solution
+javaclass Solution {
+    public void reverseString(char[] s) {
+        reverse(s, 0, s.length - 1);
+    }
+    
+    private void reverse(char[] s, int left, int right) {
+        if (left >= right) return;
+        
+        // Swap
+        char temp = s[left];
+        s[left] = s[right];
+        s[right] = temp;
+        
+        // Recursive call
+        reverse(s, left + 1, right - 1);
+    }
+}
+Explanation:
+
+Two pointers: left and right
+Swap characters at both ends
+Move pointers inward
+Base case: pointers meet
+
+Time Complexity: O(n)
+Space Complexity: O(n) - call stack

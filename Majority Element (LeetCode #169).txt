@@ -1,0 +1,46 @@
+Problem 6: Majority Element (LeetCode #169)
+Difficulty: Easy
+Link: https://leetcode.com/problems/majority-element/
+Problem Statement
+Return the majority element (appears more than ⌊n/2⌋ times).
+Example:
+Input: nums = [2,2,1,1,1,2,2]
+Output: 2
+Solution 1: Using Sorting (Simplest)
+javaclass Solution {
+    public int majorityElement(int[] nums) {
+        Arrays.sort(nums);
+        return nums[nums.length / 2];
+    }
+}
+Explanation:
+
+Majority element appears > n/2 times
+After sorting, it MUST be at middle position
+
+Time Complexity: O(n log n)
+Space Complexity: O(1)
+Solution 2: Boyer-Moore Voting (Best)
+javaclass Solution {
+    public int majorityElement(int[] nums) {
+        int candidate = 0;
+        int count = 0;
+        
+        for (int num : nums) {
+            if (count == 0) {
+                candidate = num;
+            }
+            count += (num == candidate) ? 1 : -1;
+        }
+        
+        return candidate;
+    }
+}
+Explanation:
+
+Maintain candidate and count
+If count becomes 0, change candidate
+Majority element survives cancellation
+
+Time Complexity: O(n)
+Space Complexity: O(1)

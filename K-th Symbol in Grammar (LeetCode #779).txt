@@ -1,0 +1,36 @@
+Problem 8: K-th Symbol in Grammar (LeetCode #779)
+Difficulty: Medium
+Link: https://leetcode.com/problems/k-th-symbol-in-grammar/
+Problem Statement
+Generate rows where row 1 = "0", and each row is formed by replacing 0→01 and 1→10.
+Example:
+Input: n = 3, k = 3
+Output: 1
+Explanation:
+Row 1: 0
+Row 2: 01
+Row 3: 0110
+Solution
+javaclass Solution {
+    public int kthGrammar(int n, int k) {
+        if (n == 1) return 0;
+        
+        int length = (int)Math.pow(2, n - 2);
+        
+        if (k <= length) {
+            return kthGrammar(n - 1, k);
+        } else {
+            return 1 - kthGrammar(n - 1, k - length);
+        }
+    }
+}
+Explanation:
+
+Each row has 2^(n-1) elements
+First half = previous row
+Second half = flipped previous row
+If k in first half: same as parent
+If k in second half: flip of parent
+
+Time Complexity: O(n)
+Space Complexity: O(n)

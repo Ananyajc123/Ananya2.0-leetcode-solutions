@@ -1,0 +1,42 @@
+Problem 4: Power(x, n) (LeetCode #50)
+Difficulty: Medium
+Link: https://leetcode.com/problems/powx-n/
+Problem Statement
+Implement pow(x, n), which calculates x raised to the power n.
+Example:
+Input: x = 2.00000, n = 10
+Output: 1024.00000
+Solution
+javaclass Solution {
+    public double myPow(double x, int n) {
+        long N = n;
+        if (N < 0) {
+            x = 1 / x;
+            N = -N;
+        }
+        
+        return fastPow(x, N);
+    }
+    
+    private double fastPow(double x, long n) {
+        if (n == 0) return 1.0;
+        
+        double half = fastPow(x, n / 2);
+        
+        if (n % 2 == 0) {
+            return half * half;
+        } else {
+            return half * half * x;
+        }
+    }
+}
+Explanation:
+
+Divide and conquer approach
+x^n = (x^(n/2))^2 if n is even
+x^n = x × (x^(n/2))^2 if n is odd
+Handle negative powers by inverting x
+Much faster than naive x × x × ... × x
+
+Time Complexity: O(log n)
+Space Complexity: O(log n)

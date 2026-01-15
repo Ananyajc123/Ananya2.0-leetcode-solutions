@@ -1,0 +1,35 @@
+Problem 1: Fibonacci Number (LeetCode #509)
+Difficulty: Easy
+Link: https://leetcode.com/problems/fibonacci-number/
+Problem Statement
+Calculate the nth Fibonacci number where F(n) = F(n-1) + F(n-2).
+Example:
+Input: n = 4
+Output: 3
+Explanation: F(4) = F(3) + F(2) = 2 + 1 = 3
+Solution (With Memoization)
+javaclass Solution {
+    public int fib(int n) {
+        int[] memo = new int[n + 1];
+        return fibHelper(n, memo);
+    }
+    
+    private int fibHelper(int n, int[] memo) {
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+        
+        if (memo[n] != 0) return memo[n];
+        
+        memo[n] = fibHelper(n - 1, memo) + fibHelper(n - 2, memo);
+        return memo[n];
+    }
+}
+Explanation:
+
+Base cases: F(0)=0, F(1)=1
+Recursive: F(n) = F(n-1) + F(n-2)
+Memoization: Cache results to avoid recalculation
+Without memo: O(2^n), With memo: O(n)
+
+Time Complexity: O(n)
+Space Complexity: O(n)

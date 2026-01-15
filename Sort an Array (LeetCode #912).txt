@@ -1,0 +1,23 @@
+Problem 1: Sort an Array (LeetCode #912)
+Difficulty: Medium
+Link: https://leetcode.com/problems/sort-an-array/
+Problem Statement
+Given an array of integers nums, sort the array in ascending order and return it.
+Example:
+Input: nums = [5,2,3,1]
+Output: [1,2,3,5]
+Solution (Using Built-in Sort)
+javaclass Solution {
+    public int[] sortArray(int[] nums) {
+        Arrays.sort(nums);
+        return nums;
+    }
+}
+Explanation:
+
+Arrays.sort() uses Dual-Pivot Quicksort
+Most efficient approach for interviews
+Can also implement Merge Sort or Quick Sort if asked
+
+Time Complexity: O(n log n)
+Space Complexity: O(log n)
