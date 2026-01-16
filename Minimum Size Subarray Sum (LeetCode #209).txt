@@ -1,0 +1,70 @@
+## Problem 6: Minimum Size Subarray Sum (LeetCode #209)
+
+**Difficulty:** Medium  
+**Link:** https://leetcode.com/problems/minimum-size-subarray-sum/
+
+### Problem Statement
+Given an array of positive integers `nums` and a positive integer `target`, return the minimal length of a subarray whose sum is greater than or equal to `target`. If no such subarray exists, return `0`.
+
+**Example:**
+```
+Input: target = 7, nums = [2,3,1,2,4,3]
+Output: 2
+Explanation: Subarray [4,3] has minimal length with sum ≥ 7
+Solution
+javaclass Solution {
+    public int minSubArrayLen(int target, int[] nums) {
+        int left = 0;
+        int sum = 0;
+        int minLen = Integer.MAX_VALUE;
+        
+        for (int right = 0; right < nums.length; right++) {
+            // Expand window: add right element
+            sum += nums[right];
+            
+            // Shrink window while condition met
+            while (sum >= target) {
+                minLen = Math.min(minLen, right - left + 1);
+                sum -= nums[left];
+                left++;
+            }
+        }
+        
+        return minLen == Integer.MAX_VALUE ? 0 : minLen;
+    }
+}
+```
+
+**Explanation:**
+- Variable-size sliding window
+- Expand window by moving right pointer
+- When sum ≥ target: try to shrink window from left
+- Keep shrinking while condition still satisfied
+- Track minimum window length
+
+**Detailed Dry Run:**
+```
+nums = [2,3,1,2,4,3], target = 7
+
+right=0: Add 2, sum=2 < 7
+right=1: Add 3, sum=5 < 7
+right=2: Add 1, sum=6 < 7
+right=3: Add 2, sum=8 ≥ 7 ✅
+         Window: [2,3,1,2], len=4, minLen=4
+         Shrink: Remove 2, sum=6 < 7, stop
+
+right=4: Add 4, sum=10 ≥ 7 ✅
+         Window: [3,1,2,4], len=4
+         Shrink: Remove 3, sum=7 ≥ 7 ✅
+         Window: [1,2,4], len=3, minLen=3
+         Shrink: Remove 1, sum=6 < 7, stop
+
+right=5: Add 3, sum=9 ≥ 7 ✅
+         Window: [2,4,3], len=3
+         Shrink: Remove 2, sum=7 ≥ 7 ✅
+         Window: [4,3], len=2, minLen=2 ✅
+         Shrink: Remove 4, sum=3 < 7, stop
+
+Result: minLen = 2
+Time: O(n) - Each element visited at most twice
+Space: O(1)
