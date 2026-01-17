@@ -1,0 +1,225 @@
+Problem 7: Container With Most Water (LeetCode #11)
+Difficulty: Medium
+Link: https://leetcode.com/problems/container-with-most-water/
+Problem Statement
+You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the i-th line are (i, 0) and (i, height[i]).
+Find two lines that together with the x-axis form a container that contains the most water.
+Return the maximum amount of water a container can store.
+Example:
+Input: height = [1,8,6,2,5,4,8,3,7]
+Output: 49
+
+Explanation: 
+The vertical lines are at positions 0,1,2,3,4,5,6,7,8
+Maximum area is between lines at index 1 and 8:
+Area = min(8, 7) × (8 - 1) = 7 × 7 = 49
+Visual:
+Height array: [1, 8, 6, 2, 5, 4, 8, 3, 7]
+Index:         0  1  2  3  4  5  6  7  8
+
+      8 |  |           |
+      7 |  |           |     |
+      6 |  | |         |     |
+      5 |  | |   |     |     |
+      4 |  | |   | |   |     |
+      3 |  | |   | |   | |   |
+      2 |  | | | | |   | | | |
+      1 || | | | | |   | | | |
+      0 +-------------------
+        0 1 2 3 4 5 6 7 8
+
+Best container: Between index 1 (height=8) and index 8 (height=7)
+Width = 8 - 1 = 7
+Height = min(8, 7) = 7
+Area = 7 × 7 = 49
+
+Solution
+javaclass Solution {
+    public int maxArea(int[] height) {
+        int left = 0;
+        int right = height.length - 1;
+        int maxArea = 0;
+        
+        while (left < right) {
+            // Calculate current area
+            int width = right - left;
+            int minHeight = Math.min(height[left], height[right]);
+            int currentArea = width * minHeight;
+            
+            // Update maximum
+            maxArea = Math.max(maxArea, currentArea);
+            
+            // Move pointer with smaller height
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        
+        return maxArea;
+    }
+}
+```
+
+---
+
+### Explanation
+
+**Key Insight:**
+- Water amount = `width × min(height[left], height[right])`
+- Width = distance between lines
+- Height = limited by the shorter line (water spills over)
+
+**Why move the pointer with smaller height?**
+```
+If height[left] < height[right]:
+  - Moving right pointer inward → width decreases
+  - Height still limited by height[left] (smaller)
+  - Area can only decrease or stay same ❌
+  
+  - Moving left pointer inward → width decreases
+  - But might find taller line → height could increase
+  - Possibility of larger area ✅
+
+Always move the smaller pointer to potentially find better solution!
+```
+
+---
+
+### Detailed Dry Run
+
+**Input:** `height = [1,8,6,2,5,4,8,3,7]`
+```
+═══════════════════════════════════════════════════
+Step 1: left=0, right=8
+═══════════════════════════════════════════════════
+height[0] = 1, height[8] = 7
+width = 8 - 0 = 8
+minHeight = min(1, 7) = 1
+area = 8 × 1 = 8
+maxArea = 8
+
+height[0] < height[8] → Move left pointer
+left++
+
+═══════════════════════════════════════════════════
+Step 2: left=1, right=8
+═══════════════════════════════════════════════════
+height[1] = 8, height[8] = 7
+width = 8 - 1 = 7
+minHeight = min(8, 7) = 7
+area = 7 × 7 = 49 ✅
+maxArea = max(8, 49) = 49
+
+height[8] < height[1] → Move right pointer
+right--
+
+═══════════════════════════════════════════════════
+Step 3: left=1, right=7
+═══════════════════════════════════════════════════
+height[1] = 8, height[7] = 3
+width = 7 - 1 = 6
+minHeight = min(8, 3) = 3
+area = 6 × 3 = 18
+maxArea = max(49, 18) = 49
+
+height[7] < height[1] → Move right pointer
+right--
+
+═══════════════════════════════════════════════════
+Step 4: left=1, right=6
+═══════════════════════════════════════════════════
+height[1] = 8, height[6] = 8
+width = 6 - 1 = 5
+minHeight = min(8, 8) = 8
+area = 5 × 8 = 40
+maxArea = max(49, 40) = 49
+
+height[1] == height[6] → Move either (let's move right)
+right--
+
+═══════════════════════════════════════════════════
+Step 5: left=1, right=5
+═══════════════════════════════════════════════════
+height[1] = 8, height[5] = 4
+width = 5 - 1 = 4
+minHeight = min(8, 4) = 4
+area = 4 × 4 = 16
+maxArea = max(49, 16) = 49
+
+height[5] < height[1] → Move right pointer
+right--
+
+═══════════════════════════════════════════════════
+Step 6: left=1, right=4
+═══════════════════════════════════════════════════
+height[1] = 8, height[4] = 5
+width = 4 - 1 = 3
+minHeight = min(8, 5) = 5
+area = 3 × 5 = 15
+maxArea = max(49, 15) = 49
+
+height[4] < height[1] → Move right pointer
+right--
+
+═══════════════════════════════════════════════════
+Step 7: left=1, right=3
+═══════════════════════════════════════════════════
+height[1] = 8, height[3] = 2
+width = 3 - 1 = 2
+minHeight = min(8, 2) = 2
+area = 2 × 2 = 4
+maxArea = max(49, 4) = 49
+
+height[3] < height[1] → Move right pointer
+right--
+
+═══════════════════════════════════════════════════
+Step 8: left=1, right=2
+═══════════════════════════════════════════════════
+height[1] = 8, height[2] = 6
+width = 2 - 1 = 1
+minHeight = min(8, 6) = 6
+area = 1 × 6 = 6
+maxArea = max(49, 6) = 49
+
+height[2] < height[1] → Move right pointer
+right--
+
+═══════════════════════════════════════════════════
+left=1, right=1 → left >= right, STOP
+═══════════════════════════════════════════════════
+
+FINAL RESULT: maxArea = 49
+```
+
+---
+
+### Why This Works (Proof)
+
+**Question:** Why don't we need to check ALL pairs?
+
+**Answer:** Because we intelligently skip pairs that can't be better!
+
+**Example:**
+```
+If height[left] = 3 and height[right] = 7:
+Current area = width × 3
+
+Moving right pointer:
+  New width = smaller
+  Height still limited by 3 (left didn't change)
+  New area = smaller_width × 3 < current area
+  No point checking! ❌
+
+Moving left pointer:
+  New width = smaller
+  But might find height > 3
+  New area might be larger! ✅
+  Worth checking!
+Key insight:
+
+We only skip pairs where we KNOW they can't be better
+We always check pairs that might potentially be better
+This guarantees we find the maximum!
