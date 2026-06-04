@@ -1,0 +1,146 @@
+# Why `(long)` is Used in This Condition
+
+```java id="q0bwd2"
+while ((long)(right - left + 1) * nums[right] - sum > k)
+```
+
+---
+
+# Purpose of `(long)`
+
+`long` is used to prevent **integer overflow**.
+
+The multiplication:
+
+```java id="z9m7jd"
+(right - left + 1) * nums[right]
+```
+
+can become very large.
+
+If it is stored as `int`, overflow may occur and produce incorrect values.
+
+---
+
+# Integer Range in Java
+
+```text id="58ud3p"
+int range:
+-2147483648 to 2147483647
+```
+
+Maximum value is approximately:
+
+```text id="bqzn70"
+2.1 billion
+```
+
+---
+
+# Why Overflow Happens
+
+Suppose:
+
+```text id="7xh85v"
+window size = 100000
+nums[right] = 100000
+```
+
+Then:
+
+```text id="a4g2fe"
+100000 × 100000 = 10000000000
+```
+
+which is:
+
+```text id="mjlwm74"
+10 billion
+```
+
+This exceeds the `int` limit.
+
+So overflow occurs.
+
+---
+
+# What Happens Without `(long)`?
+
+```java id="frjbrs"
+int x = 100000 * 100000;
+System.out.println(x);
+```
+
+Expected output:
+
+```text id="kn44mx"
+10000000000
+```
+
+Actual result:
+
+```text id="u5syc8"
+Incorrect value due to overflow
+```
+
+because multiplication happens using `int`.
+
+---
+
+# Why Type Casting is Needed
+
+```java id="r4a22m"
+(long)(right - left + 1)
+```
+
+converts the value to `long`.
+
+Now multiplication becomes:
+
+```text id="jlwm75"
+long × int = long
+```
+
+So Java performs the calculation safely without overflow.
+
+---
+
+# Important Java Rule
+
+If both operands are `int`:
+
+```java id="c0vwj5"
+int * int
+```
+
+the result is calculated as `int`
+even if stored later in a `long`.
+
+---
+
+# Wrong Way
+
+```java id="x0z67p"
+long value = (right - left + 1) * nums[right];
+```
+
+Overflow may already happen before storing.
+
+---
+
+# Correct Way
+
+```java id="nsjlwm"
+long value = (long)(right - left + 1) * nums[right];
+```
+
+Now multiplication itself happens in `long`.
+
+---
+
+# Key Takeaway
+
+```text id="jlwm76"
+(long) is used to avoid integer overflow because the multiplication
+can exceed the int range.
+```
