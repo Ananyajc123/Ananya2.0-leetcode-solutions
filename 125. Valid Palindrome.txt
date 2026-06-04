@@ -1,0 +1,301 @@
+# Valid Palindrome
+
+Problem from LeetCode.
+
+## Problem Statement
+
+A phrase is a palindrome if, after:
+
+* converting all uppercase letters to lowercase
+* removing all non-alphanumeric characters
+
+it reads the same forward and backward.
+
+Alphanumeric characters include:
+
+* letters (`a-z`, `A-Z`)
+* numbers (`0-9`)
+
+Return `true` if the string is a palindrome, otherwise return `false`.
+
+---
+
+# Examples
+
+## Example 1
+
+Input:
+
+```java id="wwbxhn"
+s = "A man, a plan, a canal: Panama"
+```
+
+Output:
+
+```java id="x5o6fg"
+true
+```
+
+Explanation:
+
+```text id="65l4vq"
+amanaplanacanalpanama
+```
+
+reads the same forward and backward.
+
+---
+
+## Example 2
+
+Input:
+
+```java id="x3oqd2"
+s = "race a car"
+```
+
+Output:
+
+```java id="3v6xsl"
+false
+```
+
+Explanation:
+
+```text id="t34e4h"
+raceacar
+```
+
+is not a palindrome.
+
+---
+
+## Example 3
+
+Input:
+
+```java id="z6znj7"
+s = " "
+```
+
+Output:
+
+```java id="k9kt7g"
+true
+```
+
+Explanation:
+After removing spaces, the string becomes empty.
+
+An empty string is considered a palindrome.
+
+---
+
+# Approach — Two Pointer Technique
+
+We use:
+
+* one pointer from the beginning
+* one pointer from the end
+
+Steps:
+
+1. Skip non-alphanumeric characters
+2. Convert characters to lowercase
+3. Compare both characters
+4. Move pointers inward
+
+If any mismatch occurs, return `false`.
+
+---
+
+# Java Solution
+
+```java id="r8e1j5"
+class Solution {
+    public boolean isPalindrome(String s) {
+
+        int left = 0;
+        int right = s.length() - 1;
+
+        while (left < right) {
+
+            // Skip invalid characters from left
+            while (left < right &&
+                  !Character.isLetterOrDigit(s.charAt(left))) {
+                left++;
+            }
+
+            // Skip invalid characters from right
+            while (left < right &&
+                  !Character.isLetterOrDigit(s.charAt(right))) {
+                right--;
+            }
+
+            // Compare lowercase characters
+            if (Character.toLowerCase(s.charAt(left)) !=
+                Character.toLowerCase(s.charAt(right))) {
+
+                return false;
+            }
+
+            // Move inward
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+}
+```
+
+---
+
+# Explanation
+
+## Initialize Two Pointers
+
+```java id="zyl3n8"
+int left = 0;
+int right = s.length() - 1;
+```
+
+* `left` starts from beginning
+* `right` starts from end
+
+---
+
+# Skip Special Characters
+
+## Left Side
+
+```java id="9e5zw4"
+while (left < right &&
+      !Character.isLetterOrDigit(s.charAt(left))) {
+    left++;
+}
+```
+
+Skips:
+
+```text id="4l6miv"
+spaces
+commas
+colons
+special symbols
+```
+
+---
+
+## Right Side
+
+```java id="h4oww8"
+while (left < right &&
+      !Character.isLetterOrDigit(s.charAt(right))) {
+    right--;
+}
+```
+
+Same logic for the right side.
+
+---
+
+# Compare Characters
+
+```java id="7tn1gx"
+if (Character.toLowerCase(s.charAt(left)) !=
+    Character.toLowerCase(s.charAt(right)))
+```
+
+Converts characters to lowercase before comparison.
+
+Example:
+
+```text id="svfwvl"
+'A' → 'a'
+```
+
+This helps ignore uppercase/lowercase differences.
+
+---
+
+# Move Pointers
+
+```java id="s2zzrk"
+left++;
+right--;
+```
+
+Move both pointers toward the center after successful comparison.
+
+---
+
+# Dry Run
+
+Input:
+
+```text id="i6e50v"
+"A man, a plan, a canal: Panama"
+```
+
+After ignoring special characters and converting to lowercase:
+
+```text id="e9rmot"
+amanaplanacanalpanama
+```
+
+Comparisons:
+
+```text id="z8onjlwm"
+a == a
+m == m
+a == a
+n == n
+...
+```
+
+All characters match.
+
+Return:
+
+```text id="mw8n2r"
+true
+```
+
+---
+
+# Time Complexity
+
+```text id="6c2mf9"
+O(n)
+```
+
+Each character is visited at most once.
+
+---
+
+# Space Complexity
+
+```text id="hmbcc8"
+O(1)
+```
+
+No extra string is created.
+
+---
+
+# Important Functions Used
+
+| Function                      | Purpose                           |
+| ----------------------------- | --------------------------------- |
+| `Character.isLetterOrDigit()` | checks whether character is valid |
+| `Character.toLowerCase()`     | converts uppercase to lowercase   |
+
+---
+
+# Key Takeaway
+
+Use two pointers to compare characters from both ends while:
+
+* skipping special characters
+* ignoring uppercase/lowercase differences
