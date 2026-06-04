@@ -1,0 +1,158 @@
+Reverse Integer
+
+Problem from LeetCode
+
+Problem Statement
+
+Given a signed 32-bit integer x, return the integer obtained by reversing its digits.
+
+If reversing the integer causes the value to go outside the signed 32-bit integer range:
+
+[-2^31 , 2^31 - 1]
+
+then return 0.
+
+You are not allowed to use 64-bit integers.
+
+Examples
+Example 1
+Input: x = 123
+Output: 321
+Example 2
+Input: x = -123
+Output: -321
+Example 3
+Input: x = 120
+Output: 21
+Concept Used
+
+To reverse a number:
+
+Take the last digit using % 10
+Add it to the reversed number
+Remove the last digit using / 10
+Approach
+
+We repeatedly:
+
+extract the last digit
+append it to the reversed number
+remove the last digit from the original number
+
+Before updating the reversed number, we must check for overflow.
+
+Step-by-Step Dry Run
+Input
+x = 123
+
+Initial values:
+
+reversed = 0
+Iteration 1
+digit = 123 % 10 = 3
+x = 123 / 10 = 12
+
+reversed = 0 * 10 + 3 = 3
+Iteration 2
+digit = 12 % 10 = 2
+x = 12 / 10 = 1
+
+reversed = 3 * 10 + 2 = 32
+Iteration 3
+digit = 1 % 10 = 1
+x = 1 / 10 = 0
+
+reversed = 32 * 10 + 1 = 321
+
+Final Answer:
+
+321
+Overflow Condition
+
+A signed 32-bit integer range is:
+
+Integer.MAX_VALUE = 2147483647
+Integer.MIN_VALUE = -2147483648
+
+Before:
+
+reversed = reversed * 10 + digit;
+
+we check whether multiplying by 10 will overflow.
+
+If overflow happens, return 0.
+
+Java Solution
+class Solution {
+    public int reverse(int x) {
+
+        int reversed = 0;
+
+        while (x != 0) {
+
+            int digit = x % 10;
+
+            x = x / 10;
+
+            // Overflow check
+            if (reversed > Integer.MAX_VALUE / 10 ||
+                reversed < Integer.MIN_VALUE / 10) {
+                return 0;
+            }
+
+            reversed = reversed * 10 + digit;
+        }
+
+        return reversed;
+    }
+}
+Explanation of Important Lines
+Extract Last Digit
+int digit = x % 10;
+
+Gets the last digit of the number.
+
+Example:
+
+123 % 10 = 3
+Remove Last Digit
+x = x / 10;
+
+Removes the last digit.
+
+Example:
+
+123 / 10 = 12
+Overflow Check
+if (reversed > Integer.MAX_VALUE / 10 ||
+    reversed < Integer.MIN_VALUE / 10)
+
+Checks whether multiplying by 10 will exceed integer range.
+
+Build Reversed Number
+reversed = reversed * 10 + digit;
+
+Adds the extracted digit to the reversed number.
+
+Example:
+
+32 * 10 + 1 = 321
+Time Complexity
+O(log10 n)
+
+The loop runs once for each digit.
+
+Space Complexity
+O(1)
+
+Only constant extra space is used.
+
+Key Takeaway
+
+The core idea is:
+
+digit = x % 10;
+x = x / 10;
+reversed = reversed * 10 + digit;
+
+Use overflow checking before updating the reversed number.
