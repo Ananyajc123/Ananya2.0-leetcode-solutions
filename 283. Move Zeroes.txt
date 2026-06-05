@@ -1,0 +1,225 @@
+# 283. Move Zeroes
+
+## Problem Statement
+
+Move all `0`s to the end of the array while maintaining the relative order of the non-zero elements.
+
+The operation must be done:
+
+```text id="nmnflh"
+in-place
+```
+
+without using another array.
+
+---
+
+# Key Idea
+
+We only care about placing:
+
+```text id="t57eqd"
+non-zero elements
+```
+
+in the correct order at the beginning of the array.
+
+After all non-zero elements are placed,
+zeros automatically remain at the end.
+
+---
+
+# Two Pointer Approach
+
+We use:
+
+* `i` → traverses the array
+* `j` → position where next non-zero element should go
+
+---
+
+# Algorithm
+
+1. Start `j = 0`
+2. Traverse array using `i`
+3. If `nums[i] != 0`
+
+   * swap `nums[i]` and `nums[j]`
+   * increment `j`
+
+---
+
+# Dry Run
+
+## Input
+
+```text id="5ag9uq"
+[0,1,0,3,12]
+```
+
+Initially:
+
+```text id="fb26ui"
+j = 0
+```
+
+---
+
+## i = 0
+
+```text id="d7rq3n"
+nums[i] = 0
+```
+
+Skip.
+
+---
+
+## i = 1
+
+```text id="m95q2t"
+nums[i] = 1
+```
+
+Non-zero found.
+
+Swap:
+
+```text id="u0bqmn"
+nums[i] ↔ nums[j]
+```
+
+Array becomes:
+
+```text id="nl86v6"
+[1,0,0,3,12]
+```
+
+Increment:
+
+```text id="yr5s9g"
+j = 1
+```
+
+---
+
+## i = 2
+
+```text id="p4xkz8"
+nums[i] = 0
+```
+
+Skip.
+
+---
+
+## i = 3
+
+```text id="b7ektt"
+nums[i] = 3
+```
+
+Swap with `nums[j]`.
+
+Array becomes:
+
+```text id="yx1tx6"
+[1,3,0,0,12]
+```
+
+Increment:
+
+```text id="jv1z8z"
+j = 2
+```
+
+---
+
+## i = 4
+
+```text id="1n1h50"
+nums[i] = 12
+```
+
+Swap.
+
+Final array:
+
+```text id="8gk1q8"
+[1,3,12,0,0]
+```
+
+---
+
+# Optimal Java Solution
+
+```java id="gmylut"
+class Solution {
+
+    public void moveZeroes(int[] nums) {
+
+        int j = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+
+            if (nums[i] != 0) {
+
+                int temp = nums[i];
+                nums[i] = nums[j];
+                nums[j] = temp;
+
+                j++;
+            }
+        }
+    }
+}
+```
+
+---
+
+# Important Understanding
+
+`j` always points to:
+
+```text id="8vb87e"
+position where next non-zero element should be placed
+```
+
+Whenever a non-zero element is found:
+
+1. Swap it with `nums[j]`
+2. Increment `j`
+
+This keeps all non-zero elements in correct order.
+
+---
+
+# Why Relative Order is Maintained
+
+We process elements:
+
+```text id="0pbxsm"
+left to right
+```
+
+So non-zero elements appear in the same order as the original array.
+
+---
+
+# Time Complexity
+
+```text id="c2if4l"
+O(n)
+```
+
+Only one traversal.
+
+---
+
+# Space Complexity
+
+```text id="4v5zvn"
+O(1)
+```
+
+No extra array used.

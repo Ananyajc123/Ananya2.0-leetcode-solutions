@@ -1,0 +1,190 @@
+# 26. Remove Duplicates from Sorted Array
+
+## Key Idea
+
+Since the array is already **sorted**, duplicate elements will always be adjacent.
+
+Example:
+
+```text
+[0,0,1,1,1,2,2,3,3,4]
+```
+
+So we only need to keep one copy of each element.
+
+---
+
+# Two Pointer Approach
+
+We use two pointers:
+
+* `i` → tracks the index of the last unique element
+* `j` → traverses the array
+
+---
+
+# Algorithm
+
+1. Start `i = 0`
+2. Traverse array using `j` from `1` to `n-1`
+3. If `nums[i] != nums[j]`
+
+   * new unique element found
+   * increment `i`
+   * copy `nums[j]` to `nums[i]`
+4. Return `i + 1`
+
+---
+
+# Dry Run
+
+## Input
+
+```text
+[0,0,1,1,1,2,2,3,3,4]
+```
+
+Initially:
+
+```text
+i = 0
+```
+
+---
+
+## j = 1
+
+```text
+nums[i] = 0
+nums[j] = 0
+```
+
+Duplicate → skip
+
+---
+
+## j = 2
+
+```text
+nums[i] = 0
+nums[j] = 1
+```
+
+Different → unique element found
+
+Move `i`:
+
+```text
+i = 1
+```
+
+Copy:
+
+```text
+nums[i] = nums[j]
+```
+
+Array becomes:
+
+```text
+[0,1,1,1,1,2,2,3,3,4]
+```
+
+---
+
+## j = 5
+
+```text
+nums[j] = 2
+```
+
+Again unique:
+
+```text
+i = 2
+nums[2] = 2
+```
+
+Array becomes:
+
+```text
+[0,1,2,1,1,2,2,3,3,4]
+```
+
+---
+
+Continue similarly.
+
+Final useful portion:
+
+```text
+[0,1,2,3,4]
+```
+
+Returned value:
+
+```text
+5
+```
+
+---
+
+# Optimal Java Solution
+
+```java
+class Solution {
+
+    public int removeDuplicates(int[] nums) {
+
+        int i = 0;
+
+        for (int j = 1; j < nums.length; j++) {
+
+            if (nums[i] != nums[j]) {
+
+                i++;
+                nums[i] = nums[j];
+            }
+        }
+
+        return i + 1;
+    }
+}
+```
+
+---
+
+# Important Understanding
+
+`i` always points to:
+
+```text
+last unique element index
+```
+
+`j` is used to explore the array.
+
+Whenever a new unique element is found:
+
+1. Move `i`
+2. Store the unique element at `nums[i]`
+
+---
+
+# Time Complexity
+
+```text
+O(n)
+```
+
+Only one traversal.
+
+---
+
+# Space Complexity
+
+```text
+O(1)
+```
+
+No extra space used.

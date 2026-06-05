@@ -1,0 +1,135 @@
+# 1752. Check if Array Is Sorted and Rotated
+
+## Key Idea
+
+A sorted and rotated array can have **at most one drop**.
+
+A **drop** means:
+
+```java
+nums[i] > nums[(i + 1) % n]
+```
+
+Example:
+
+```text
+[3,4,5,1,2]
+       ↑
+     drop
+```
+
+Here only `5 > 1`, so the array is valid.
+
+---
+
+# Why `% n` is Used
+
+We use:
+
+```java
+nums[(i + 1) % n]
+```
+
+to make the array behave like a **circular array**.
+
+Normally:
+
+```java
+nums[i + 1]
+```
+
+will go out of bounds when `i = n-1`.
+
+Example:
+
+```text
+n = 5
+i = 4
+
+(4 + 1) % 5 = 0
+```
+
+So:
+
+```java
+nums[4] compares with nums[0]
+```
+
+This helps us check the circular rotation condition.
+
+---
+
+# Example Walkthrough
+
+## Example 1
+
+```text
+[3,4,5,1,2]
+```
+
+Comparisons:
+
+```text
+3 < 4
+4 < 5
+5 > 1  → drop = 1
+1 < 2
+2 < 3
+```
+
+Only one drop → Valid.
+
+---
+
+## Example 2
+
+```text
+[2,1,3,4]
+```
+
+Comparisons:
+
+```text
+2 > 1 → drop = 1
+1 < 3
+3 < 4
+4 > 2 → drop = 2
+```
+
+More than one drop → Invalid.
+
+---
+
+# Optimal Solution (Java)
+
+```java
+class Solution {
+    public boolean check(int[] nums) {
+        int count = 0;
+        int n = nums.length;
+
+        for (int i = 0; i < n; i++) {
+
+            if (nums[i] > nums[(i + 1) % n]) {
+                count++;
+            }
+        }
+
+        return count <= 1;
+    }
+}
+```
+
+---
+
+# Time Complexity
+
+```text
+O(n)
+```
+
+# Space Complexity
+
+```text
+O(1)
+```

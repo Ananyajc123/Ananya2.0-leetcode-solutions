@@ -1,0 +1,228 @@
+# Single Number
+
+## Problem Statement
+
+Given a non-empty integer array:
+
+```text id="f3j3km"
+every element appears twice except one
+```
+
+Find the element that appears only once.
+
+Conditions:
+
+* Time Complexity must be:
+
+```text id="1u3z0k"
+O(n)
+```
+
+* Space Complexity must be:
+
+```text id="p7q8an"
+O(1)
+```
+
+---
+
+# Key Idea
+
+This problem is solved using:
+
+```text id="r90h4y"
+XOR (^)
+```
+
+operator.
+
+---
+
+# Important XOR Properties
+
+## 1.
+
+a \oplus a = 0
+
+Same numbers cancel each other.
+
+Example:
+
+```text id="8zt8cq"
+2 ^ 2 = 0
+```
+
+---
+
+## 2.
+
+a \oplus 0 = a
+
+Example:
+
+```text id="5dczj7"
+5 ^ 0 = 5
+```
+
+---
+
+## 3.
+
+XOR is commutative:
+
+a \oplus b \oplus a = b
+
+Order does not matter.
+
+Pairs automatically cancel out.
+
+---
+
+# Main Idea
+
+If all duplicate numbers cancel each other:
+
+```text id="rxjgnv"
+only the unique number remains
+```
+
+---
+
+# Optimal Java Solution
+
+```java id="kvd6rk"
+class Solution {
+
+    public int singleNumber(int[] nums) {
+
+        int result = 0;
+
+        for (int num : nums) {
+
+            result ^= num;
+        }
+
+        return result;
+    }
+}
+```
+
+---
+
+# Dry Run
+
+## Input
+
+```text id="nnolpn"
+[4,1,2,1,2]
+```
+
+Initially:
+
+```text id="6k30va"
+result = 0
+```
+
+---
+
+## Step 1
+
+```text id="sn61a8"
+0 ^ 4 = 4
+```
+
+```text id="2fn3va"
+result = 4
+```
+
+---
+
+## Step 2
+
+```text id="r3l4kp"
+4 ^ 1 = 5
+```
+
+---
+
+## Step 3
+
+```text id="6xwqj4"
+5 ^ 2 = 7
+```
+
+---
+
+## Step 4
+
+```text id="lp0l6x"
+7 ^ 1 = 6
+```
+
+Duplicate `1` cancels out.
+
+---
+
+## Step 5
+
+```text id="h9u2uv"
+6 ^ 2 = 4
+```
+
+Duplicate `2` cancels out.
+
+Final Answer:
+
+```text id="0zcygm"
+4
+```
+
+---
+
+# Why This Works
+
+Duplicate elements appear twice:
+
+```text id="wk39gn"
+a ^ a = 0
+```
+
+So all pairs become `0`.
+
+Finally:
+
+```text id="2k4ih8"
+0 ^ singleNumber = singleNumber
+```
+
+---
+
+# Time Complexity
+
+```text id="l7v1h6"
+O(n)
+```
+
+Only one traversal.
+
+---
+
+# Space Complexity
+
+```text id="n3b72h"
+O(1)
+```
+
+No extra data structure used.
+
+---
+
+# Why XOR Solution is Optimal
+
+| Approach     | Time  | Space  |
+| ------------ | ----- | ------ |
+| Nested Loops | O(n²) | O(1)   |
+| HashMap      | O(n)  | O(n)   |
+| XOR          | O(n)  | O(1) ✅ |
+
+XOR satisfies both problem constraints.
