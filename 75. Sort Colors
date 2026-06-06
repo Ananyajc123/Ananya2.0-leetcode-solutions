@@ -1,0 +1,172 @@
+75. Sort Colors
+Problem
+
+Given an array containing only:
+
+0 → Red
+1 → White
+2 → Blue
+
+Sort the array in-place such that:
+
+All 0s come first,
+then 1s,
+then 2s.
+
+Without using:
+
+Arrays.sort()
+Optimal Approach — Dutch National Flag Algorithm
+Intuition
+
+Use 3 pointers:
+
+low  → position for next 0
+mid  → current element
+high → position for next 2
+
+The array is divided into 4 regions:
+
+0 to low-1      → all 0s
+low to mid-1    → all 1s
+mid to high     → unsorted
+high+1 to end   → all 2s
+Algorithm
+If nums[mid] == 0
+
+0 should go to left side.
+
+Swap:
+
+nums[low] ↔ nums[mid]
+
+Move:
+
+low++
+mid++
+If nums[mid] == 1
+
+1 is already in correct position.
+
+Move:
+
+mid++
+If nums[mid] == 2
+
+2 should go to right side.
+
+Swap:
+
+nums[mid] ↔ nums[high]
+
+Move:
+
+high--
+
+Do NOT increment mid because swapped element must be checked again.
+
+Dry Run
+Input
+nums = [2,0,2,1,1,0]
+
+Initial pointers:
+
+low = 0
+mid = 0
+high = 5
+Step 1
+nums[mid] = 2
+
+Swap mid and high:
+
+[0,0,2,1,1,2]
+high--
+Step 2
+nums[mid] = 0
+
+Swap low and mid:
+
+[0,0,2,1,1,2]
+low++
+mid++
+Step 3
+nums[mid] = 0
+
+Swap again.
+
+low++
+mid++
+Step 4
+nums[mid] = 2
+
+Swap with high:
+
+[0,0,1,1,2,2]
+high--
+Step 5
+nums[mid] = 1
+mid++
+Final Output
+[0,0,1,1,2,2]
+Java Code
+class Solution {
+    public void sortColors(int[] nums) {
+
+        int low = 0;
+        int mid = 0;
+        int high = nums.length - 1;
+
+        while(mid <= high) {
+
+            if(nums[mid] == 0) {
+
+                int temp = nums[low];
+                nums[low] = nums[mid];
+                nums[mid] = temp;
+
+                low++;
+                mid++;
+            }
+
+            else if(nums[mid] == 1) {
+
+                mid++;
+            }
+
+            else {
+
+                int temp = nums[mid];
+                nums[mid] = nums[high];
+                nums[high] = temp;
+
+                high--;
+            }
+        }
+    }
+}
+Complexity Analysis
+Time Complexity
+O(n)
+
+Each element is processed at most once.
+
+Space Complexity
+O(1)
+
+No extra space used.
+
+Important Interview Points
+Why do we not increment mid when nums[mid] == 2?
+
+After swapping with high, the new element at mid may be:
+
+0 or 1 or 2
+
+So it must be checked again.
+
+Key Pattern
+3 Pointer Partitioning
+
+Also known as:
+
+Dutch National Flag Algorithm
