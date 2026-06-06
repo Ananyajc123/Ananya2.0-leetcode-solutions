@@ -1,0 +1,174 @@
+169. Majority Element
+Problem
+
+Given an integer array:
+
+nums[]
+
+Find the element that appears more than:
+
+⌊n/2⌋
+
+times.
+
+You may assume that the majority element always exists.
+
+Approach 1 — Sorting
+Intuition
+
+After sorting, the majority element will always be present at the middle index.
+
+Because it appears more than half of the array.
+
+Example
+Input
+nums = [2,2,1,1,1,2,2]
+
+After sorting:
+
+[1,1,1,2,2,2,2]
+
+Middle index:
+
+nums.length / 2 = 7 / 2 = 3
+
+Element at index 3:
+
+2
+
+Answer = 2
+
+Java Code
+import java.util.Arrays;
+
+class Solution {
+    public int majorityElement(int[] nums) {
+
+        Arrays.sort(nums);
+
+        return nums[nums.length / 2];
+    }
+}
+Complexity Analysis
+Time Complexity
+
+Sorting takes:
+
+O(n log n)
+Space Complexity
+O(1)
+
+(depends on sorting implementation internally)
+
+Why Middle Element Always Works?
+
+Majority element frequency is:
+
+>n/2
+
+So after sorting, it must occupy the middle position.
+
+Optimal Approach — Moore’s Voting Algorithm
+Intuition
+
+Different elements cancel each other.
+
+Since majority element appears more than all others combined, it survives all cancellations.
+
+Main Idea
+
+Maintain:
+
+candidate → possible majority element
+count     → support count
+Rules
+If count == 0
+
+Choose current element as new candidate.
+
+If current element == candidate
+count++
+Else
+count--
+
+Different elements cancel each other.
+
+Dry Run
+Input
+nums = [2,2,1,1,1,2,2]
+Step 1
+
+Current = 2
+
+candidate = 2
+count = 1
+Step 2
+
+Current = 2
+
+Same element.
+
+count = 2
+Step 3
+
+Current = 1
+
+Different element.
+
+count = 1
+Step 4
+
+Current = 1
+
+Different again.
+
+count = 0
+
+All previous support cancelled.
+
+Step 5
+
+Current = 1
+
+New candidate.
+
+candidate = 1
+count = 1
+Step 6
+
+Current = 2
+
+Different element.
+
+count = 0
+Step 7
+
+Current = 2
+
+New candidate.
+
+candidate = 2
+count = 1
+
+Final answer:
+
+2
+Optimal Java Code
+class Solution {
+    public int majorityElement(int[] nums) {
+      Arrays.sort(nums);
+      return nums[nums.length/2];
+    }
+}
+Complexity Analysis
+Time Complexity
+O(n)
+Space Complexity
+O(1)
+Important Interview Point
+
+Moore’s Voting works because majority element frequency is:
+
+>n/2
+
+So it can never be completely cancelled out by other elements.
