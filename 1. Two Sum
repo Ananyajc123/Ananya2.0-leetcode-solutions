@@ -1,0 +1,167 @@
+Two Sum Notes
+Problem
+
+Given an array and a target:
+
+Find indices of two numbers such that:
+nums[i] + nums[j] = target
+
+Cannot use same element twice.
+
+Brute Force Approach
+Idea
+
+Check every possible pair.
+
+Try all (i, j)
+
+If:
+
+nums[i] + nums[j] == target
+
+return indices.
+
+Code
+for(int i = 0; i < n; i++) {
+    for(int j = i + 1; j < n; j++) {
+
+        if(nums[i] + nums[j] == target) {
+            return new int[]{i, j};
+        }
+    }
+}
+Complexity
+
+Time:
+
+O(n²)
+
+Space:
+
+O(1)
+Optimal Approach — HashMap
+Main Idea
+
+For every number:
+
+complement = target - current number
+
+Check:
+
+Has complement already appeared?
+
+If yes → answer found.
+
+If no → store current element in HashMap.
+
+HashMap Stores
+number -> index
+
+Example:
+
+{2=0, 7=1}
+
+Meaning:
+
+2 is at index 0
+7 is at index 1
+Algorithm
+1. Create HashMap
+2. Traverse array
+3. Find complement = target - nums[i]
+4. If complement exists in map:
+       return indices
+5. Else store nums[i] and index
+Dry Run
+Example
+nums = [2,7,11,15]
+target = 9
+i = 0
+
+Current:
+
+2
+
+Need:
+
+9 - 2 = 7
+
+7 not in map.
+
+Store:
+
+2 -> 0
+
+Map:
+
+{2=0}
+i = 1
+
+Current:
+
+7
+
+Need:
+
+9 - 7 = 2
+
+2 exists in map.
+
+Answer:
+
+[0,1]
+Important Interview Point
+Why check before storing?
+
+Because:
+
+same element cannot be used twice
+
+Example:
+
+nums = [3,3]
+target = 6
+
+Correct order:
+
+1. Check complement
+2. Then store
+Optimal Code
+import java.util.*;
+
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        for(int i = 0; i < nums.length; i++) {
+
+            int complement = target - nums[i];
+
+            if(map.containsKey(complement)) {
+                return new int[]{map.get(complement), i};
+            }
+
+            map.put(nums[i], i);
+        }
+
+        return new int[]{};
+    }
+}
+Complexity
+Time
+O(n)
+
+Because HashMap lookup is O(1).
+
+Space
+O(n)
+
+For storing elements in HashMap.
+
+Pattern to Remember
+Two Sum Pattern:
+Store visited elements in HashMap
+and search for complement.
+
+Used in many problems.
