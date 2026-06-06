@@ -1,0 +1,196 @@
+2149. Rearrange Array Elements by Sign
+Problem
+
+You are given an array containing:
+
+Equal number of positive and negative integers
+
+You must rearrange the array such that:
+
+1. Positive and negative numbers alternate
+2. Array starts with positive number
+3. Relative order remains same
+Main Intuition
+
+Since:
+
+positive → even indices
+negative → odd indices
+
+We can directly place elements in correct positions.
+
+Key Observation
+
+Because array must start with positive:
+
+Index	Value Type
+0	Positive
+1	Negative
+2	Positive
+3	Negative
+
+and so on.
+
+Optimal Approach
+
+Use:
+
+posIndex = 0
+negIndex = 1
+
+Create a result array.
+
+Algorithm
+If number is positive
+
+Place it at:
+
+result[posIndex]
+
+Then:
+
+posIndex += 2
+If number is negative
+
+Place it at:
+
+result[negIndex]
+
+Then:
+
+negIndex += 2
+Dry Run
+Input
+nums = [3,1,-2,-5,2,-4]
+Initialization
+result = [_,_,_,_,_,_]
+
+posIndex = 0
+negIndex = 1
+Step 1
+
+Element = 3
+
+Positive.
+
+result[0] = 3
+
+Move:
+
+posIndex = 2
+
+Result:
+
+[3,_,_,_,_,_]
+Step 2
+
+Element = 1
+
+Positive.
+
+result[2] = 1
+
+Move:
+
+posIndex = 4
+
+Result:
+
+[3,_,1,_,_,_]
+Step 3
+
+Element = -2
+
+Negative.
+
+result[1] = -2
+
+Move:
+
+negIndex = 3
+
+Result:
+
+[3,-2,1,_,_,_]
+Step 4
+
+Element = -5
+
+Negative.
+
+result[3] = -5
+
+Move:
+
+negIndex = 5
+
+Result:
+
+[3,-2,1,-5,_,_]
+Step 5
+
+Element = 2
+
+Positive.
+
+result[4] = 2
+Step 6
+
+Element = -4
+
+Negative.
+
+result[5] = -4
+Final Output
+[3,-2,1,-5,2,-4]
+Optimal Java Code
+class Solution {
+    public int[] rearrangeArray(int[] nums) {
+
+        int[] result = new int[nums.length];
+
+        int posIndex = 0;
+        int negIndex = 1;
+
+        for(int num : nums) {
+
+            if(num > 0) {
+
+                result[posIndex] = num;
+                posIndex += 2;
+
+            } else {
+
+                result[negIndex] = num;
+                negIndex += 2;
+            }
+        }
+
+        return result;
+    }
+}
+Complexity Analysis
+Time Complexity
+O(n)
+
+Single traversal.
+
+Space Complexity
+O(n)
+
+Extra result array used.
+
+Important Interview Point
+
+Why does this work?
+
+Because:
+
+Number of positive and negative elements are equal
+
+So even and odd positions can be perfectly filled.
+
+Key Pattern
+Place elements directly at required indices
+
+Used in many rearrangement problems.
