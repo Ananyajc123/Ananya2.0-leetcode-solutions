@@ -1,0 +1,285 @@
+54. Spiral Matrix
+Intuition
+
+We need to print matrix elements in:
+
+spiral order
+
+Meaning:
+
+left → right
+top → bottom
+right → left
+bottom → top
+
+and repeat layer by layer.
+
+Example
+
+Input:
+
+1 2 3
+4 5 6
+7 8 9
+
+Spiral traversal:
+
+1 → 2 → 3
+            ↓
+4 ← 5 ← 6
+↑
+7 → 8 → 9
+
+Output:
+
+[1,2,3,6,9,8,7,4,5]
+Main Idea
+
+We maintain 4 boundaries:
+
+top
+bottom
+left
+right
+
+These boundaries shrink after every traversal.
+
+Visualization
+
+Initially:
+
+top = 0
+bottom = m - 1
+left = 0
+right = n - 1
+Traversal Order
+
+We move in 4 directions:
+
+1. Left → Right
+
+Traverse top row.
+
+Then:
+
+top++
+
+because top row is completed.
+
+2. Top → Bottom
+
+Traverse right column.
+
+Then:
+
+right--
+
+because right column is completed.
+
+3. Right → Left
+
+Traverse bottom row.
+
+Then:
+
+bottom--
+4. Bottom → Top
+
+Traverse left column.
+
+Then:
+
+left++
+Continue Until
+top <= bottom && left <= right
+Dry Run
+Input
+1 2 3
+4 5 6
+7 8 9
+Initial Boundaries
+top = 0
+bottom = 2
+left = 0
+right = 2
+STEP 1: Left → Right
+
+Top row:
+
+1 2 3
+
+Output:
+
+[1,2,3]
+
+Move:
+
+top++
+
+Now:
+
+top = 1
+STEP 2: Top → Bottom
+
+Right column:
+
+6 9
+
+Output:
+
+[1,2,3,6,9]
+
+Move:
+
+right--
+
+Now:
+
+right = 1
+STEP 3: Right → Left
+
+Bottom row:
+
+8 7
+
+Output:
+
+[1,2,3,6,9,8,7]
+
+Move:
+
+bottom--
+
+Now:
+
+bottom = 1
+STEP 4: Bottom → Top
+
+Left column:
+
+4
+
+Output:
+
+[1,2,3,6,9,8,7,4]
+
+Move:
+
+left++
+
+Now:
+
+left = 1
+Remaining Element
+
+Only:
+
+5
+
+Output:
+
+[1,2,3,6,9,8,7,4,5]
+
+Done.
+
+Java Code
+import java.util.*;
+
+class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+
+        List<Integer> ans = new ArrayList<>();
+
+        int m = matrix.length;
+        int n = matrix[0].length;
+
+        int top = 0;
+        int bottom = m - 1;
+
+        int left = 0;
+        int right = n - 1;
+
+        while(top <= bottom && left <= right) {
+
+            // STEP 1: Left -> Right
+            for(int j = left; j <= right; j++) {
+                ans.add(matrix[top][j]);
+            }
+            top++;
+
+            // STEP 2: Top -> Bottom
+            for(int i = top; i <= bottom; i++) {
+                ans.add(matrix[i][right]);
+            }
+            right--;
+
+            // STEP 3: Right -> Left
+            if(top <= bottom) {
+
+                for(int j = right; j >= left; j--) {
+                    ans.add(matrix[bottom][j]);
+                }
+                bottom--;
+            }
+
+            // STEP 4: Bottom -> Top
+            if(left <= right) {
+
+                for(int i = bottom; i >= top; i--) {
+                    ans.add(matrix[i][left]);
+                }
+                left++;
+            }
+        }
+
+        return ans;
+    }
+}
+Why Extra Conditions?
+Condition 1
+if(top <= bottom)
+
+Needed because after shrinking boundaries:
+
+bottom row may not exist
+Condition 2
+if(left <= right)
+
+Needed because:
+
+left column may not exist
+
+Without these conditions:
+
+duplicate elements may get added
+Time Complexity
+
+Every element visited once:
+
+O(m × n)
+Space Complexity
+
+Ignoring output list:
+
+O(1)
+
+Output list stores answer.
+
+Important Interview Concept
+
+Use shrinking boundaries:
+
+top
+bottom
+left
+right
+
+This is the core idea.
+
+Memory Trick
+
+Think:
+
+→ ↓ ← ↑
+
+Move in spiral repeatedly while shrinking boundaries.
