@@ -1,0 +1,233 @@
+31. Next Permutation
+
+Intuition
+
+To get the next permutation, we want to create the smallest possible number that is just greater than the current arrangement.
+
+Example:
+
+1 2 3 → next is 1 3 2
+
+Why?
+
+Because among all permutations greater than 123, 132 is the smallest.
+
+Key Observation
+
+If you look from the right side, permutations usually increase like this:
+
+1 2 3
+1 3 2
+2 1 3
+2 3 1
+3 1 2
+3 2 1
+
+The change always happens near the end first.
+
+So we scan from the back.
+
+Main Idea (3 Steps)
+Step 1: Find the "break point"
+
+Find the first index from the right where:
+
+nums[i] < nums[i+1]
+
+Why?
+
+Because after that point, the array is decreasing.
+
+Example:
+
+1 2 7 4 3 1
+      ↑
+
+At index 1:
+
+2 < 7
+
+So breakpoint = 2
+
+Everything after it (7 4 3 1) is in decreasing order.
+
+Step 2: Find the next greater element
+
+Now from the right side, find the first element greater than breakpoint value.
+
+Example:
+
+1 2 7 4 3 1
+
+Breakpoint = 2
+
+Find element just greater than 2 from right:
+
+3
+
+Swap them:
+
+1 3 7 4 2 1
+Step 3: Reverse the remaining part
+
+Why reverse?
+
+Because the right side is in decreasing order, and we need the smallest possible arrangement after the swap.
+
+Reverse:
+
+7 4 2 1
+
+becomes
+
+1 2 4 7
+
+Final answer:
+
+1 3 1 2 4 7
+Dry Run
+Example 1
+nums = [1,2,3]
+Find breakpoint
+
+From right:
+
+2 < 3
+
+Breakpoint index = 1
+
+Find next greater
+
+Greater than 2 is 3
+
+Swap:
+
+1 3 2
+Reverse right part
+
+Only one element left.
+
+Final:
+
+[1,3,2]
+Example 2
+[3,2,1]
+
+Find breakpoint:
+
+No element satisfies:
+
+nums[i] < nums[i+1]
+
+Meaning this is the LAST permutation.
+
+So reverse whole array:
+
+[1,2,3]
+Example 3
+[1,1,5]
+
+Breakpoint:
+
+1 < 5
+
+Swap:
+
+1 5 1
+
+Reverse right side:
+
+Same.
+
+Answer:
+
+[1,5,1]
+Why Does This Work?
+
+Because:
+
+We increase the number at the rightmost possible position
+We increase it by the smallest amount
+Then make the remaining part as small as possible
+
+That guarantees the immediate next permutation.
+
+Java Code
+class Solution {
+    public void nextPermutation(int[] nums) {
+
+        int n = nums.length;
+
+        // STEP 1: Find breakpoint
+        int index = -1;
+
+        for(int i = n - 2; i >= 0; i--) {
+            if(nums[i] < nums[i + 1]) {
+                index = i;
+                break;
+            }
+        }
+
+        // If no breakpoint found
+        // Array is in descending order
+        if(index == -1) {
+            reverse(nums, 0, n - 1);
+            return;
+        }
+
+        // STEP 2: Find next greater element
+        for(int i = n - 1; i > index; i--) {
+            if(nums[i] > nums[index]) {
+
+                // swap
+                int temp = nums[i];
+                nums[i] = nums[index];
+                nums[index] = temp;
+
+                break;
+            }
+        }
+
+        // STEP 3: Reverse remaining part
+        reverse(nums, index + 1, n - 1);
+    }
+
+    public void reverse(int[] nums, int start, int end) {
+
+        while(start < end) {
+
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+
+            start++;
+            end--;
+        }
+    }
+}
+Time Complexity
+O(N)
+
+We traverse array at most 3 times.
+
+Space Complexity
+O(1)
+
+Only constant extra space used.
+
+Important Interview Point
+
+The suffix after breakpoint is always in:
+
+decreasing order
+
+That is why reversing makes it the smallest possible arrangement.
+
+Easy Memory Trick
+
+Think:
+
+BREAK → SWAP → REVERSE
+Find break point
+Swap with next greater
+Reverse remaining part
