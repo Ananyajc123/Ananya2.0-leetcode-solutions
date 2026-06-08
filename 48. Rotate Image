@@ -1,0 +1,228 @@
+48. Rotate Image
+Understanding the Problem
+
+We are given an n × n matrix.
+
+We must rotate the matrix:
+
+90 degrees clockwise
+
+WITHOUT using another matrix.
+
+That means:
+
+modify the same matrix directly
+Example
+Input
+1 2 3
+4 5 6
+7 8 9
+
+After rotating 90° clockwise:
+
+7 4 1
+8 5 2
+9 6 3
+Visual Understanding
+
+Imagine rotating paper clockwise.
+
+Top row becomes right column.
+
+Mapping of Positions
+
+Observe:
+
+1 → goes to top-right
+2 → goes to middle-right
+3 → goes to bottom-right
+
+Doing direct movement manually is complicated.
+
+So we use a smarter trick.
+
+MAIN TRICK
+
+Rotation can be done in TWO STEPS:
+
+Step 1: Transpose the Matrix
+
+Convert:
+
+rows → columns
+
+Meaning:
+
+Swap:
+
+matrix[i][j]
+with
+matrix[j][i]
+Example
+
+Original:
+
+1 2 3
+4 5 6
+7 8 9
+
+After transpose:
+
+1 4 7
+2 5 8
+3 6 9
+
+Notice:
+
+Rows became columns
+Step 2: Reverse Every Row
+
+Now reverse each row.
+
+Row 1
+1 4 7
+
+becomes:
+
+7 4 1
+Entire Matrix
+1 4 7
+2 5 8
+3 6 9
+
+After reversing rows:
+
+7 4 1
+8 5 2
+9 6 3
+
+Correct answer.
+
+Why Does This Work?
+
+Transpose changes:
+
+(row, col)
+→
+(col, row)
+
+Then reversing rows completes clockwise rotation.
+
+Dry Run
+Input
+1 2 3
+4 5 6
+7 8 9
+STEP 1: Transpose
+
+Swap:
+
+(0,1) ↔ (1,0)
+(0,2) ↔ (2,0)
+(1,2) ↔ (2,1)
+
+Result:
+
+1 4 7
+2 5 8
+3 6 9
+STEP 2: Reverse Each Row
+
+Row 1:
+
+1 4 7
+→
+7 4 1
+
+Row 2:
+
+2 5 8
+→
+8 5 2
+
+Row 3:
+
+3 6 9
+→
+9 6 3
+
+Final:
+
+7 4 1
+8 5 2
+9 6 3
+Java Code
+class Solution {
+    public void rotate(int[][] matrix) {
+
+        int n = matrix.length;
+
+        // STEP 1: Transpose
+        for(int i = 0; i < n; i++) {
+
+            for(int j = i + 1; j < n; j++) {
+
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
+            }
+        }
+
+        // STEP 2: Reverse each row
+        for(int i = 0; i < n; i++) {
+
+            int left = 0;
+            int right = n - 1;
+
+            while(left < right) {
+
+                int temp = matrix[i][left];
+                matrix[i][left] = matrix[i][right];
+                matrix[i][right] = temp;
+
+                left++;
+                right--;
+            }
+        }
+    }
+}
+Understanding the Transpose Loop
+for(int j = i + 1; j < n; j++)
+
+Why i + 1?
+
+Because:
+
+diagonal elements don't need swapping
+avoids double swapping
+Example
+
+If we swap:
+
+(0,1) with (1,0)
+
+No need to swap again later.
+
+Time Complexity
+Transpose
+O(n²)
+Reverse Rows
+O(n²)
+
+Total:
+
+O(n²)
+Space Complexity
+O(1)
+
+In-place rotation.
+
+Important Interview Concept
+Clockwise Rotation =
+Transpose + Reverse Rows
+Memory Trick
+TRANSPOSE → REVERSE ROWS
+
+For anticlockwise rotation:
+
+TRANSPOSE → REVERSE COLUMNS
