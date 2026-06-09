@@ -1,0 +1,163 @@
+18. 4Sum
+Idea
+
+4Sum is an extension of 3Sum.
+
+In 3Sum:
+
+Fix 1 element
+Use two pointers for remaining 2 elements
+
+In 4Sum:
+
+Fix 2 elements
+Use two pointers for remaining 2 elements
+Approach
+Sort the array
+Use first loop for first element
+Use second loop for second element
+Use two pointers:
+left
+right
+Find quadruplets whose sum equals target
+Skip duplicates
+Why Sorting?
+
+Sorting helps:
+
+move left pointer to increase sum
+move right pointer to decrease sum
+avoid duplicates easily
+Java Optimal Solution
+class Solution {
+
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+
+        List<List<Integer>> ans = new ArrayList<>();
+
+        Arrays.sort(nums);
+
+        int n = nums.length;
+
+        for (int i = 0; i < n - 3; i++) {
+
+            // Skip duplicate first elements
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+
+            for (int j = i + 1; j < n - 2; j++) {
+
+                // Skip duplicate second elements
+                if (j > i + 1 && nums[j] == nums[j - 1]) {
+                    continue;
+                }
+
+                int left = j + 1;
+                int right = n - 1;
+
+                while (left < right) {
+
+                    long sum =
+                        (long) nums[i] +
+                        nums[j] +
+                        nums[left] +
+                        nums[right];
+
+                    // Quadruplet found
+                    if (sum == target) {
+
+                        ans.add(Arrays.asList(
+                            nums[i],
+                            nums[j],
+                            nums[left],
+                            nums[right]
+                        ));
+
+                        left++;
+                        right--;
+
+                        // Skip duplicate left values
+                        while (left < right &&
+                               nums[left] == nums[left - 1]) {
+                            left++;
+                        }
+
+                        // Skip duplicate right values
+                        while (left < right &&
+                               nums[right] == nums[right + 1]) {
+                            right--;
+                        }
+                    }
+
+                    // Need bigger sum
+                    else if (sum < target) {
+                        left++;
+                    }
+
+                    // Need smaller sum
+                    else {
+                        right--;
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+Why Use long?
+long sum
+
+Important because integer overflow can happen.
+
+Example:
+
+1000000000 + 1000000000 + ...
+
+may exceed int range.
+
+Dry Run
+Input
+nums = [1,0,-1,0,-2,2]
+target = 0
+
+After sorting:
+
+[-2,-1,0,0,1,2]
+i = 0
+nums[i] = -2
+j = 1
+nums[j] = -1
+
+left = 2
+
+right = 5
+
+Sum:
+
+-2 + (-1) + 0 + 2 = -1
+
+Need bigger sum → move left.
+
+Next:
+
+-2 + (-1) + 1 + 2 = 0
+
+Quadruplet:
+
+[-2,-1,1,2]
+Output
+[
+ [-2,-1,1,2],
+ [-2,0,0,2],
+ [-1,0,0,1]
+]
+Time Complexity
+O(n³)
+Two loops
+One two-pointer traversal
+Space Complexity
+O(1)
+
+Ignoring output list.
