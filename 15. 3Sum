@@ -1,0 +1,347 @@
+# 15. 3Sum
+
+## Problem Statement
+
+Given an integer array `nums`, return all unique triplets:
+
+```java id="p6k2vx"
+[nums[i], nums[j], nums[k]]
+```
+
+such that:
+
+```java id="d9m4sq"
+i != j
+i != k
+j != k
+```
+
+and:
+
+```java id="x1z7tw"
+nums[i] + nums[j] + nums[k] == 0
+```
+
+The solution should not contain duplicate triplets.
+
+---
+
+# Example
+
+## Input
+
+```java id="m8r2np"
+nums = [-1,0,1,2,-1,-4]
+```
+
+## Output
+
+```java id="g5t9lc"
+[[-1,-1,2],[-1,0,1]]
+```
+
+---
+
+# Brute Force Approach
+
+Use 3 loops:
+
+```java id="f4v8dj"
+for i
+   for j
+      for k
+```
+
+Check every triplet.
+
+### Time Complexity
+
+```java id="n2x6qm"
+O(n³)
+```
+
+This is too slow.
+
+---
+
+# Optimal Approach (Sorting + Two Pointers)
+
+## Main Idea
+
+1. Sort the array
+2. Fix one element
+3. Use two pointers to find remaining two numbers
+
+---
+
+# Why Sorting?
+
+After sorting:
+
+```java id="z7c1ph"
+[-4,-1,-1,0,1,2]
+```
+
+we can:
+
+* move left pointer to increase sum
+* move right pointer to decrease sum
+
+This reduces complexity to:
+
+```java id="t5b9vk"
+O(n²)
+```
+
+---
+
+# Algorithm
+
+For every index `i`:
+
+* Fix `nums[i]`
+* Use:
+
+```java id="r1m6qy"
+left = i + 1
+right = n - 1
+```
+
+* Calculate:
+
+```java id="k3x8pd"
+sum = nums[i] + nums[left] + nums[right]
+```
+
+### Cases
+
+### 1. sum == 0
+
+Triplet found.
+
+Store it and move both pointers.
+
+---
+
+### 2. sum < 0
+
+Need bigger value.
+
+Move:
+
+```java id="u7w2lf"
+left++
+```
+
+---
+
+### 3. sum > 0
+
+Need smaller value.
+
+Move:
+
+```java id="b4n9xt"
+right--
+```
+
+---
+
+# Important Duplicate Handling
+
+## Duplicate i
+
+```java id="e2v5rc"
+if(i > 0 && nums[i] == nums[i - 1])
+```
+
+Skip duplicate first elements.
+
+---
+
+## Duplicate left
+
+```java id="h6k1zs"
+while(left < right &&
+      nums[left] == nums[left - 1])
+```
+
+Skip duplicate left values.
+
+---
+
+## Duplicate right
+
+```java id="q9j4wb"
+while(left < right &&
+      nums[right] == nums[right + 1])
+```
+
+Skip duplicate right values.
+
+---
+
+# Correct Java Code
+
+```java id="y5f8na"
+class Solution {
+
+    public List<List<Integer>> threeSum(int[] nums) {
+
+        List<List<Integer>> ans = new ArrayList<>();
+
+        int n = nums.length;
+
+        Arrays.sort(nums);
+
+        for (int i = 0; i < n - 2; i++) {
+
+            // Skip duplicate first elements
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+
+            int left = i + 1;
+            int right = n - 1;
+
+            while (left < right) {
+
+                int sum =
+                    nums[i] + nums[left] + nums[right];
+
+                // Triplet found
+                if (sum == 0) {
+
+                    ans.add(Arrays.asList(
+                        nums[i],
+                        nums[left],
+                        nums[right]
+                    ));
+
+                    left++;
+                    right--;
+
+                    // Skip duplicate left values
+                    while (left < right &&
+                           nums[left] == nums[left - 1]) {
+                        left++;
+                    }
+
+                    // Skip duplicate right values
+                    while (left < right &&
+                           nums[right] == nums[right + 1]) {
+                        right--;
+                    }
+                }
+
+                // Need bigger sum
+                else if (sum < 0) {
+                    left++;
+                }
+
+                // Need smaller sum
+                else {
+                    right--;
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
+
+---
+
+# Dry Run
+
+## Input
+
+```java id="d3r7mx"
+nums = [-1,0,1,2,-1,-4]
+```
+
+After sorting:
+
+```java id="s8k2pt"
+[-4,-1,-1,0,1,2]
+```
+
+---
+
+## i = 1
+
+```java id="f1v6qd"
+nums[i] = -1
+```
+
+### left = 2
+
+### right = 5
+
+```java id="j4n9yc"
+-1 + (-1) + 2 = 0
+```
+
+Triplet:
+
+```java id="w7m3lp"
+[-1,-1,2]
+```
+
+Move pointers.
+
+---
+
+Next:
+
+```java id="x5b8kr"
+-1 + 0 + 1 = 0
+```
+
+Triplet:
+
+```java id="n2q6vf"
+[-1,0,1]
+```
+
+---
+
+# Time Complexity
+
+Sorting:
+
+```java id="g8w1zh"
+O(n log n)
+```
+
+Two pointers traversal:
+
+```java id="m9r4xc"
+O(n²)
+```
+
+Overall:
+
+```java id="v6t2pk"
+O(n²)
+```
+
+---
+
+# Space Complexity
+
+```java id="l1x7qy"
+O(1)
+```
+
+Ignoring output list.
+
+---
+
+# Important Interview Points
+
+* Sorting enables two pointers
+* Two pointers reduce complexity from `O(n³)` to `O(n²)`
+* Duplicate skipping is VERY important
+* `i < n - 2` because we need 2 more elements after `i`
