@@ -1,0 +1,231 @@
+152. Maximum Product Subarray
+Problem Statement
+
+Given an integer array nums, find the contiguous subarray that has the largest product and return that product.
+
+A subarray is a contiguous part of the array.
+
+Example 1
+Input
+nums = [2,3,-2,4]
+Output
+6
+Explanation
+
+Subarray:
+
+[2,3]
+
+Product:
+
+2 × 3 = 6
+
+which is the maximum product.
+
+Example 2
+Input
+nums = [-2,0,-1]
+Output
+0
+Why This Problem is Different
+
+In Maximum Sum problems:
+
+larger positives always help
+
+But in Product problems:
+
+negative × negative = positive
+
+So a minimum negative product can suddenly become maximum.
+
+Important Observation
+
+At every index we must track:
+
+Maximum product ending at current index
+Minimum product ending at current index
+Why Minimum Product is Needed
+
+Example:
+
+current minimum = -10
+current number = -3
+
+Then:
+
+-10 × -3 = 30
+
+A negative minimum becomes a large positive maximum.
+
+Dynamic Programming Idea
+
+For every element:
+
+We calculate:
+
+new maximum product
+new minimum product
+
+using:
+
+Current number itself
+Current number × previous maximum
+Current number × previous minimum
+Formula
+Maximum Product
+max = maximum of:
+curr
+curr × previousMax
+curr × previousMin
+Minimum Product
+min = minimum of:
+curr
+curr × previousMax
+curr × previousMin
+Java Solution
+class Solution {
+
+    public int maxProduct(int[] nums) {
+
+        int max = nums[0];
+        int min = nums[0];
+        int ans = nums[0];
+
+        for (int i = 1; i < nums.length; i++) {
+
+            int curr = nums[i];
+
+            int tempMax = Math.max(curr,
+                    Math.max(curr * max, curr * min));
+
+            int tempMin = Math.min(curr,
+                    Math.min(curr * max, curr * min));
+
+            max = tempMax;
+            min = tempMin;
+
+            ans = Math.max(ans, max);
+        }
+
+        return ans;
+    }
+}
+Code Explanation
+Step 1 — Initialization
+int max = nums[0];
+int min = nums[0];
+int ans = nums[0];
+
+Initialize:
+
+current maximum product
+current minimum product
+final answer
+
+with first element.
+
+Step 2 — Traverse Array
+for (int i = 1; i < nums.length; i++)
+
+Start from index 1 because first element is already considered.
+
+Step 3 — Store Current Element
+int curr = nums[i];
+
+Current number being processed.
+
+Step 4 — Calculate Temporary Maximum
+int tempMax = Math.max(curr,
+        Math.max(curr * max, curr * min));
+
+Possible choices:
+
+Start new subarray with current element
+Extend previous maximum product subarray
+Extend previous minimum product subarray
+
+Take maximum among them.
+
+Step 5 — Calculate Temporary Minimum
+int tempMin = Math.min(curr,
+        Math.min(curr * max, curr * min));
+
+Similarly calculate minimum product.
+
+This is important for future negative sign flips.
+
+Step 6 — Update Values
+max = tempMax;
+min = tempMin;
+
+Store current maximum and minimum products.
+
+Step 7 — Update Final Answer
+ans = Math.max(ans, max);
+
+Track the overall maximum product.
+
+Dry Run
+Input
+[2,3,-2,4]
+Initial Values
+max = 2
+min = 2
+ans = 2
+i = 1 → curr = 3
+tempMax = max(3, 6, 6) = 6
+tempMin = min(3, 6, 6) = 3
+
+Update:
+
+max = 6
+min = 3
+ans = 6
+i = 2 → curr = -2
+tempMax = max(-2, -12, -6) = -2
+tempMin = min(-2, -12, -6) = -12
+
+Update:
+
+max = -2
+min = -12
+ans = 6
+Important Observation
+
+Minimum product became:
+
+-12
+
+This may later become a large positive number.
+
+i = 3 → curr = 4
+tempMax = max(4, -8, -48) = 4
+tempMin = min(4, -8, -48) = -48
+
+Final answer remains:
+
+6
+Another Important Example
+Input
+[-2,3,-4]
+
+At last step:
+
+-6 × -4 = 24
+
+Maximum product becomes:
+
+24
+
+This is why minimum product tracking is necessary.
+
+Time Complexity
+O(n)
+
+Single traversal of array.
+
+Space Complexity
+O(1)
+
+Only variables are used.
