@@ -1,0 +1,231 @@
+88. Merge Sorted Array
+Problem Statement
+
+You are given two sorted arrays:
+
+nums1 of size m + n
+nums2 of size n
+
+The first m elements of nums1 are valid elements, while the last n elements are 0 and act as empty spaces.
+
+Merge nums2 into nums1 such that the final array remains sorted.
+
+Example
+Input
+nums1 = [1,2,3,0,0,0]
+m = 3
+
+nums2 = [2,5,6]
+n = 3
+Output
+[1,2,2,3,5,6]
+Important Observation
+
+Only first m elements in nums1 are valid.
+
+Actual arrays:
+
+nums1 = [1,2,3]
+nums2 = [2,5,6]
+
+The extra zeros are placeholders.
+
+Brute Force Approach
+Copy nums2 into nums1
+Sort nums1
+Complexity
+O((m+n) log(m+n))
+
+Not optimal.
+
+Optimal Approach
+
+Since both arrays are already sorted, we can merge them efficiently using the two-pointer technique.
+
+Main Idea
+
+Start filling nums1 from the BACK.
+
+Why?
+
+Because front positions already contain useful elements and may get overwritten.
+
+Pointer Setup
+int i = m - 1;
+
+Points to last valid element of nums1.
+
+int j = n - 1;
+
+Points to last element of nums2.
+
+int k = m + n - 1;
+
+Points to last position of nums1.
+
+Visualization
+nums1 = [1,2,3,0,0,0]
+               i     k
+
+nums2 = [2,5,6]
+               j
+Java Solution
+class Solution {
+
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+
+        int i = m - 1;
+        int j = n - 1;
+        int k = m + n - 1;
+
+        while (i >= 0 && j >= 0) {
+
+            if (nums1[i] > nums2[j]) {
+
+                nums1[k] = nums1[i];
+                i--;
+
+            } else {
+
+                nums1[k] = nums2[j];
+                j--;
+            }
+
+            k--;
+        }
+
+        while (j >= 0) {
+
+            nums1[k] = nums2[j];
+            j--;
+            k--;
+        }
+    }
+}
+Code Explanation
+Step 1 — Compare Elements
+if (nums1[i] > nums2[j])
+
+Compare the largest remaining elements of both arrays.
+
+Step 2 — Place Larger Element at End
+
+If nums1 element is larger:
+
+nums1[k] = nums1[i];
+
+Else:
+
+nums1[k] = nums2[j];
+Step 3 — Move Pointers
+
+After placing an element:
+
+k--;
+
+Move the position pointer left.
+
+Also move either:
+
+i--
+
+or
+
+j--
+
+depending on which element was used.
+
+Why Start from Back?
+
+If we start from front:
+
+nums1 elements may get overwritten
+
+Starting from back avoids this issue because empty spaces are available at the end.
+
+Dry Run
+Input
+nums1 = [1,2,3,0,0,0]
+nums2 = [2,5,6]
+Initial Pointers
+i = 2 → 3
+j = 2 → 6
+k = 5
+Iteration 1
+
+Compare:
+
+3 vs 6
+
+6 is larger.
+
+Place 6 at index k.
+
+nums1 = [1,2,3,0,0,6]
+
+Move:
+
+j--
+k--
+Iteration 2
+
+Compare:
+
+3 vs 5
+
+5 is larger.
+
+nums1 = [1,2,3,0,5,6]
+Iteration 3
+
+Compare:
+
+3 vs 2
+
+3 is larger.
+
+nums1 = [1,2,3,3,5,6]
+Iteration 4
+
+Compare:
+
+2 vs 2
+
+Place nums2 value.
+
+nums1 = [1,2,2,3,5,6]
+Final Output
+[1,2,2,3,5,6]
+Second While Loop
+while (j >= 0)
+
+Copies remaining nums2 elements if nums1 elements finish first.
+
+Example
+nums1 = [0]
+m = 0
+
+nums2 = [1]
+
+Result:
+
+[1]
+Why No Loop for Remaining nums1 Elements?
+
+Because they are already in correct sorted position.
+
+Time Complexity
+O(m + n)
+
+Each element is processed once.
+
+Space Complexity
+O(1)
+
+No extra array used.
+
+Key Takeaway
+
+The entire problem depends on one important idea:
+
+Fill nums1 from the BACK using the larger element.
