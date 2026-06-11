@@ -1,0 +1,313 @@
+34. Find First and Last Position of Element in Sorted Array
+Problem
+
+Given a sorted array nums (non-decreasing order) and a target value:
+
+Return the first occurrence index of the target.
+Return the last occurrence index of the target.
+If the target does not exist, return [-1, -1].
+Example
+nums = [5,7,7,8,8,10]
+target = 8
+
+Output = [3,4]
+Key Observation
+
+The array is sorted, so Binary Search can be used.
+
+A normal Binary Search stops as soon as it finds the target.
+
+However, in this problem we need:
+
+First occurrence
+Last occurrence
+
+Therefore, we perform Binary Search twice:
+
+Find First Occurrence
+Find Last Occurrence
+Why Two Binary Searches?
+
+Consider:
+
+Index: 0 1 2 3 4 5
+Value: 5 7 7 8 8 10
+
+Normal Binary Search may find:
+
+index = 4
+
+But we still don't know:
+
+Is 4 the first occurrence?
+Is 4 the last occurrence?
+
+So we continue searching even after finding the target.
+
+Approach 1: Find First Occurrence
+
+When target is found:
+
+ans = mid;
+high = mid - 1;
+Why move left?
+
+Because there may be another occurrence of the target before mid.
+
+Example:
+
+5 7 7 8 8 10
+      ↑
+   another 8 may exist
+
+We store the current answer and continue searching left.
+
+First Occurrence Code
+public int findFirst(int[] nums, int target) {
+
+    int low = 0;
+    int high = nums.length - 1;
+    int ans = -1;
+
+    while(low <= high) {
+
+        int mid = low + (high - low) / 2;
+
+        if(nums[mid] == target) {
+            ans = mid;
+            high = mid - 1;
+        }
+
+        else if(nums[mid] < target) {
+            low = mid + 1;
+        }
+
+        else {
+            high = mid - 1;
+        }
+    }
+
+    return ans;
+}
+Approach 2: Find Last Occurrence
+
+When target is found:
+
+ans = mid;
+low = mid + 1;
+Why move right?
+
+Because there may be another occurrence of the target after mid.
+
+Example:
+
+5 7 7 8 8 10
+        ↑
+    another 8 may exist
+
+We store the current answer and continue searching right.
+
+Last Occurrence Code
+public int findLast(int[] nums, int target) {
+
+    int low = 0;
+    int high = nums.length - 1;
+    int ans = -1;
+
+    while(low <= high) {
+
+        int mid = low + (high - low) / 2;
+
+        if(nums[mid] == target) {
+            ans = mid;
+            low = mid + 1;
+        }
+
+        else if(nums[mid] < target) {
+            low = mid + 1;
+        }
+
+        else {
+            high = mid - 1;
+        }
+    }
+
+    return ans;
+}
+Complete Solution
+class Solution {
+
+    public int[] searchRange(int[] nums, int target) {
+
+        int first = findFirst(nums, target);
+        int last = findLast(nums, target);
+
+        return new int[]{first, last};
+    }
+
+    public int findFirst(int[] nums, int target) {
+
+        int low = 0;
+        int high = nums.length - 1;
+        int ans = -1;
+
+        while(low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            if(nums[mid] == target) {
+                ans = mid;
+                high = mid - 1;
+            }
+            else if(nums[mid] < target) {
+                low = mid + 1;
+            }
+            else {
+                high = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+
+    public int findLast(int[] nums, int target) {
+
+        int low = 0;
+        int high = nums.length - 1;
+        int ans = -1;
+
+        while(low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            if(nums[mid] == target) {
+                ans = mid;
+                low = mid + 1;
+            }
+            else if(nums[mid] < target) {
+                low = mid + 1;
+            }
+            else {
+                high = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+}
+Dry Run
+Input
+nums = [5,7,7,8,8,10]
+target = 8
+Finding First Occurrence
+mid = 2 → 7
+low = 3
+
+mid = 4 → 8
+ans = 4
+high = 3
+
+mid = 3 → 8
+ans = 3
+high = 2
+
+stop
+
+Result:
+
+first = 3
+Finding Last Occurrence
+mid = 2 → 7
+low = 3
+
+mid = 4 → 8
+ans = 4
+low = 5
+
+mid = 5 → 10
+high = 4
+
+stop
+
+Result:
+
+last = 4
+Final Answer
+[3,4]
+Why Do We Need ans?
+
+Suppose:
+
+nums = [8,8,8,8]
+
+When we find a target:
+
+ans = mid;
+
+We save the valid index.
+
+Then we continue searching left or right.
+
+Without ans, we would lose the correct position while continuing the search.
+
+Edge Cases
+Target Not Present
+nums = [5,7,7,8,8,10]
+target = 6
+
+Output:
+
+[-1,-1]
+Empty Array
+nums = []
+target = 0
+
+Output:
+
+[-1,-1]
+Complexity Analysis
+Time Complexity
+
+Two Binary Searches:
+
+O(log n) + O(log n)
+
+Overall:
+
+O(log n)
+Space Complexity
+O(1)
+Important Pattern
+First Occurrence
+if(nums[mid] == target) {
+    ans = mid;
+    high = mid - 1;
+}
+
+👉 Save answer and move LEFT.
+
+Last Occurrence
+if(nums[mid] == target) {
+    ans = mid;
+    low = mid + 1;
+}
+
+👉 Save answer and move RIGHT.
+
+Key Takeaway
+
+This problem introduces a common Binary Search pattern:
+
+Instead of stopping when the target is found, store the answer and continue searching in the required direction.
+
+Move Left → First Occurrence
+Move Right → Last Occurrence
+
+This same idea is used in:
+
+First/Last Occurrence
+Count Occurrences
+Lower Bound
+Upper Bound
+Search Range Problems
+Many advanced Binary Search questions.
