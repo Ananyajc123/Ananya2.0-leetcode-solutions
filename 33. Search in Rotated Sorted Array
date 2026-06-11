@@ -1,0 +1,316 @@
+33. Search in Rotated Sorted Array
+Problem
+
+An array is originally sorted in ascending order but is rotated at an unknown pivot.
+
+Example
+
+Original Array:
+
+[0,1,2,4,5,6,7]
+
+Rotated Array:
+
+[4,5,6,7,0,1,2]
+
+Given a target value, return its index if found; otherwise return -1.
+
+Example
+Input:
+nums = [4,5,6,7,0,1,2]
+target = 0
+
+Output:
+4
+Why Normal Binary Search Fails
+
+Normal Binary Search works because the entire array is sorted.
+
+Example:
+
+[1,3,5,7,9]
+
+If:
+
+target < nums[mid]
+
+we safely move left.
+
+If:
+
+target > nums[mid]
+
+we safely move right.
+
+Problem in Rotated Array
+[4,5,6,7,0,1,2]
+
+Suppose:
+
+mid = 3
+nums[mid] = 7
+target = 0
+
+Normal Binary Search would think:
+
+0 < 7
+
+and move left.
+
+[4,5,6]
+
+But the target is actually on the right side.
+
+Therefore normal Binary Search cannot be directly applied.
+
+Key Observation
+
+Even though the entire array is not sorted:
+
+At least one half is always sorted.
+
+Example:
+
+[4,5,6,7,0,1,2]
+
+At:
+
+mid = 3
+4 5 6 7 | 0 1 2
+
+Left half:
+
+4 5 6 7
+
+is sorted.
+
+Right half:
+
+0 1 2
+
+is also sorted.
+
+At least one side is guaranteed to be sorted.
+
+Approach
+
+For every iteration:
+
+Step 1
+
+Find the middle element.
+
+int mid = low + (high - low) / 2;
+Step 2
+
+Check if target is found.
+
+if(nums[mid] == target)
+    return mid;
+Step 3
+
+Determine which half is sorted.
+
+if(nums[low] <= nums[mid])
+
+Left half is sorted.
+
+Otherwise:
+
+else
+
+Right half is sorted.
+
+Step 4
+
+Check if target lies inside the sorted half.
+
+If yes:
+
+Search inside that half
+
+Otherwise:
+
+Search in the opposite half
+Important Condition
+Left Half Sorted
+if(nums[low] <= nums[mid])
+
+Why <= and not <?
+
+Consider:
+
+nums = [1]
+low = 0
+mid = 0
+nums[low] = nums[mid]
+
+A single element is always sorted.
+
+Therefore:
+
+nums[low] <= nums[mid]
+
+must be used.
+
+Code
+class Solution {
+
+    public int search(int[] nums, int target) {
+
+        int low = 0;
+        int high = nums.length - 1;
+
+        while(low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            if(nums[mid] == target) {
+                return mid;
+            }
+
+            // Left half is sorted
+            if(nums[low] <= nums[mid]) {
+
+                if(target >= nums[low] &&
+                   target < nums[mid]) {
+
+                    high = mid - 1;
+                }
+                else {
+                    low = mid + 1;
+                }
+            }
+
+            // Right half is sorted
+            else {
+
+                if(target > nums[mid] &&
+                   target <= nums[high]) {
+
+                    low = mid + 1;
+                }
+                else {
+                    high = mid - 1;
+                }
+            }
+        }
+
+        return -1;
+    }
+}
+Dry Run
+Input
+nums = [4,5,6,7,0,1,2]
+target = 0
+Iteration 1
+low = 0
+high = 6
+
+mid = 3
+nums[mid] = 7
+
+Check:
+
+nums[low] = 4
+nums[mid] = 7
+4 <= 7
+
+Left half is sorted.
+
+4 5 6 7
+
+Check target:
+
+0 >= 4 ❌
+
+Target is not in the left half.
+
+Move right:
+
+low = mid + 1;
+Iteration 2
+low = 4
+high = 6
+
+mid = 5
+nums[mid] = 1
+
+Check:
+
+0 <= 1
+
+Left half is sorted.
+
+0 1
+
+Target lies in this range.
+
+Move left:
+
+high = mid - 1;
+Iteration 3
+low = 4
+high = 4
+
+mid = 4
+nums[mid] = 0
+
+Target found.
+
+Return:
+
+4
+Visualization
+[4,5,6,7,0,1,2]
+         ↑
+        mid
+
+Left half sorted:
+
+4 5 6 7
+
+Check if target lies in:
+
+[4,7]
+
+If yes:
+
+Search Left
+
+Otherwise:
+
+Search Right
+
+Repeat until target is found.
+
+Complexity Analysis
+Time Complexity
+
+Each iteration eliminates half of the search space.
+
+n → n/2 → n/4 → n/8 ...
+
+Therefore:
+
+O(log n)
+Space Complexity
+
+Only a few variables are used.
+
+O(1)
+Key Takeaway
+
+For a Rotated Sorted Array:
+
+Find mid.
+Determine which half is sorted.
+Check if the target lies inside that sorted half.
+Search the appropriate half.
+Pattern
+if(nums[low] <= nums[mid]) {
+    // Left half sorted
+}
+else {
+    // Right half sorted
+}
