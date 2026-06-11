@@ -1,0 +1,158 @@
+704. Binary Search
+Problem
+
+Given a sorted array nums in ascending order and a target value, return its index if found; otherwise return -1.
+
+Constraint: The algorithm must run in O(log n) time.
+
+Key Observation
+
+The array is already sorted.
+
+Instead of checking every element one by one, we can repeatedly divide the search space into two halves and eliminate the half that cannot contain the target.
+
+This approach is called Binary Search.
+
+Why Not Linear Search?
+Linear Search
+for(int i = 0; i < nums.length; i++) {
+    if(nums[i] == target)
+        return i;
+}
+return -1;
+Complexity
+Time: O(n)
+Space: O(1)
+
+Although this returns the correct answer, it does not satisfy the required O(log n) complexity.
+
+Binary Search Idea
+Find the middle element.
+If middle element equals target → return index.
+If target is greater than middle element → search right half.
+If target is smaller than middle element → search left half.
+Repeat until target is found or search space becomes empty.
+Dry Run
+nums = [-1,0,3,5,9,12]
+target = 9
+Step 1
+low = 0
+high = 5
+
+mid = (0 + 5) / 2 = 2
+
+nums[mid] = 3
+
+Since:
+
+9 > 3
+
+Search right half.
+
+low = mid + 1 = 3
+Step 2
+low = 3
+high = 5
+
+mid = (3 + 5) / 2 = 4
+
+nums[mid] = 9
+
+Target found.
+
+return 4
+Binary Search Template
+int low = 0;
+int high = nums.length - 1;
+
+while(low <= high) {
+    int mid = low + (high - low) / 2;
+
+    if(nums[mid] == target)
+        return mid;
+
+    else if(nums[mid] < target)
+        low = mid + 1;
+
+    else
+        high = mid - 1;
+}
+
+return -1;
+Why Use low + (high - low) / 2?
+
+Instead of:
+
+int mid = (low + high) / 2;
+
+we use:
+
+int mid = low + (high - low) / 2;
+
+to avoid integer overflow when low and high are very large.
+
+Complexity Analysis
+Time Complexity
+
+At each step, half of the search space is discarded.
+
+n → n/2 → n/4 → n/8 → ...
+
+Number of divisions:
+
+log₂(n)
+
+Therefore:
+
+Time Complexity = O(log n)
+Space Complexity
+
+Only a few variables are used.
+
+Space Complexity = O(1)
+Important Conditions for Binary Search
+
+✅ Array must be sorted.
+
+✅ Search space should be reducible by half each iteration.
+
+✅ Use while(low <= high) for standard binary search.
+
+Common Mistakes
+Mistake 1
+while(low < high)
+
+May skip checking the last remaining element.
+
+Use:
+
+while(low <= high)
+Mistake 2
+low = mid;
+
+Can cause an infinite loop.
+
+Use:
+
+low = mid + 1;
+Mistake 3
+high = mid;
+
+Can cause an infinite loop.
+
+Use:
+
+high = mid - 1;
+Pattern Recognition
+
+Use Binary Search when:
+
+Array is sorted.
+Searching for an element.
+Finding first/last occurrence.
+Finding lower bound or upper bound.
+Finding minimum/maximum in a sorted structure.
+Problem asks for O(log n) complexity.
+
+Core Idea:
+"Whenever a sorted structure allows us to eliminate half of the search space in each step, Binary Search is a potential solution."
