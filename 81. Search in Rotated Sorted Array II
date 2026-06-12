@@ -1,0 +1,323 @@
+81. Search in Rotated Sorted Array II
+Problem
+
+An array is sorted in non-decreasing order and then rotated at an unknown pivot.
+
+Unlike Problem 33, duplicate elements are allowed.
+
+Return:
+
+true if the target exists.
+false otherwise.
+Example
+nums = [2,5,6,0,0,1,2]
+target = 0
+
+Output: true
+Difference Between Problem 33 and Problem 81
+Problem 33
+[4,5,6,7,0,1,2]
+
+All elements are distinct.
+
+Using:
+
+nums[low] <= nums[mid]
+
+we can always determine which half is sorted.
+
+Problem 81
+
+Duplicates are allowed.
+
+Example:
+
+[1,0,1,1,1]
+
+Suppose:
+
+low = 0
+mid = 2
+high = 4
+
+Values:
+
+nums[low] = 1
+nums[mid] = 1
+nums[high] = 1
+
+Now we cannot determine:
+
+Whether the left half is sorted
+Whether the right half is sorted
+
+because duplicates hide the pivot.
+
+This is the main challenge of this problem.
+
+Key Observation
+
+In a rotated array:
+
+[4,5,6,7,0,1,2]
+
+At least one half is always sorted.
+
+However, with duplicates:
+
+[1,0,1,1,1]
+
+when:
+
+nums[low] == nums[mid] == nums[high]
+
+we lose the ability to identify the sorted half.
+
+Solution Idea
+
+Before checking which half is sorted:
+
+if(nums[low] == nums[mid] &&
+   nums[mid] == nums[high])
+{
+    low++;
+    high--;
+}
+Why?
+
+Since all three values are identical, they provide no useful information about the pivot.
+
+Therefore, we shrink the search space and continue.
+
+Approach
+Step 1
+
+Find the middle element.
+
+int mid = low + (high - low) / 2;
+Step 2
+
+Check if target is found.
+
+if(nums[mid] == target)
+{
+    return true;
+}
+Step 3
+
+Handle duplicates.
+
+if(nums[low] == nums[mid] &&
+   nums[mid] == nums[high])
+{
+    low++;
+    high--;
+}
+Step 4
+
+Determine which half is sorted.
+
+Left Half Sorted
+else if(nums[low] <= nums[mid])
+
+Check if target lies inside:
+
+target >= nums[low] &&
+target < nums[mid]
+
+If yes:
+
+high = mid - 1;
+
+Otherwise:
+
+low = mid + 1;
+Right Half Sorted
+else
+
+Check if target lies inside:
+
+target > nums[mid] &&
+target <= nums[high]
+
+If yes:
+
+low = mid + 1;
+
+Otherwise:
+
+high = mid - 1;
+Code
+class Solution {
+
+    public boolean search(int[] nums, int target) {
+
+        int low = 0;
+        int high = nums.length - 1;
+
+        while(low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            if(nums[mid] == target) {
+                return true;
+            }
+
+            // Handle duplicates
+            if(nums[low] == nums[mid] &&
+               nums[mid] == nums[high]) {
+
+                low++;
+                high--;
+            }
+
+            // Left half sorted
+            else if(nums[low] <= nums[mid]) {
+
+                if(target >= nums[low] &&
+                   target < nums[mid]) {
+
+                    high = mid - 1;
+                }
+                else {
+                    low = mid + 1;
+                }
+            }
+
+            // Right half sorted
+            else {
+
+                if(target > nums[mid] &&
+                   target <= nums[high]) {
+
+                    low = mid + 1;
+                }
+                else {
+                    high = mid - 1;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+Dry Run
+Input
+nums = [1,0,1,1,1]
+target = 0
+Iteration 1
+low = 0
+high = 4
+
+mid = 2
+
+Values:
+
+nums[low] = 1
+nums[mid] = 1
+nums[high] = 1
+
+All equal.
+
+low++;
+high--;
+
+Now:
+
+low = 1
+high = 3
+Iteration 2
+mid = 2
+
+nums[low] = 0
+nums[mid] = 1
+
+Left half is sorted.
+
+Target lies in:
+
+[0,1)
+
+Move left:
+
+high = mid - 1;
+Iteration 3
+low = 1
+high = 1
+
+mid = 1
+nums[mid] = 0
+
+Target found.
+
+return true;
+Why Do We Use low++ and high--?
+
+Consider:
+
+[1,1,1,1,1]
+
+At:
+
+low = 0
+mid = 2
+high = 4
+
+All values are equal.
+
+No information can be extracted regarding the pivot.
+
+Therefore:
+
+low++;
+high--;
+
+removes duplicate boundaries and helps continue the search.
+
+Complexity Analysis
+Average Case
+
+Binary Search behavior:
+
+O(log n)
+Worst Case
+
+Example:
+
+[1,1,1,1,1,1,1,1,1]
+
+Every iteration may only perform:
+
+low++;
+high--;
+
+Therefore:
+
+O(n)
+Space Complexity
+O(1)
+Comparison
+Problem	Duplicates Allowed	Complexity
+33. Search in Rotated Sorted Array	No	O(log n)
+81. Search in Rotated Sorted Array II	Yes	O(log n) average, O(n) worst case
+Key Takeaway
+
+This problem is almost identical to Problem 33.
+
+The only additional logic is:
+
+if(nums[low] == nums[mid] &&
+   nums[mid] == nums[high]) {
+    low++;
+    high--;
+}
+
+This handles the ambiguity caused by duplicate values.
+
+Pattern
+1. Check target
+2. Handle duplicates
+3. Determine sorted half
+4. Search in the appropriate half
+
+This is the standard Binary Search pattern for Rotated Sorted Arrays with Duplicates.
