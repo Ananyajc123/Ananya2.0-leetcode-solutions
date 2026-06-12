@@ -1,0 +1,302 @@
+153. Find Minimum in Rotated Sorted Array
+Problem
+
+An array is originally sorted in ascending order and then rotated at an unknown pivot.
+
+All elements are unique.
+
+Find the minimum element in the rotated sorted array.
+
+Example 1
+nums = [3,4,5,1,2]
+
+Output = 1
+
+Original Array:
+
+[1,2,3,4,5]
+
+Rotated:
+
+[3,4,5,1,2]
+Example 2
+nums = [4,5,6,7,0,1,2]
+
+Output = 0
+Example 3
+nums = [11,13,15,17]
+
+Output = 11
+
+Array is already sorted.
+
+Minimum is the first element.
+
+Key Observation
+
+In a rotated sorted array:
+
+[4,5,6,7,0,1,2]
+
+the minimum element lies exactly at the rotation point.
+
+4 5 6 7 | 0 1 2
+          ↑
+       minimum
+
+Our goal is to find this point using Binary Search.
+
+Why Not Linear Search?
+int min = nums[0];
+
+for(int num : nums){
+    min = Math.min(min, num);
+}
+Complexity
+Time = O(n)
+Space = O(1)
+
+But the problem requires:
+
+O(log n)
+
+Therefore Binary Search must be used.
+
+Main Idea
+
+Compare:
+
+nums[mid]
+
+with:
+
+nums[high]
+
+This tells us which side contains the minimum element.
+
+Observation 1
+
+If:
+
+nums[mid] > nums[high]
+
+Example:
+
+[4,5,6,7,0,1,2]
+
+mid = 7
+high = 2
+7 > 2
+
+The minimum must be on the right side.
+
+4 5 6 7 | 0 1 2
+          ↑
+
+Move:
+
+low = mid + 1;
+Observation 2
+
+If:
+
+nums[mid] < nums[high]
+
+Example:
+
+0 1 2
+mid = 1
+high = 2
+1 < 2
+
+The minimum lies on the left side including mid.
+
+Move:
+
+high = mid;
+Why not high = mid - 1?
+
+Because mid itself could be the minimum.
+
+Binary Search Logic
+Case 1
+if(nums[mid] > nums[high])
+
+Minimum lies in:
+
+[mid+1 ... high]
+
+Move:
+
+low = mid + 1;
+Case 2
+else
+
+Minimum lies in:
+
+[low ... mid]
+
+Move:
+
+high = mid;
+Code
+class Solution {
+
+    public int findMin(int[] nums) {
+
+        int low = 0;
+        int high = nums.length - 1;
+
+        while(low < high) {
+
+            int mid = low + (high - low) / 2;
+
+            if(nums[mid] > nums[high]) {
+                low = mid + 1;
+            }
+            else {
+                high = mid;
+            }
+        }
+
+        return nums[low];
+    }
+}
+Dry Run
+Input
+nums = [4,5,6,7,0,1,2]
+Iteration 1
+low = 0
+high = 6
+
+mid = 3
+nums[mid] = 7
+nums[high] = 2
+7 > 2
+
+Minimum is on the right.
+
+low = mid + 1;
+
+Now:
+
+low = 4
+high = 6
+Iteration 2
+mid = 5
+nums[mid] = 1
+nums[high] = 2
+1 < 2
+
+Minimum is on the left side including mid.
+
+high = mid;
+
+Now:
+
+low = 4
+high = 5
+Iteration 3
+mid = 4
+nums[mid] = 0
+nums[high] = 1
+0 < 1
+
+Move:
+
+high = mid;
+
+Now:
+
+low = 4
+high = 4
+
+Loop ends.
+
+Return:
+
+nums[low]
+
+Output:
+
+0
+Visualization
+[4,5,6,7,0,1,2]
+
+mid = 7
+high = 2
+
+7 > 2
+
+Minimum must be after mid.
+
+Search Right
+[0,1,2]
+
+mid = 1
+high = 2
+
+1 < 2
+
+Minimum lies before or at mid.
+
+Search Left
+Why Use while(low < high)?
+
+Unlike standard Binary Search:
+
+while(low <= high)
+
+Here we are not searching for a target.
+
+We are narrowing the search space until:
+
+low == high
+
+At that point:
+
+Both point to the minimum element.
+Complexity Analysis
+Time Complexity
+
+Each iteration eliminates half of the array.
+
+n → n/2 → n/4 → n/8 ...
+
+Therefore:
+
+O(log n)
+Space Complexity
+
+Only a few variables are used.
+
+O(1)
+Pattern Recognition
+
+Use this pattern when:
+
+Array is sorted and rotated.
+Elements are unique.
+Need to find minimum element.
+O(log n) solution is required.
+Key Takeaway
+
+The important insight is:
+
+if(nums[mid] > nums[high])
+
+👉 Minimum lies on the right side.
+
+low = mid + 1;
+
+Otherwise:
+
+high = mid;
+
+👉 Minimum lies on the left side (including mid).
+
+When:
+
+low == high
+
+that index contains the minimum element.
