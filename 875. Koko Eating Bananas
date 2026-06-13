@@ -1,0 +1,161 @@
+875. Koko Eating Bananas
+Intuition
+
+We need to find the minimum eating speed k such that Koko can finish all bananas within h hours.
+
+For a speed k:
+
+A pile with pile bananas takes:
+ceil(pile / k)
+
+hours to finish.
+
+Total hours required:
+Σ ceil(pile / k)
+
+If total hours ≤ h, then the speed is valid.
+
+Key Observation
+
+As eating speed increases:
+
+Speed ↑ → Hours Needed ↓
+
+As eating speed decreases:
+
+Speed ↓ → Hours Needed ↑
+
+Since the relationship is monotonic, we can apply Binary Search on the Answer.
+
+Binary Search Range
+low = 1;
+high = max(piles);
+Minimum possible speed = 1
+Maximum possible speed = largest pile size
+
+For each speed mid:
+
+Calculate total hours needed.
+If hours ≤ h, try a smaller speed.
+Otherwise, increase the speed.
+Ceiling Division Trick
+
+Instead of:
+
+Math.ceil((double)pile / mid)
+
+use:
+
+(pile + mid - 1) / mid
+
+Example:
+
+pile = 11, mid = 4
+
+(11 + 4 - 1) / 4
+= 14 / 4
+= 3
+
+which is equivalent to:
+
+ceil(11 / 4) = 3
+Java Code
+class Solution {
+    public int minEatingSpeed(int[] piles, int h) {
+
+        int low = 1;
+        int high = 0;
+
+        for (int pile : piles) {
+            high = Math.max(high, pile);
+        }
+
+        while (low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            long hours = 0;
+
+            for (int pile : piles) {
+                hours += (pile + mid - 1) / mid;
+            }
+
+            if (hours <= h) {
+                high = mid - 1;   // valid speed, try smaller
+            } else {
+                low = mid + 1;    // speed too slow
+            }
+        }
+
+        return low;
+    }
+}
+Dry Run
+Input
+piles = [3,6,7,11]
+h = 8
+Iteration 1
+low = 1, high = 11
+mid = 6
+
+Hours:
+
+1 + 1 + 2 + 2 = 6
+
+6 <= 8 → valid
+
+high = 5
+Iteration 2
+low = 1, high = 5
+mid = 3
+
+Hours:
+
+1 + 2 + 3 + 4 = 10
+
+10 > 8 → invalid
+
+low = 4
+Iteration 3
+low = 4, high = 5
+mid = 4
+
+Hours:
+
+1 + 2 + 2 + 3 = 8
+
+8 <= 8 → valid
+
+high = 3
+
+Loop ends:
+
+low = 4
+high = 3
+
+Answer:
+
+4
+Complexity Analysis
+Time Complexity
+O(n × log(max(piles)))
+O(n) to calculate hours for a speed.
+O(log(max(piles))) binary search iterations.
+Space Complexity
+O(1)
+Pattern Recognition
+
+This is a Binary Search on Answer problem.
+
+Use this pattern when:
+
+Need minimum/maximum value satisfying a condition.
+Search space is numeric.
+Condition is monotonic (True/False boundary exists).
+Similar Problems
+Capacity To Ship Packages Within D Days
+Split Array Largest Sum
+Minimum Number of Days to Make m Bouquets
+Minimum Time to Complete Trips
+
+Pattern: Binary Search on Answer. 🚀
