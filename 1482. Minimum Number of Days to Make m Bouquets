@@ -1,0 +1,214 @@
+1482. Minimum Number of Days to Make m Bouquets
+Problem Statement
+
+Given an array bloomDay, where bloomDay[i] represents the day the i-th flower blooms, find the minimum number of days required to make m bouquets. Each bouquet requires exactly k adjacent bloomed flowers.
+
+If it is impossible to make m bouquets, return -1.
+
+Key Observation
+
+For any given day D, we can determine whether it is possible to make m bouquets.
+
+Day 1  -> No
+Day 2  -> No
+Day 3  -> Yes
+Day 4  -> Yes
+Day 5  -> Yes
+
+This forms a monotonic pattern:
+
+False False False True True True
+
+Since we need the first valid day, Binary Search can be applied.
+
+Binary Search on Answer
+Search Space
+Minimum day = min(bloomDay)
+Maximum day = max(bloomDay)
+low = min(bloomDay);
+high = max(bloomDay);
+Important Edge Case
+
+Before starting Binary Search:
+
+if ((long)m * k > bloomDay.length)
+    return -1;
+
+Reason:
+
+Required flowers = m × k
+
+If required flowers > total flowers available,
+it is impossible to make the bouquets.
+Checking a Day
+
+For a given day mid:
+
+bloomDay[i] <= mid
+
+Flower has bloomed and can be used.
+
+bloomDay[i] > mid
+
+Flower has not bloomed yet.
+
+Counting Bouquets
+
+Maintain:
+
+flowers = 0;
+bouquets = 0;
+If flower has bloomed
+flowers++;
+If flower has not bloomed
+
+Adjacency breaks.
+
+flowers = 0;
+When flowers == k
+
+A bouquet can be formed.
+
+bouquets++;
+flowers = 0;
+Example
+bloomDay = [7,7,7,7,12,7,7]
+m = 2
+k = 3
+day = 7
+
+Garden state:
+
+x x x x _ x x
+
+Counting adjacent flowers:
+
+1
+2
+3 -> Bouquet 1
+0
+1
+
+Gap encountered:
+
+_
+
+Reset count.
+
+1
+2
+
+Total bouquets:
+
+1
+
+Need:
+
+2
+
+Result:
+
+False
+Binary Search Logic
+if(canMake(mid))
+{
+    answer = mid;
+    high = mid - 1;
+}
+else
+{
+    low = mid + 1;
+}
+Why?
+If bouquets can be made on day mid, try a smaller day.
+Otherwise, wait for more flowers to bloom.
+Algorithm
+Check impossible case.
+Find minimum and maximum bloom day.
+Apply Binary Search on days.
+For each day, count how many bouquets can be formed using adjacent bloomed flowers.
+Return the first valid day.
+Complexity Analysis
+Time Complexity
+Checking one day: O(n)
+
+Binary Search: O(log(maxBloomDay))
+
+Overall: O(n × log(maxBloomDay))
+Space Complexity
+O(1)
+Pattern Recognition
+
+Whenever you see:
+
+Can we do it in X days?
+Can we finish with speed X?
+Can we ship with capacity X?
+
+and answers follow:
+
+No No No Yes Yes Yes
+
+think:
+
+Binary Search on Answer
+Java Solution
+class Solution {
+
+    public int minDays(int[] bloomDay, int m, int k) {
+
+        if ((long)m * k > bloomDay.length)
+            return -1;
+
+        int low = Integer.MAX_VALUE;
+        int high = Integer.MIN_VALUE;
+
+        for (int day : bloomDay) {
+            low = Math.min(low, day);
+            high = Math.max(high, day);
+        }
+
+        int ans = -1;
+
+        while (low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            if (canMake(bloomDay, m, k, mid)) {
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean canMake(int[] bloomDay, int m, int k, int day) {
+
+        int flowers = 0;
+        int bouquets = 0;
+
+        for (int bloom : bloomDay) {
+
+            if (bloom <= day) {
+
+                flowers++;
+
+                if (flowers == k) {
+                    bouquets++;
+                    flowers = 0;
+                }
+
+            } else {
+                flowers = 0;
+            }
+        }
+
+        return bouquets >= m;
+    }
+}
+One-Line Revision
+
+Binary Search on days + count consecutive bloomed flowers; whenever k adjacent flowers are found, form one bouquet and check if at least m bouquets can be made.
