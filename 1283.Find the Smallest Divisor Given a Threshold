@@ -1,0 +1,168 @@
+1283 - Find the Smallest Divisor Given a Threshold
+Problem Summary
+
+Given an array nums and an integer threshold, find the smallest positive divisor such that:
+
+sum(ceil(nums[i] / divisor)) <= threshold
+Key Observation
+
+As the divisor increases, the value of:
+
+ceil(nums[i] / divisor)
+
+either:
+
+decreases
+remains the same
+
+Therefore, the total sum is monotonically decreasing.
+
+Example:
+
+nums = [1,2,5,9]
+
+divisor = 1 → sum = 17
+divisor = 2 → sum = 10
+divisor = 3 → sum = 7
+divisor = 4 → sum = 7
+divisor = 5 → sum = 5
+17 → 10 → 7 → 7 → 5
+
+The sum never increases.
+
+Binary Search on Answer
+
+Possible divisors lie in the range:
+
+[1, max(nums)]
+
+For some divisor values, the condition fails:
+
+NO NO NO NO YES YES YES YES
+
+Once a divisor satisfies:
+
+sum <= threshold
+
+all larger divisors will also satisfy it.
+
+This monotonic pattern makes Binary Search applicable.
+
+Search Space
+int low = 1;
+int high = max(nums);
+Mid Calculation
+int mid = low + (high - low) / 2;
+Validity Check
+
+For a chosen divisor:
+
+sum += ceil(nums[i] / divisor);
+
+If:
+
+sum <= threshold
+
+the divisor works, so try finding a smaller one:
+
+high = mid - 1;
+
+Otherwise:
+
+low = mid + 1;
+Ceiling Division Trick
+
+Instead of:
+
+Math.ceil((double) num / divisor)
+
+use integer arithmetic:
+
+(num + divisor - 1) / divisor
+
+Example:
+
+9 / 5 = 1.8
+ceil(1.8) = 2
+
+(9 + 5 - 1) / 5
+= 13 / 5
+= 2
+Algorithm
+Set low = 1, high = max(nums).
+While low <= high:
+Compute mid.
+Calculate the sum using ceiling division.
+If sum <= threshold:
+Search left half (high = mid - 1).
+Else:
+Search right half (low = mid + 1).
+Return low.
+Java Solution
+class Solution {
+    public int smallestDivisor(int[] nums, int threshold) {
+
+        int low = 1;
+        int high = 0;
+
+        for (int num : nums) {
+            high = Math.max(high, num);
+        }
+
+        while (low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            long sum = 0;
+
+            for (int num : nums) {
+                sum += (num + mid - 1) / mid;
+            }
+
+            if (sum <= threshold) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return low;
+    }
+}
+Complexity Analysis
+Time Complexity
+
+Finding the sum for one divisor:
+
+O(n)
+
+Binary search over:
+
+[1, max(nums)]
+
+takes:
+
+O(log(max(nums)))
+
+Overall:
+
+O(n × log(max(nums)))
+Space Complexity
+O(1)
+Pattern Recognition
+
+Use Binary Search on Answer when:
+
+Asked to find the minimum/maximum value satisfying a condition.
+The condition forms a monotonic pattern:
+NO NO NO YES YES YES
+
+or
+
+YES YES YES NO NO NO
+Similar Problems
+LeetCode 875 — Koko Eating Bananas
+LeetCode 1011 — Capacity To Ship Packages Within D Days
+LeetCode 410 — Split Array Largest Sum
+Aggressive Cows
+Allocate Books
