@@ -1,0 +1,192 @@
+1539 - Kth Missing Positive Number
+Problem Summary
+
+Given a sorted array of positive integers arr and an integer k, return the kth positive integer that is missing from the array.
+
+Example
+arr = [2,3,4,7,11]
+k = 5
+
+Missing positive numbers:
+
+1, 5, 6, 8, 9, 10, ...
+
+The 5th missing positive number is:
+
+9
+Key Observation
+
+If no numbers were missing, then:
+
+Index : 0 1 2 3 4
+Value : 1 2 3 4 5
+
+For any index i:
+
+Expected Value = i + 1
+
+But the actual array is:
+
+Index : 0 1 2 3 4
+Value : 2 3 4 7 11
+
+The difference tells us how many numbers are missing up to that position.
+
+missing = arr[i] - (i + 1)
+Example
+arr = [2,3,4,7,11]
+Index	Value	Missing Count
+0	2	2 - 1 = 1
+1	3	3 - 2 = 1
+2	4	4 - 3 = 1
+3	7	7 - 4 = 3
+4	11	11 - 5 = 6
+Missing Counts = [1,1,1,3,6]
+Binary Search Idea
+
+We need to find the first index where:
+
+missing >= k
+
+For:
+
+k = 5
+Missing Counts = [1,1,1,3,6]
+                           ^
+
+The first position where missing count becomes at least 5 is index 4.
+
+This is a monotonic pattern:
+
+missing < k     |     missing >= k
+-----------------------------------
+1 1 1 3         |         6
+
+So Binary Search can be applied.
+
+Binary Search Logic
+Calculate Missing Numbers
+int missing = arr[mid] - (mid + 1);
+If Missing Count is Less Than k
+missing < k
+
+We haven't reached the kth missing number yet.
+
+Move right:
+
+low = mid + 1;
+If Missing Count is Greater Than or Equal to k
+missing >= k
+
+The answer may be at this position or to the left.
+
+Move left:
+
+high = mid - 1;
+Why Return low + k?
+
+After binary search:
+
+low
+
+represents the number of array elements that appear before the kth missing number.
+
+Since those elements occupy positions in the sequence, we shift k by low.
+
+Therefore:
+
+answer = low + k;
+Example
+arr = [2,3,4,7,11]
+k = 5
+
+After binary search:
+
+low = 4
+
+Answer:
+
+low + k
+= 4 + 5
+= 9
+
+Correct.
+
+Java Solution
+class Solution {
+    public int findKthPositive(int[] arr, int k) {
+
+        int low = 0;
+        int high = arr.length - 1;
+
+        while (low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            int missing = arr[mid] - (mid + 1);
+
+            if (missing < k) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return low + k;
+    }
+}
+Dry Run
+Input
+arr = [2,3,4,7,11]
+k = 5
+Iteration 1
+mid = 2
+missing = 4 - 3 = 1
+1 < 5
+
+Move right:
+
+low = 3
+Iteration 2
+mid = 3
+missing = 7 - 4 = 3
+3 < 5
+
+Move right:
+
+low = 4
+Iteration 3
+mid = 4
+missing = 11 - 5 = 6
+6 >= 5
+
+Move left:
+
+high = 3
+
+Loop ends.
+
+low = 4
+
+Return:
+
+low + k = 4 + 5 = 9
+Complexity Analysis
+Time Complexity
+
+Binary Search:
+
+O(log n)
+Space Complexity
+O(1)
+Pattern Recognition
+
+Use this approach when:
+
+The array is sorted.
+You can calculate a monotonic property (missing count).
+You need to find the first position satisfying a condition.
+Key Formula
+missing = arr[i] - (i + 1);
+Final Answer
+return low + k;
