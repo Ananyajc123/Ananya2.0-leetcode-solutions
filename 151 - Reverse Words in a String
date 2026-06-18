@@ -1,0 +1,123 @@
+ 151 - Reverse Words in a String
+Problem Statement
+
+Given an input string s, reverse the order of the words.
+
+Rules
+A word is a sequence of non-space characters.
+Remove leading and trailing spaces.
+Reduce multiple spaces between words to a single space.
+Examples
+Input:  "the sky is blue"
+Output: "blue is sky the"
+Input:  "  hello world  "
+Output: "world hello"
+Input:  "a good   example"
+Output: "example good a"
+Approach
+Intuition
+
+The problem requires reversing the order of words while handling extra spaces.
+
+Steps
+Remove leading and trailing spaces using trim().
+Split the string into words using split("\\s+").
+Traverse the words array from the last word to the first.
+Append each word to the result.
+Insert a single space between words.
+Algorithm
+Trim the string.
+Split the string into words using:
+String[] words = s.trim().split("\\s+");
+Create a StringBuilder for the result.
+Traverse the array from right to left.
+Append each word to the answer.
+Add a space after every word except the last one.
+Return the final string.
+Dry Run
+Input
+s = "a good   example"
+After Trim
+"a good   example"
+After Split
+["a", "good", "example"]
+Reverse Traversal
+example
+good
+a
+Result
+"example good a"
+Java Solution
+class Solution {
+    public String reverseWords(String s) {
+
+        String[] words = s.trim().split("\\s+");
+
+        StringBuilder ans = new StringBuilder();
+
+        for (int i = words.length - 1; i >= 0; i--) {
+
+            ans.append(words[i]);
+
+            if (i != 0)
+                ans.append(" ");
+        }
+
+        return ans.toString();
+    }
+}
+Complexity Analysis
+Time Complexity
+O(n)
+
+Where n is the length of the string.
+
+trim() → O(n)
+split() → O(n)
+Reverse traversal → O(n)
+
+Overall:
+
+O(n)
+Space Complexity
+O(n)
+
+Extra space is used for:
+
+Array of words
+StringBuilder
+Key Concepts
+trim()
+
+Removes leading and trailing spaces.
+
+"  hello world  ".trim()
+
+Output:
+
+"hello world"
+split("\\s+")
+
+Splits the string based on one or more whitespace characters.
+
+"a   good    example".split("\\s+")
+
+Output:
+
+["a", "good", "example"]
+Interview Takeaway
+
+The main trick is handling extra spaces correctly:
+
+String[] words = s.trim().split("\\s+");
+trim() removes unwanted spaces at the beginning and end.
+\\s+ treats multiple consecutive spaces as a single separator.
+
+After that, simply traverse the words array in reverse order and build the answer.
+
+Final Complexity
+Metric	Complexity
+Time	O(n)
+Space	O(n)
+
+Pattern: String Manipulation + Two-Pass Traversal.
