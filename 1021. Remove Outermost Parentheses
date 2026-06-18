@@ -1,0 +1,111 @@
+1021. Remove Outermost Parentheses
+Problem Statement
+
+Given a valid parentheses string s, remove the outermost parentheses from every primitive valid parentheses substring and return the resulting string.
+
+Example
+Input:  "(()())(())"
+Output: "()()()"
+
+Primitive decomposition:
+
+(()()) + (())
+
+After removing outermost parentheses:
+
+()() + ()
+
+Result:
+
+()()()
+Approach: Primitive String Identification
+Key Observation
+
+A primitive valid parentheses string is a valid parentheses string that cannot be split into smaller non-empty valid parentheses strings.
+
+We can identify a primitive by maintaining a counter:
+
+Increment for '('
+Decrement for ')'
+
+When the counter becomes 0, a complete primitive has been found.
+
+For each primitive:
+
+Remove the first '('
+Remove the last ')'
+Append the remaining substring to the answer
+Algorithm
+Initialize:
+open = 0
+start = 0
+StringBuilder ans
+Traverse the string:
+If current character is '(', increment open
+Else decrement open
+Whenever open == 0:
+A primitive ends at current index i
+Append s.substring(start + 1, i) to answer
+Update start = i + 1
+Return the final answer.
+Dry Run
+Input
+s = "(()())(())"
+Primitive 1
+(()())
+
+Remove outermost:
+
+()()
+Primitive 2
+(())
+
+Remove outermost:
+
+()
+Final Answer
+()()()
+Java Solution
+class Solution {
+    public String removeOuterParentheses(String s) {
+
+        StringBuilder ans = new StringBuilder();
+
+        int open = 0;
+        int start = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+
+            if (s.charAt(i) == '(')
+                open++;
+            else
+                open--;
+
+            if (open == 0) {
+                ans.append(s.substring(start + 1, i));
+                start = i + 1;
+            }
+        }
+
+        return ans.toString();
+    }
+}
+Complexity Analysis
+Time Complexity
+O(n)
+We traverse the string once.
+Space Complexity
+O(n)
+StringBuilder stores the resulting string.
+Interview Tip
+
+The crucial observation is:
+
+When the balance/open count becomes 0,
+one primitive valid parentheses string is completed.
+
+Removing the outermost parentheses of a primitive can be done by:
+
+s.substring(start + 1, end)
+
+which skips the first '(' and the last ')'.
