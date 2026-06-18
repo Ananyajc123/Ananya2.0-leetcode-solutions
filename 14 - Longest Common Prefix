@@ -1,0 +1,186 @@
+14 - Longest Common Prefix
+Problem Statement
+
+Write a function to find the longest common prefix string among an array of strings.
+
+If there is no common prefix, return an empty string "".
+
+Examples
+Input: strs = ["flower","flow","flight"]
+Output: "fl"
+Input: strs = ["dog","racecar","car"]
+Output: ""
+Approach: Prefix Shrinking
+Intuition
+
+Assume the first string is the common prefix.
+
+Then compare it with every other string:
+
+If the current string starts with the prefix, continue.
+Otherwise, keep removing the last character from the prefix.
+Repeat until the current string starts with the prefix.
+If the prefix becomes empty, return "".
+Algorithm
+Handle edge cases:
+If array is null or empty, return "".
+Initialize:
+String prefix = strs[0];
+Traverse all strings.
+For each string:
+Check if it starts with prefix.
+If not, shorten the prefix by removing its last character.
+Continue until it becomes a valid prefix.
+Return the final prefix.
+Java Solution
+class Solution {
+    public String longestCommonPrefix(String[] strs) {
+
+        if (strs == null || strs.length == 0) {
+            return "";
+        }
+
+        String prefix = strs[0];
+
+        for (int i = 0; i < strs.length; i++) {
+
+            while (strs[i].indexOf(prefix) != 0) {
+
+                prefix = prefix.substring(0, prefix.length() - 1);
+
+                if (prefix.isEmpty()) {
+                    return "";
+                }
+            }
+        }
+
+        return prefix;
+    }
+}
+Important Concepts
+indexOf(prefix)
+
+Returns the index where prefix first appears.
+
+Example:
+
+"flower".indexOf("flo")
+
+Output:
+
+0
+
+Since "flo" starts at index 0, it is a prefix.
+
+Example:
+
+"flight".indexOf("flow")
+
+Output:
+
+-1
+
+Since "flow" is not present.
+
+Why check indexOf(prefix) != 0?
+
+We want the prefix to start at index 0.
+
+while(strs[i].indexOf(prefix) != 0)
+
+means:
+
+Current string does not start with prefix.
+
+So we keep shrinking the prefix.
+
+Dry Run
+Input
+strs = ["flower","flow","flight"]
+Initial Prefix
+prefix = "flower"
+Compare with "flow"
+flow does not start with "flower"
+
+Shrink:
+
+flower
+↓
+flowe
+↓
+flow
+
+Now:
+
+flow starts with "flow"
+
+Current Prefix:
+
+flow
+Compare with "flight"
+flight does not start with "flow"
+
+Shrink:
+
+flow
+↓
+flo
+↓
+fl
+
+Now:
+
+flight starts with "fl"
+
+Current Prefix:
+
+fl
+Final Answer
+fl
+Example 2
+Input
+strs = ["dog","racecar","car"]
+Process
+prefix = dog
+↓
+do
+↓
+d
+↓
+""
+
+No common prefix exists.
+
+Output:
+
+""
+Complexity Analysis
+Time Complexity
+O(n × m)
+
+Where:
+
+n = number of strings
+m = length of the longest string
+
+In the worst case, the prefix may be shortened multiple times for every string.
+
+Space Complexity
+O(1)
+
+Only a few variables are used.
+
+Key Takeaway
+
+The core idea is:
+
+Start with the first string as the prefix.
+If another string doesn't start with it,
+keep removing characters from the end
+until it becomes a valid prefix.
+Pattern
+String Processing + Prefix Shrinking
+Final Complexity
+Metric	Complexity
+Time	O(n × m)
+Space	O(1)
