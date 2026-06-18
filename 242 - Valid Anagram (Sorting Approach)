@@ -1,0 +1,156 @@
+242 - Valid Anagram (Sorting Approach)
+Problem Statement
+
+Given two strings s and t, return true if t is an anagram of s, otherwise return false.
+
+An anagram is a word formed by rearranging the letters of another word using all the original letters exactly once.
+
+Examples
+Input: s = "anagram", t = "nagaram"
+Output: true
+Input: s = "rat", t = "car"
+Output: false
+Approach: Sorting
+Intuition
+
+If two strings are anagrams:
+
+They contain exactly the same characters.
+Their sorted forms will be identical.
+Example
+s = "anagram"
+t = "nagaram"
+
+After sorting:
+
+anagram → aaagmnr
+nagaram → aaagmnr
+
+Both become identical.
+
+Therefore:
+
+true
+Algorithm
+Check if both strings have the same length.
+If not, return false.
+Convert both strings into character arrays.
+Sort both arrays.
+Compare the sorted arrays using Arrays.equals().
+Return the result.
+Java Solution
+class Solution {
+    public boolean isAnagram(String s, String t) {
+
+        if (s.length() != t.length()) {
+            return false;
+        }
+
+        char[] S = s.toCharArray();
+        char[] T = t.toCharArray();
+
+        Arrays.sort(S);
+        Arrays.sort(T);
+
+        return Arrays.equals(S, T);
+    }
+}
+Dry Run
+Input
+s = "anagram"
+t = "nagaram"
+Step 1: Length Check
+7 == 7
+
+Continue.
+
+Step 2: Convert to Character Arrays
+S = ['a','n','a','g','r','a','m']
+T = ['n','a','g','a','r','a','m']
+Step 3: Sort Arrays
+Arrays.sort(S);
+Arrays.sort(T);
+
+Result:
+
+S = ['a','a','a','g','m','n','r']
+T = ['a','a','a','g','m','n','r']
+Step 4: Compare Arrays
+Arrays.equals(S, T)
+
+Result:
+
+true
+Example 2
+Input
+s = "rat"
+t = "car"
+Sorted Arrays
+rat → art
+car → acr
+
+Comparison:
+
+art != acr
+
+Return:
+
+false
+Important Methods Used
+toCharArray()
+
+Converts a string into a character array.
+
+String s = "abc";
+char[] arr = s.toCharArray();
+
+Output:
+
+['a','b','c']
+Arrays.sort()
+
+Sorts the character array in ascending order.
+
+char[] arr = {'c','a','b'};
+Arrays.sort(arr);
+
+Output:
+
+['a','b','c']
+Arrays.equals()
+
+Compares two arrays element by element.
+
+Arrays.equals(arr1, arr2);
+
+Returns:
+
+true  → if arrays are identical
+false → otherwise
+Complexity Analysis
+Time Complexity
+O(n log n)
+Sorting first array: O(n log n)
+Sorting second array: O(n log n)
+Comparing arrays: O(n)
+
+Overall:
+
+O(n log n)
+Space Complexity
+O(n)
+
+Extra space is used for the character arrays.
+
+Key Takeaway
+
+The core idea is:
+
+If two strings are anagrams,
+their sorted character sequences will be identical.
+Pattern
+Sorting + String Manipulation
+Final Complexity
+Metric	Complexity
+Time	O(n log n)
+Space	O(n)
