@@ -1,0 +1,136 @@
+1903 - Largest Odd Number in String
+Problem Statement
+
+Given a numeric string num, return the largest-valued odd integer (as a string) that is a non-empty substring of num.
+
+If no odd integer exists, return an empty string "".
+
+Examples
+Input:  num = "52"
+Output: "5"
+Input:  num = "4206"
+Output: ""
+Input:  num = "35427"
+Output: "35427"
+Key Observation
+
+An integer is odd if its last digit is odd.
+
+Odd digits are:
+
+1, 3, 5, 7, 9
+
+To get the largest odd substring, we should keep as many digits as possible from the beginning.
+
+Therefore:
+
+Find the rightmost odd digit.
+Return the substring from index 0 to that odd digit.
+If no odd digit exists, return "".
+Intuition
+Example 1
+num = "354270"
+
+Check digits from right:
+
+0 → even
+7 → odd
+
+Largest odd substring:
+
+35427
+Example 2
+num = "4206"
+
+All digits are even:
+
+4, 2, 0, 6
+
+No odd number can be formed.
+
+Return:
+
+""
+Algorithm
+Initialize lastOddIndex = -1.
+Traverse the string from left to right.
+Whenever an odd digit is found, update lastOddIndex.
+After traversal:
+If lastOddIndex == -1, return "".
+Otherwise return:
+num.substring(0, lastOddIndex + 1);
+Java Solution
+class Solution {
+    public String largestOddNumber(String num) {
+
+        int lastOddIndex = -1;
+
+        for (int i = 0; i < num.length(); i++) {
+
+            if ((num.charAt(i) - '0') % 2 != 0) {
+                lastOddIndex = i;
+            }
+        }
+
+        if (lastOddIndex == -1)
+            return "";
+
+        return num.substring(0, lastOddIndex + 1);
+    }
+}
+Dry Run
+Input
+num = "354270"
+Traversal
+3 → odd  → lastOddIndex = 0
+5 → odd  → lastOddIndex = 1
+4 → even
+2 → even
+7 → odd  → lastOddIndex = 4
+0 → even
+Result
+num.substring(0, 5)
+
+Output:
+
+35427
+Important Concept
+Converting Character to Integer
+num.charAt(i) - '0'
+
+Example:
+
+'7' - '0'
+= 55 - 48
+= 7
+
+This converts a digit character into its integer value.
+
+Used to check:
+
+(num.charAt(i) - '0') % 2 != 0
+
+which means:
+
+Digit is odd
+Complexity Analysis
+Time Complexity
+O(n)
+Single traversal of the string.
+Space Complexity
+O(1)
+Only a few variables are used.
+Interview Takeaway
+
+The largest odd substring must end at the rightmost odd digit.
+
+Instead of generating all substrings, simply:
+
+Find the last odd digit.
+Return the prefix ending at that position.
+Final Complexity
+Metric	Complexity
+Time	O(n)
+Space	O(1)
+
+Pattern: String Traversal + Greedy Observation.
