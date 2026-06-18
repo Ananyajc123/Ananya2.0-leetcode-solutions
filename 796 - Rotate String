@@ -1,0 +1,167 @@
+796 - Rotate String
+Problem Statement
+
+Given two strings s and goal, return true if and only if s can become goal after some number of shifts.
+
+A shift operation moves the leftmost character of s to the rightmost position.
+
+Examples
+Input:  s = "abcde", goal = "cdeab"
+Output: true
+
+Explanation:
+
+abcde
+↓
+bcdea
+↓
+cdeab
+Input:  s = "abcde", goal = "abced"
+Output: false
+
+No sequence of rotations can produce "abced".
+
+Approach: String Concatenation
+Key Observation
+
+If goal is a rotation of s, then it must appear as a substring in s + s.
+
+Example
+s = "abcde"
+
+Concatenate:
+
+s + s = "abcdeabcde"
+
+Possible rotations:
+
+abcde
+bcdea
+cdeab
+deabc
+eabcd
+
+All rotations of s are present inside:
+
+abcdeabcde
+
+Since:
+
+goal = "cdeab"
+
+is present in:
+
+abcdeabcde
+
+the answer is:
+
+true
+Algorithm
+Check if both strings have the same length.
+If not, return false.
+Concatenate the string with itself:
+s + s
+Check whether goal exists as a substring.
+Return the result.
+Java Solution
+class Solution {
+    public boolean rotateString(String s, String goal) {
+
+        if (s.length() != goal.length()) {
+            return false;
+        }
+
+        return (s + s).contains(goal);
+    }
+}
+Dry Run
+Input
+s = "abcde"
+goal = "cdeab"
+Length Check
+5 == 5
+
+Continue.
+
+Concatenate
+s + s
+=
+abcdeabcde
+Search Goal
+abcdeabcde
+  ↑
+ cdeab
+
+Found.
+
+Return:
+
+true
+Example 2
+Input
+s = "abcde"
+goal = "abced"
+Concatenate
+abcdeabcde
+
+Search:
+
+abced
+
+Not found.
+
+Return:
+
+false
+Why Does This Work?
+
+Consider:
+
+s = "waterbottle"
+
+All rotations are:
+
+waterbottle
+aterbottlew
+terbottlewa
+...
+
+When we concatenate:
+
+waterbottlewaterbottle
+
+every possible rotation appears as a contiguous substring.
+
+Therefore:
+
+goal is a rotation of s
+⇔
+goal is a substring of (s + s)
+Complexity Analysis
+Time Complexity
+O(n)
+String concatenation: O(n)
+contains() search: O(n)
+
+Overall:
+
+O(n)
+Space Complexity
+O(n)
+Extra string (s + s) of length 2n.
+Key Takeaway
+
+The crucial observation is:
+
+All rotations of a string are present
+inside the string concatenated with itself.
+
+So instead of generating every rotation, simply check:
+
+(s + s).contains(goal)
+Pattern
+String Manipulation + Rotation Trick
+Final Complexity
+Metric	Complexity
+Time	O(n)
+Space	O(n)
