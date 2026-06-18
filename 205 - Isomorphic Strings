@@ -1,0 +1,214 @@
+205 - Isomorphic Strings
+Problem Statement
+
+Given two strings s and t, determine if they are isomorphic.
+
+Two strings are isomorphic if:
+
+Characters in s can be replaced to get t.
+Each character maps to exactly one character.
+No two different characters can map to the same character.
+Examples
+Input: s = "egg", t = "add"
+Output: true
+e → a
+g → d
+Input: s = "foo", t = "bar"
+Output: false
+f → b
+o → a
+o → r   ❌
+Input: s = "ab", t = "aa"
+Output: false
+a → a
+b → a   ❌
+Approach: Last Occurrence Mapping
+Intuition
+
+Instead of storing actual character mappings, store the last occurrence position of each character.
+
+If two characters are mapped together, they must always have appeared at the same previous position.
+
+We use:
+
+int[] mapS = new int[256];
+int[] mapT = new int[256];
+mapS[ch] → last position of character in string s
+mapT[ch] → last position of character in string t
+Key Observation
+
+For every index i:
+
+if(mapS[charS] != mapT[charT])
+    return false;
+
+If the previous occurrence positions are different, the mapping pattern is broken.
+
+Therefore, the strings are not isomorphic.
+
+Algorithm
+Create two arrays of size 256.
+Traverse both strings simultaneously.
+For each character pair:
+Compare their previous occurrence positions.
+If different, return false.
+Update both arrays with the current position.
+If traversal completes, return true.
+Java Solution
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+
+        if (s == null || t == null || s.length() == 0 || t.length() == 0) {
+            return false;
+        }
+
+        int[] mapS = new int[256];
+        int[] mapT = new int[256];
+
+        for (int i = 0; i < s.length(); i++) {
+
+            char charS = s.charAt(i);
+            char charT = t.charAt(i);
+
+            if (mapS[charS] != mapT[charT]) {
+                return false;
+            }
+
+            mapS[charS] = i + 1;
+            mapT[charT] = i + 1;
+        }
+
+        return true;
+    }
+}
+Why i + 1?
+
+Arrays are initialized with:
+
+0
+
+which means:
+
+Character has not appeared yet.
+
+If we stored:
+
+mapS[charS] = i;
+
+then:
+
+Position 0
+
+and
+
+Never seen
+
+would both be represented by 0.
+
+To avoid this ambiguity, store:
+
+mapS[charS] = i + 1;
+
+Now:
+
+0 = never seen
+1 = first position
+2 = second position
+...
+Dry Run
+Input
+s = "egg"
+t = "add"
+Initial State
+mapS = all 0
+mapT = all 0
+i = 0
+e → a
+
+Check:
+
+mapS[e] = 0
+mapT[a] = 0
+
+Equal ✅
+
+Update:
+
+mapS[e] = 1
+mapT[a] = 1
+i = 1
+g → d
+
+Check:
+
+mapS[g] = 0
+mapT[d] = 0
+
+Equal ✅
+
+Update:
+
+mapS[g] = 2
+mapT[d] = 2
+i = 2
+g → d
+
+Check:
+
+mapS[g] = 2
+mapT[d] = 2
+
+Equal ✅
+
+Update:
+
+mapS[g] = 3
+mapT[d] = 3
+Result
+true
+Example Where Mapping Fails
+Input
+s = "ab"
+t = "aa"
+i = 0
+a → a
+
+Store:
+
+mapS[a] = 1
+mapT[a] = 1
+i = 1
+b → a
+
+Check:
+
+mapS[b] = 0
+mapT[a] = 1
+
+Not equal ❌
+
+Return:
+
+false
+Complexity Analysis
+Time Complexity
+O(n)
+Single traversal of both strings.
+Space Complexity
+O(1)
+Two fixed-size arrays of length 256.
+Key Takeaway
+
+The core idea is:
+
+Two characters can be mapped only if
+their previous occurrence positions are identical.
+
+Instead of storing actual mappings, we store the last seen position of each character and compare the patterns.
+
+Pattern
+Hashing / Character Mapping
+Final Complexity
+Metric	Complexity
+Time	O(n)
+Space	O(1)
