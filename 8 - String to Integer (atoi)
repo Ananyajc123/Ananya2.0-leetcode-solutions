@@ -1,0 +1,157 @@
+# LeetCode 8 - String to Integer (atoi)
+
+## Problem Statement
+
+Implement the `myAtoi(string s)` function, which converts a string to a 32-bit signed integer.
+
+The algorithm should:
+
+1. Ignore leading whitespaces.
+2. Determine the sign (`+` or `-`).
+3. Read digits until a non-digit character is encountered.
+4. Clamp the result to the 32-bit signed integer range:
+
+   * `[-2^31, 2^31 - 1]`
+   * `[-2147483648, 2147483647]`
+
+---
+
+## Approach
+
+### Step 1: Skip Leading Spaces
+
+Traverse the string until the first non-space character is found.
+
+### Step 2: Determine Sign
+
+* If the character is `+`, the number is positive.
+* If the character is `-`, the number is negative.
+* Otherwise, assume the number is positive.
+
+### Step 3: Extract Digits
+
+Continue reading characters while they are digits and build the number.
+
+### Step 4: Handle Overflow
+
+Use a `long` variable to store the intermediate result.
+If the value exceeds the 32-bit integer range:
+
+* Return `Integer.MAX_VALUE` for positive overflow.
+* Return `Integer.MIN_VALUE` for negative overflow.
+
+### Step 5: Return Result
+
+Multiply the result by its sign and return it as an integer.
+
+---
+
+## Code
+
+```java
+class Solution {
+    public int myAtoi(String s) {
+
+        if (s == null || s.length() == 0)
+            return 0;
+
+        final int INT_MAX = Integer.MAX_VALUE;
+        final int INT_MIN = Integer.MIN_VALUE;
+
+        int i = 0;
+        int n = s.length();
+
+        while (i < n && s.charAt(i) == ' ') {
+            i++;
+        }
+
+        if (i == n) {
+            return 0;
+        }
+
+        int sign = 1;
+
+        if (s.charAt(i) == '+') {
+            i++;
+        } else if (s.charAt(i) == '-') {
+            sign = -1;
+            i++;
+        }
+
+        long res = 0;
+
+        while (i < n && Character.isDigit(s.charAt(i))) {
+
+            int digit = s.charAt(i) - '0';
+
+            res = res * 10 + digit;
+
+            if (sign * res <= INT_MIN) {
+                return INT_MIN;
+            } else if (sign * res >= INT_MAX) {
+                return INT_MAX;
+            }
+
+            i++;
+        }
+
+        return (int) (res * sign);
+    }
+}
+```
+
+---
+
+## Dry Run
+
+### Input
+
+```
+s = "   -42"
+```
+
+### Process
+
+```
+Skip spaces
+Sign = -1
+Read digits: 4, 2
+res = 42
+Return -42
+```
+
+### Output
+
+```
+-42
+```
+
+---
+
+## Complexity Analysis
+
+### Time Complexity
+
+```
+O(n)
+```
+
+The string is traversed at most once.
+
+### Space Complexity
+
+```
+O(1)
+```
+
+Only a few variables are used.
+
+---
+
+## Key Takeaways
+
+* Skip leading whitespaces before processing.
+* Handle optional '+' and '-' signs.
+* Read digits until a non-digit character appears.
+* Use a `long` variable to safely detect overflow.
+* Clamp values within the 32-bit signed integer range.
