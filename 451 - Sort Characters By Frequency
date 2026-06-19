@@ -1,0 +1,99 @@
+451 - Sort Characters By Frequency
+Problem Statement
+
+Given a string s, sort it in decreasing order based on the frequency of characters and return the resulting string.
+
+Example
+
+Input:
+
+s = "tree"
+
+Output:
+
+"eert"
+
+Explanation:
+
+e appears 2 times.
+t and r appear 1 time each.
+Characters with higher frequency should appear first.
+Approach: HashMap + Max Heap (Priority Queue)
+Intuition
+Count the frequency of each character using a HashMap.
+Store all unique characters in a Max Heap (PriorityQueue) ordered by their frequencies.
+Repeatedly remove the character with the highest frequency and append it to the result string.
+Algorithm
+Traverse the string and store character frequencies in a HashMap.
+Create a Max Heap that sorts characters based on their frequency.
+Insert all unique characters into the heap.
+While the heap is not empty:
+Extract the character with the highest frequency.
+Append it to the result string as many times as its frequency.
+Return the final string.
+Code
+class Solution {
+    public String frequencySort(String s) {
+
+        HashMap<Character, Integer> map = new HashMap<>();
+
+        for (char ch : s.toCharArray()) {
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+        }
+
+        PriorityQueue<Character> pq =
+                new PriorityQueue<>((a, b) -> map.get(b) - map.get(a));
+
+        pq.addAll(map.keySet());
+
+        StringBuilder ans = new StringBuilder();
+
+        while (!pq.isEmpty()) {
+            char ch = pq.poll();
+            int freq = map.get(ch);
+
+            for (int i = 0; i < freq; i++) {
+                ans.append(ch);
+            }
+        }
+
+        return ans.toString();
+    }
+}
+Dry Run
+Input
+s = "tree"
+Frequency Map
+t → 1
+r → 1
+e → 2
+Max Heap Order
+e, t, r
+Result Construction
+Poll e → "ee"
+Poll t → "eet"
+Poll r → "eetr"
+Output
+"eetr"
+Complexity Analysis
+Time Complexity
+Building frequency map: O(n)
+Heap insertion/removal: O(k log k)
+Building result string: O(n)
+
+Overall: O(n + k log k)
+
+Where:
+
+n = length of string
+k = number of unique characters
+Space Complexity
+HashMap: O(k)
+Priority Queue: O(k)
+
+Overall: O(k)
+
+Key Takeaway
+Use a HashMap to count character frequencies.
+Use a Max Heap (Priority Queue) to always retrieve the character with the highest frequency.
+Efficiently builds the answer in descending frequency order.
