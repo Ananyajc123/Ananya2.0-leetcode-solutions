@@ -1,0 +1,73 @@
+1781. Sum of Beauty of All Substrings
+Problem Statement
+
+Given a string s, the beauty of a substring is defined as the difference between the highest and lowest frequency of characters present in that substring.
+
+Return the sum of beauty values of all possible substrings.
+
+Approach
+Iterate through each index i as the starting point of a substring.
+Maintain a frequency array freq[26] for lowercase English letters.
+Extend the substring one character at a time using index j.
+Update the frequency of the newly added character.
+For every substring, find:
+maxFreq = maximum character frequency
+minFreq = minimum non-zero character frequency
+Compute beauty as maxFreq - minFreq.
+Add the beauty value to the final answer.
+Algorithm
+Initialize ans = 0.
+For each starting index i:
+Create a frequency array of size 26.
+For each ending index j from i to n-1:
+Increment the frequency of s.charAt(j).
+Traverse the frequency array to find:
+Maximum frequency
+Minimum non-zero frequency
+Add (maxFreq - minFreq) to ans.
+Return ans.
+Code Logic
+for (int i = 0; i < n; i++)
+Fixes the starting index of the substring.
+for (int j = i; j < n; j++)
+Expands the substring by moving the ending index.
+freq[s.charAt(j) - 'a']++;
+Updates the frequency of the current character.
+if (freq[k] > 0)
+Considers only characters that appear in the substring.
+maxFreq = Math.max(maxFreq, freq[k]);
+minFreq = Math.min(minFreq, freq[k]);
+Finds the maximum and minimum non-zero frequencies.
+ans += (maxFreq - minFreq);
+Adds the beauty of the current substring to the result.
+Example
+
+Input:
+
+s = "aabcb"
+
+Substrings with non-zero beauty:
+
+"aab"   -> 1
+"aabc"  -> 1
+"aabcb" -> 1
+"abcb"  -> 1
+"bcb"   -> 1
+
+Total Beauty:
+
+1 + 1 + 1 + 1 + 1 = 5
+
+Output:
+
+5
+Complexity Analysis
+Time Complexity: O(n² × 26) ≈ O(n²)
+Two nested loops generate all substrings.
+Frequency array of size 26 is scanned for each substring.
+Space Complexity: O(26) ≈ O(1)
+Uses a fixed-size frequency array.
+Key Learning
+Use a frequency array to maintain character counts efficiently while expanding substrings.
+Ignore characters with zero frequency when calculating the minimum frequency.
+Since the alphabet size is fixed (26), scanning the frequency array is effectively constant time.
