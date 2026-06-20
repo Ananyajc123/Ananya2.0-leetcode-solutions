@@ -1,0 +1,172 @@
+5. Longest Palindromic Substring
+Java Solution
+class Solution {
+    int start = 0;
+    int maxlen = 0;
+
+    public String longestPalindrome(String s) {
+
+        if (s == null || s.length() < 1) {
+            return "";
+        }
+
+        for (int i = 0; i < s.length(); i++) {
+
+            // Odd length palindrome
+            expand(s, i, i);
+
+            // Even length palindrome
+            expand(s, i, i + 1);
+        }
+
+        return s.substring(start, start + maxlen);
+    }
+
+    public void expand(String s, int left, int right) {
+
+        while (left >= 0 &&
+               right < s.length() &&
+               s.charAt(left) == s.charAt(right)) {
+
+            left--;
+            right++;
+        }
+
+        int len = right - left - 1;
+
+        if (len > maxlen) {
+            maxlen = len;
+            start = left + 1;
+        }
+    }
+}
+Problem Statement
+
+Given a string s, return the longest palindromic substring present in the string.
+
+A palindrome is a string that reads the same forward and backward.
+
+Approach: Expand Around Center
+Key Idea
+
+Every palindrome has a center.
+
+There are two possible palindrome types:
+
+1. Odd Length Palindrome
+aba
+ ^
+
+Center is a single character.
+
+2. Even Length Palindrome
+abba
+ ^^
+
+Center lies between two characters.
+
+For every index:
+
+Expand around (i, i) for odd-length palindromes.
+Expand around (i, i + 1) for even-length palindromes.
+Track the longest palindrome found.
+Algorithm
+Initialize:
+start = 0
+maxlen = 0
+Iterate through each character of the string.
+Expand around:
+(i, i) → Odd palindrome.
+(i, i + 1) → Even palindrome.
+While characters match:
+Move left pointer left.
+Move right pointer right.
+Calculate palindrome length.
+Update longest palindrome if current length is larger.
+Return substring from start to start + maxlen.
+Dry Run
+Input
+s = "babad"
+i = 0
+
+Odd palindrome:
+
+b
+
+Length = 1
+
+i = 1
+
+Expand around center:
+
+bab
+
+Length = 3
+
+Update:
+
+start = 0
+maxlen = 3
+i = 2
+
+Expand around center:
+
+aba
+
+Length = 3
+
+Same length, no update.
+
+Remaining Centers
+
+No longer palindrome found.
+
+Result
+s.substring(0, 3)
+
+Output:
+
+"bab"
+Example 2
+Input
+s = "cbbd"
+Expansion
+c b b d
+  ↑ ↑
+
+Even-length palindrome:
+
+bb
+
+Length = 2
+
+Output:
+
+"bb"
+Complexity Analysis
+Time Complexity
+For every index, expansion can take up to O(n) time.
+Total:
+O(n²)
+Space Complexity
+O(1)
+
+No extra data structures are used.
+
+Key Learning
+Every palindrome can be expanded from its center.
+Check both odd and even length palindromes.
+Use two pointers (left, right) to expand outward.
+Keep track of the starting index and maximum length of the longest palindrome found.
+GitHub Notes
+
+Approach: Expand Around Center
+
+Treat every character as the center of an odd-length palindrome.
+Treat every pair of adjacent characters as the center of an even-length palindrome.
+Expand outward while characters match.
+Update the longest palindrome whenever a larger palindrome is found.
+Return the substring using the stored starting index and maximum length.
+
+Time Complexity: O(n²)
+Space Complexity: O(1)
