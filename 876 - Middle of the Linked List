@@ -1,0 +1,60 @@
+876 - Middle of the Linked List
+Problem
+
+Given the head of a singly linked list, return the middle node of the linked list. If there are two middle nodes, return the second middle node.
+
+Intuition
+
+Use two pointers:
+
+Slow Pointer moves one step at a time.
+Fast Pointer moves two steps at a time.
+
+When the fast pointer reaches the end of the list, the slow pointer will be at the middle.
+
+Algorithm
+Initialize slow and fast to head.
+Traverse the list while fast != null and fast.next != null.
+Move:
+slow = slow.next
+fast = fast.next.next
+Return slow.
+Code
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        return slow;
+    }
+}
+Dry Run
+1 -> 2 -> 3 -> 4 -> 5
+
+Initial:
+slow = 1, fast = 1
+
+Move 1:
+slow = 2, fast = 3
+
+Move 2:
+slow = 3, fast = 5
+
+fast reaches end
+Answer = 3
+Complexity Analysis
+Time Complexity: O(n)
+Space Complexity: O(1)
+Key Learning
+
+The Slow-Fast Pointer technique is commonly used for:
+
+Finding the middle node
+Detecting cycles
+Finding cycle starting point
+Happy Number problem
