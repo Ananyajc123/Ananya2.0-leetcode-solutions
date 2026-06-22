@@ -1,0 +1,173 @@
+234 - Palindrome Linked List
+Problem Statement
+
+Given the head of a singly linked list, return true if the linked list is a palindrome, otherwise return false.
+
+A palindrome reads the same forward and backward.
+
+Example
+Input:  1 -> 2 -> 2 -> 1
+Output: true
+
+Input:  1 -> 2
+Output: false
+Approach
+
+The optimal solution uses three steps:
+
+1. Find the Middle of the Linked List
+
+Use the Slow and Fast Pointer technique.
+
+slow moves one step.
+fast moves two steps.
+
+When the loop ends, slow will be at the middle of the list.
+
+while (fast != null && fast.next != null) {
+    slow = slow.next;
+    fast = fast.next.next;
+}
+2. Reverse the Second Half
+
+Starting from slow, reverse the remaining part of the linked list.
+
+ListNode prev = null;
+
+while (slow != null) {
+    ListNode next = slow.next;
+    slow.next = prev;
+    prev = slow;
+    slow = next;
+}
+
+After reversal, prev becomes the head of the reversed second half.
+
+3. Compare Both Halves
+
+Use two pointers:
+
+left starts from the head.
+right starts from the reversed second half.
+
+Compare values one by one.
+
+while (right != null) {
+
+    if (left.val != right.val) {
+        return false;
+    }
+
+    left = left.next;
+    right = right.next;
+}
+
+If all values match, the linked list is a palindrome.
+
+Algorithm
+Handle edge cases (null or single node).
+Find the middle using slow and fast pointers.
+Reverse the second half of the list.
+Compare the first half with the reversed second half.
+If any mismatch occurs, return false.
+Otherwise, return true.
+Code
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+
+        if (head == null || head.next == null) {
+            return true;
+        }
+
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        ListNode prev = null;
+
+        while (slow != null) {
+            ListNode next = slow.next;
+            slow.next = prev;
+            prev = slow;
+            slow = next;
+        }
+
+        ListNode left = head;
+        ListNode right = prev;
+
+        while (right != null) {
+
+            if (left.val != right.val) {
+                return false;
+            }
+
+            left = left.next;
+            right = right.next;
+        }
+
+        return true;
+    }
+}
+Dry Run
+Input
+1 -> 2 -> 2 -> 1
+Find Middle
+slow = third node (2)
+Reverse Second Half
+2 -> 1
+
+becomes
+
+1 -> 2
+Compare
+1 == 1 ✓
+2 == 2 ✓
+
+All values match.
+
+return true;
+Complexity Analysis
+Complexity	Value
+Time Complexity	O(n)
+Space Complexity	O(1)
+Key Concepts Used
+Slow & Fast Pointer
+slow = slow.next;
+fast = fast.next.next;
+
+Used to find the middle node.
+
+Reverse Linked List
+next = slow.next;
+slow.next = prev;
+prev = slow;
+slow = next;
+
+Used to reverse the second half.
+
+Two Pointer Comparison
+left = head;
+right = prev;
+
+Used to compare both halves efficiently.
+
+Pattern Learned
+
+This problem is a combination of:
+
+LeetCode 876 – Middle of the Linked List
+LeetCode 206 – Reverse Linked List
+Two Pointer Comparison
+Key Takeaway
+
+To check if a linked list is a palindrome:
+
+Find the middle.
+Reverse the second half.
+Compare both halves.
+
+This achieves O(n) time and O(1) extra space, making it the optimal solution.
