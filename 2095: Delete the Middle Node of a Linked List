@@ -1,0 +1,154 @@
+2095: Delete the Middle Node of a Linked List
+Problem Statement
+
+Given the head of a singly linked list, delete the middle node and return the head of the modified linked list.
+
+For an odd-length list, the middle node is the exact center.
+For an even-length list, the second middle node is considered the middle.
+Examples
+Input:  1 -> 3 -> 4 -> 7 -> 1 -> 2 -> 6
+Output: 1 -> 3 -> 4 -> 1 -> 2 -> 6
+Input:  1 -> 2 -> 3 -> 4
+Output: 1 -> 2 -> 4
+Intuition
+
+To delete the middle node efficiently:
+
+Use Slow and Fast Pointers to find the middle node.
+Maintain a prev pointer to track the node before the middle.
+Once the middle node is found, skip it by updating the next pointer of prev.
+
+This avoids calculating the length of the linked list separately.
+
+Approach
+Step 1: Handle Edge Case
+
+If the list contains only one node, deleting the middle node results in an empty list.
+
+if (head == null || head.next == null) {
+    return null;
+}
+Step 2: Initialize Pointers
+ListNode slow = head;
+ListNode fast = head;
+ListNode prev = null;
+slow moves one step at a time.
+fast moves two steps at a time.
+prev stores the node before slow.
+Step 3: Find the Middle Node
+while (fast != null && fast.next != null) {
+    prev = slow;
+    slow = slow.next;
+    fast = fast.next.next;
+}
+
+When the loop ends:
+
+slow points to the middle node.
+prev points to the node just before the middle.
+Step 4: Delete the Middle Node
+prev.next = slow.next;
+
+This bypasses the middle node and removes it from the linked list.
+
+Step 5: Return the Head
+return head;
+Code
+class Solution {
+    public ListNode deleteMiddle(ListNode head) {
+
+        if (head == null || head.next == null) {
+            return null;
+        }
+
+        ListNode slow = head;
+        ListNode fast = head;
+        ListNode prev = null;
+
+        while (fast != null && fast.next != null) {
+            prev = slow;
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        prev.next = slow.next;
+
+        return head;
+    }
+}
+Dry Run
+Input
+1 -> 2 -> 3 -> 4 -> 5
+Initial State
+prev = null
+slow = 1
+fast = 1
+Iteration 1
+prev = 1
+slow = 2
+fast = 3
+Iteration 2
+prev = 2
+slow = 3
+fast = 5
+
+Loop ends.
+
+prev = 2
+slow = 3 (middle node)
+
+Delete middle:
+
+2 -> 3 -> 4
+
+becomes
+
+2 -----> 4
+
+Result:
+
+1 -> 2 -> 4 -> 5
+Complexity Analysis
+Time Complexity
+O(n)
+
+The linked list is traversed only once.
+
+Space Complexity
+O(1)
+
+Only a few pointers are used.
+
+Key Concepts Learned
+Slow & Fast Pointer Technique
+slow = slow.next;
+fast = fast.next.next;
+
+Used to find the middle node efficiently.
+
+Node Deletion
+prev.next = slow.next;
+
+Removes a node by bypassing it.
+
+Pattern Learned
+
+Find Middle + Delete Node
+
+Find the middle node using slow and fast pointers.
+Keep track of the previous node.
+Skip the middle node using pointer manipulation.
+
+This pattern is commonly used in linked list problems involving:
+
+Finding the middle node
+Deleting specific nodes
+Fast and slow pointer traversal
+Takeaway
+
+The optimal solution uses the Slow & Fast Pointer technique to locate the middle node in a single traversal and deletes it using pointer manipulation.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+This is the standard and most efficient solution for LeetCode 2095.
