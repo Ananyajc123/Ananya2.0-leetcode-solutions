@@ -1,0 +1,206 @@
+2: Add Two Numbers
+Problem Statement
+
+You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each node contains a single digit.
+
+Return the sum as a linked list.
+
+Examples
+Input:
+l1 = 2 -> 4 -> 3
+l2 = 5 -> 6 -> 4
+
+Output:
+7 -> 0 -> 8
+
+Explanation:
+
+342 + 465 = 807
+
+Result:
+7 -> 0 -> 8
+Intuition
+
+The linked lists represent numbers in reverse order, so we can directly add corresponding digits from left to right while maintaining a carry.
+
+This is similar to elementary addition:
+
+  342
++ 465
+-----
+  807
+
+We process one digit at a time and carry any overflow to the next position.
+
+Approach
+Step 1: Create a Dummy Node
+
+A dummy node helps simplify result list construction.
+
+ListNode dummy = new ListNode(0);
+ListNode curr = dummy;
+Step 2: Maintain a Carry
+int carry = 0;
+
+The carry stores overflow from the previous addition.
+
+Example:
+
+8 + 7 = 15
+
+digit = 5
+carry = 1
+Step 3: Traverse Both Lists
+
+Continue while:
+
+while (l1 != null || l2 != null || carry != 0)
+
+We continue if:
+
+Nodes remain in l1
+Nodes remain in l2
+A carry still exists
+Step 4: Extract Values
+int x = (l1 != null) ? l1.val : 0;
+int y = (l2 != null) ? l2.val : 0;
+
+If one list ends before the other, treat its value as 0.
+
+Step 5: Compute Sum and Carry
+int sum = x + y + carry;
+
+carry = sum / 10;
+
+Example:
+
+sum = 15
+
+digit = 5
+carry = 1
+Step 6: Store Current Digit
+curr.next = new ListNode(sum % 10);
+
+sum % 10 gives the current digit.
+
+Step 7: Move Pointers
+curr = curr.next;
+
+if (l1 != null) l1 = l1.next;
+if (l2 != null) l2 = l2.next;
+
+Continue until all digits are processed.
+
+Code
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+
+        ListNode dummy = new ListNode(0);
+        ListNode curr = dummy;
+
+        int carry = 0;
+
+        while (l1 != null || l2 != null || carry != 0) {
+
+            int x = (l1 != null) ? l1.val : 0;
+            int y = (l2 != null) ? l2.val : 0;
+
+            int sum = x + y + carry;
+
+            carry = sum / 10;
+
+            curr.next = new ListNode(sum % 10);
+            curr = curr.next;
+
+            if (l1 != null) l1 = l1.next;
+            if (l2 != null) l2 = l2.next;
+        }
+
+        return dummy.next;
+    }
+}
+Dry Run
+Input
+l1 = 2 -> 4 -> 3
+l2 = 5 -> 6 -> 4
+Iteration 1
+2 + 5 + 0 = 7
+
+digit = 7
+carry = 0
+
+Result:
+
+7
+Iteration 2
+4 + 6 + 0 = 10
+
+digit = 0
+carry = 1
+
+Result:
+
+7 -> 0
+Iteration 3
+3 + 4 + 1 = 8
+
+digit = 8
+carry = 0
+
+Result:
+
+7 -> 0 -> 8
+Complexity Analysis
+Time Complexity
+O(max(m, n))
+
+Where:
+
+m = length of first linked list
+n = length of second linked list
+
+Each node is processed exactly once.
+
+Space Complexity
+O(max(m, n))
+
+Space is used for the resulting linked list.
+
+Key Concepts Learned
+Dummy Node
+ListNode dummy = new ListNode(0);
+
+Helps simplify linked list construction.
+
+Carry Handling
+carry = sum / 10;
+
+Stores overflow for the next digit.
+
+Current Digit
+sum % 10
+
+Extracts the digit to be stored in the current node.
+
+Pattern Learned
+
+Linked List Construction + Carry Propagation
+
+Traverse both linked lists simultaneously.
+Add corresponding digits and carry.
+Create new nodes for the result.
+Propagate carry to the next iteration.
+
+This pattern is useful in:
+
+LeetCode 2 – Add Two Numbers
+LeetCode 445 – Add Two Numbers II
+Arithmetic operations using linked lists
+Takeaway
+
+The optimal solution simulates digit-by-digit addition while maintaining a carry and constructing the answer using a dummy node.
+
+Time Complexity: O(max(m, n))
+Space Complexity: O(max(m, n))
+
+This is the standard interview solution for LeetCode 2.
