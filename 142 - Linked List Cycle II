@@ -1,0 +1,197 @@
+142 - Linked List Cycle II
+Problem Statement
+
+Given the head of a linked list, return the node where the cycle begins. If there is no cycle, return null.
+
+Approach: Floyd's Cycle Detection Algorithm
+
+This problem is solved in two phases:
+
+Phase 1: Detect Cycle
+
+Use two pointers:
+
+Slow Pointer → moves 1 step at a time.
+Fast Pointer → moves 2 steps at a time.
+
+If slow == fast, a cycle exists.
+
+slow = slow.next;
+fast = fast.next.next;
+Phase 2: Find the Starting Node of the Cycle
+
+Once a meeting point is found:
+
+Create a new pointer start at head.
+Keep slow at the meeting point.
+Move both pointers one step at a time.
+The node where they meet is the cycle starting node.
+ListNode start = head;
+
+while (start != slow) {
+    start = start.next;
+    slow = slow.next;
+}
+
+Return:
+
+return start;
+Why Does while(start != slow) Work?
+
+After slow and fast meet inside the cycle:
+
+Distance from head to cycle start
+Distance from meeting point to cycle start
+
+Therefore:
+
+One pointer starts from head
+One pointer starts from the meeting point
+
+Moving both one step at a time guarantees that they will meet exactly at the cycle entry node.
+
+Example
+1 → 2 → 3 → 4 → 5
+    ↑       ↓
+    ← ← ← ←
+
+Meeting Point:
+
+slow = 5
+
+Initialize:
+
+start = 1
+slow  = 5
+
+Move both:
+
+start = 2
+slow  = 2
+
+They meet at node 2, which is the start of the cycle.
+
+Algorithm
+
+Initialize:
+
+slow = head
+fast = head
+
+Detect cycle:
+
+while(fast != null && fast.next != null)
+
+Move pointers:
+
+slow = slow.next
+fast = fast.next.next
+
+If:
+
+slow == fast
+
+cycle exists.
+
+Set:
+
+ListNode start = head;
+
+Move both pointers one step:
+
+while(start != slow)
+
+Return:
+
+start
+
+If no cycle exists:
+
+return null;
+Code
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.next != null) {
+
+            slow = slow.next;
+            fast = fast.next.next;
+
+            if (slow == fast) {
+
+                ListNode start = head;
+
+                while (start != slow) {
+                    start = start.next;
+                    slow = slow.next;
+                }
+
+                return start;
+            }
+        }
+
+        return null;
+    }
+}
+Dry Run
+Input
+1 → 2 → 3 → 4 → 5
+    ↑       ↓
+    ← ← ← ←
+Phase 1
+slow = 1, fast = 1
+
+slow = 2, fast = 3
+slow = 3, fast = 5
+slow = 4, fast = 3
+slow = 5, fast = 5
+
+Cycle detected.
+
+Phase 2
+start = 1
+slow  = 5
+
+Move both:
+
+start = 2
+slow  = 2
+
+Meet at node 2.
+
+Return node 2.
+
+Complexity Analysis
+Complexity	Value
+Time Complexity	O(n)
+Space Complexity	O(1)
+Key Patterns Learned
+Detect Cycle
+slow = slow.next;
+fast = fast.next.next;
+
+if (slow == fast)
+Find Cycle Entry
+ListNode start = head;
+
+while (start != slow) {
+    start = start.next;
+    slow = slow.next;
+}
+Interview Takeaways
+Extension of LeetCode 141 (Linked List Cycle).
+Uses Floyd's Tortoise and Hare Algorithm.
+No extra space required.
+Important concept: after detecting a cycle, moving one pointer from head and one from the meeting point leads both to the cycle start.
+Related Problems
+LeetCode 141 – Linked List Cycle
+LeetCode 876 – Middle of the Linked List
+LeetCode 206 – Reverse Linked List
+Find Duplicate Number
+Happy Number
+Pattern Learned
+
+Slow & Fast Pointer Technique + Cycle Entry Detection.
