@@ -1,0 +1,160 @@
+160: Intersection of Two Linked Lists
+Problem Statement
+
+Given the heads of two singly linked lists headA and headB, return the node at which the two lists intersect. If the two linked lists have no intersection, return null.
+
+Example
+List A: 4 -> 1 \
+               8 -> 4 -> 5
+List B:    5 -> 6 -> 1 /
+
+Output:
+
+8
+Intuition
+
+The two linked lists may have different lengths before they reach the common intersection part.
+
+Instead of calculating lengths separately, we use two pointers:
+
+pA starts from headA
+pB starts from headB
+
+When a pointer reaches the end of its list, redirect it to the head of the other list.
+
+This ensures both pointers travel the same total distance:
+
+LengthA + LengthB
+
+As a result:
+
+If an intersection exists, they meet at the intersection node.
+If no intersection exists, both pointers become null at the same time.
+Approach
+Step 1: Initialize Two Pointers
+ListNode pA = headA;
+ListNode pB = headB;
+Step 2: Traverse Until Both Pointers Meet
+while (pA != pB)
+
+Continue moving both pointers until they point to the same node.
+
+Step 3: Switch Lists When Reaching the End
+pA = (pA == null) ? headB : pA.next;
+pB = (pB == null) ? headA : pB.next;
+If pA reaches the end of List A, start traversing List B.
+If pB reaches the end of List B, start traversing List A.
+
+This equalizes the distance traveled by both pointers.
+
+Step 4: Return the Intersection Node
+return pA;
+
+At this point:
+
+pA and pB are either at the intersection node
+or both are null
+Code
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+
+        ListNode pA = headA;
+        ListNode pB = headB;
+
+        while (pA != pB) {
+
+            pA = (pA == null) ? headB : pA.next;
+            pB = (pB == null) ? headA : pB.next;
+        }
+
+        return pA;
+    }
+}
+Dry Run
+Input
+A: 4 -> 1 -> 8 -> 4 -> 5
+B: 5 -> 6 -> 1 -> 8 -> 4 -> 5
+Initial State
+pA = 4
+pB = 5
+Traversal
+pA: 4 -> 1 -> 8 -> 4 -> 5 -> null -> 5 -> 6 -> 1 -> 8
+pB: 5 -> 6 -> 1 -> 8 -> 4 -> 5 -> null -> 4 -> 1 -> 8
+
+Eventually:
+
+pA = 8
+pB = 8
+
+Both pointers meet at the intersection node.
+
+Return:
+
+8
+Why This Works
+
+Suppose:
+
+LengthA = a + c
+LengthB = b + c
+
+Where:
+
+a = unique part of List A
+b = unique part of List B
+c = common intersection part
+
+After switching lists:
+
+Pointer A travels: a + c + b
+Pointer B travels: b + c + a
+
+Both pointers travel the same distance, so they align at the intersection node.
+
+Complexity Analysis
+Time Complexity
+O(m + n)
+
+Where:
+
+m = length of List A
+n = length of List B
+Space Complexity
+O(1)
+
+No extra data structures are used.
+
+Key Concepts Learned
+Two Pointer Technique
+pA = (pA == null) ? headB : pA.next;
+pB = (pB == null) ? headA : pB.next;
+
+Used to equalize traversal lengths.
+
+Reference Comparison
+while (pA != pB)
+
+We compare node references (memory addresses), not node values.
+
+Pattern Learned
+
+Two Pointer Switching Technique
+
+Start pointers at different linked lists.
+Traverse normally.
+Switch to the other list when reaching the end.
+Meet at the intersection node.
+
+This pattern is useful in problems involving:
+
+Linked list intersections
+Equalizing path lengths
+Pointer synchronization
+Takeaway
+
+The optimal solution avoids computing lengths explicitly. By allowing each pointer to traverse both linked lists, both pointers travel the same total distance and naturally meet at the intersection node.
+
+Time Complexity: O(m + n)
+Space Complexity: O(1)
+
+This is the most elegant and commonly asked interview solution for LeetCode 160.
