@@ -1,0 +1,160 @@
+19: Remove Nth Node From End of List
+Problem Statement
+
+Given the head of a linked list, remove the nth node from the end of the list and return the modified head.
+
+Examples
+Input: head = [1,2,3,4,5], n = 2
+Output: [1,2,3,5]
+Input: head = [1], n = 1
+Output: []
+Intuition
+
+Instead of calculating the length of the linked list first, we can use the Two Pointer (Fast & Slow Pointer) technique.
+
+The idea is to maintain a gap of n + 1 nodes between the fast and slow pointers.
+
+When the fast pointer reaches the end of the list:
+
+The slow pointer will be positioned just before the node that needs to be removed.
+
+This allows us to delete the target node in a single traversal.
+
+Approach
+Step 1: Create a Dummy Node
+
+A dummy node simplifies edge cases, especially when the head node needs to be removed.
+
+ListNode dummy = new ListNode(0);
+dummy.next = head;
+
+Example:
+
+dummy -> 1 -> 2 -> 3 -> 4 -> 5
+Step 2: Initialize Fast and Slow Pointers
+ListNode fast = dummy;
+ListNode slow = dummy;
+
+Both pointers start at the dummy node.
+
+Step 3: Move Fast Pointer Ahead
+
+Move the fast pointer n + 1 steps ahead.
+
+for(int i = 0; i <= n; i++) {
+    fast = fast.next;
+}
+
+This creates a fixed gap between fast and slow.
+
+Step 4: Move Both Pointers Together
+while(fast != null) {
+    fast = fast.next;
+    slow = slow.next;
+}
+
+When fast reaches null, slow will be just before the node to remove.
+
+Step 5: Remove the Target Node
+slow.next = slow.next.next;
+
+This skips the target node and removes it from the list.
+
+Step 6: Return the Updated Head
+return dummy.next;
+Code
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+
+        ListNode fast = dummy;
+        ListNode slow = dummy;
+
+        for(int i = 0; i <= n; i++) {
+            fast = fast.next;
+        }
+
+        while(fast != null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+
+        slow.next = slow.next.next;
+
+        return dummy.next;
+    }
+}
+Dry Run
+Input
+1 -> 2 -> 3 -> 4 -> 5
+n = 2
+Move Fast Pointer
+dummy -> 1 -> 2 -> 3 -> 4 -> 5
+slow
+                     fast
+Move Both Pointers
+fast reaches null
+slow reaches node 3
+Delete Node
+3 -> 4 -> 5
+
+slow.next = slow.next.next
+
+3 -------> 5
+
+Result:
+
+1 -> 2 -> 3 -> 5
+Complexity Analysis
+Time Complexity
+O(n)
+
+The linked list is traversed only once.
+
+Space Complexity
+O(1)
+
+Only a few pointers are used.
+
+Key Concepts Learned
+Dummy Node
+ListNode dummy = new ListNode(0);
+dummy.next = head;
+
+Helps handle deletion of the head node without additional conditions.
+
+Fast & Slow Pointer
+fast = fast.next;
+slow = slow.next;
+
+Maintains a fixed distance between pointers.
+
+Node Deletion
+slow.next = slow.next.next;
+
+Removes a node by bypassing it.
+
+Pattern Learned
+
+Fast & Slow Pointer with Fixed Gap
+
+Move fast pointer ahead by n + 1 steps.
+Move both pointers together.
+Slow pointer reaches the node before the target.
+Delete the target node.
+
+This pattern is commonly used in linked list problems involving:
+
+Finding nodes from the end
+Removing nodes
+Maintaining a fixed distance between pointers
+Takeaway
+
+The optimal solution uses a dummy node and a fixed-gap fast/slow pointer technique to remove the nth node from the end in a single traversal.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+This is the standard interview solution for LeetCode 19.
