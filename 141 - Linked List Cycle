@@ -1,0 +1,122 @@
+141 - Linked List Cycle
+Problem Statement
+
+Given the head of a linked list, determine whether the linked list contains a cycle.
+
+A cycle exists if a node can be reached again by continuously following the next pointer.
+
+Approach: Floyd's Cycle Detection Algorithm (Tortoise and Hare)
+Intuition
+
+Use two pointers:
+
+Slow Pointer → moves one step at a time.
+Fast Pointer → moves two steps at a time.
+
+If the linked list contains a cycle, the fast pointer will eventually catch up to the slow pointer inside the cycle.
+
+If there is no cycle, the fast pointer will reach null.
+
+Algorithm
+
+Initialize:
+
+ListNode slow = head;
+ListNode fast = head;
+
+Traverse while:
+
+fast != null && fast.next != null
+
+Move pointers:
+
+slow = slow.next;
+fast = fast.next.next;
+
+If:
+
+slow == fast
+
+return true.
+
+If the loop ends, return false.
+Code
+class Solution {
+    public boolean hasCycle(ListNode head) {
+
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.next != null) {
+
+            slow = slow.next;
+            fast = fast.next.next;
+
+            if (slow == fast) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+Dry Run
+Input
+1 → 2 → 3 → 4
+    ↑       ↓
+    ← ← ← ←
+Iteration 1
+slow = 2
+fast = 3
+Iteration 2
+slow = 3
+fast = 2
+Iteration 3
+slow = 4
+fast = 4
+
+Both pointers meet.
+
+return true;
+Why This Works
+
+Inside a cycle:
+
+Slow pointer speed = 1 node/step
+Fast pointer speed = 2 nodes/step
+
+The distance between them decreases by 1 node every iteration.
+
+Eventually, the fast pointer catches the slow pointer, proving that a cycle exists.
+
+If no cycle exists, the fast pointer reaches the end (null).
+
+Complexity Analysis
+Complexity	Value
+Time	O(n)
+Space	O(1)
+Key Pattern
+slow = slow.next;
+fast = fast.next.next;
+
+if (slow == fast) {
+    return true;
+}
+Interview Takeaways
+Classic Slow & Fast Pointer problem.
+Also known as Floyd's Cycle Detection Algorithm.
+No extra data structures are required.
+More efficient than using a HashSet because it uses constant space.
+Related Problems
+LeetCode 876 – Middle of the Linked List
+LeetCode 142 – Linked List Cycle II
+Happy Number
+Find the Duplicate Number
+Pattern Learned
+
+Fast and Slow Pointer Technique
+
+Find middle node
+Detect cycles
+Find cycle starting point
+Solve circular traversal problems efficiently.
