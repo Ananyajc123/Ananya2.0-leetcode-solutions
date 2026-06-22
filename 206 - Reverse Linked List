@@ -1,0 +1,96 @@
+206 - Reverse Linked List
+Problem
+
+Given the head of a singly linked list, reverse the list and return the new head.
+
+Intuition
+
+To reverse a linked list, change the direction of each link.
+
+Use three pointers:
+
+prev → Previous node
+curr → Current node
+next → Store next node before changing links
+Algorithm
+
+Initialize:
+
+prev = null
+curr = head
+While curr != null:
+Store next node.
+Reverse current node's link.
+Move prev and curr one step forward.
+Return prev as the new head.
+Code
+class Solution {
+    public ListNode reverseList(ListNode head) {
+
+        ListNode prev = null;
+        ListNode curr = head;
+
+        while (curr != null) {
+            ListNode next = curr.next;
+
+            curr.next = prev;
+
+            prev = curr;
+            curr = next;
+        }
+
+        return prev;
+    }
+}
+Dry Run
+Input:
+1 -> 2 -> 3 -> 4 -> 5
+
+Iteration 1:
+1 -> null
+prev = 1
+curr = 2
+
+Iteration 2:
+2 -> 1 -> null
+prev = 2
+curr = 3
+
+Iteration 3:
+3 -> 2 -> 1 -> null
+prev = 3
+curr = 4
+
+Iteration 4:
+4 -> 3 -> 2 -> 1 -> null
+prev = 4
+curr = 5
+
+Iteration 5:
+5 -> 4 -> 3 -> 2 -> 1 -> null
+prev = 5
+curr = null
+Complexity Analysis
+Time Complexity: O(n)
+Space Complexity: O(1)
+Key Learning
+
+The core reversal pattern is:
+
+next = curr.next;
+curr.next = prev;
+prev = curr;
+curr = next;
+
+This pattern is the foundation for many Linked List problems such as:
+
+Reverse Linked List II
+Reverse Nodes in k-Group
+Palindrome Linked List
+Reorder List
+Swap Nodes in Pairs
+Takeaway
+LeetCode 876: Learn the Slow & Fast Pointer technique.
+LeetCode 206: Learn the Pointer Reversal technique.
+
+These are two of the most important linked list patterns and appear frequently in coding interviews.
