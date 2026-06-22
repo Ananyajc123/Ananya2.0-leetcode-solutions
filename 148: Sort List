@@ -1,0 +1,237 @@
+148: Sort List
+Problem Statement
+
+Given the head of a linked list, sort the list in ascending order and return the sorted list.
+
+Examples
+Input:  4 -> 2 -> 1 -> 3
+Output: 1 -> 2 -> 3 -> 4
+Input:  -1 -> 5 -> 3 -> 4 -> 0
+Output: -1 -> 0 -> 3 -> 4 -> 5
+Intuition
+
+Sorting a linked list efficiently requires O(n log n) time complexity. The best approach is Merge Sort, which works naturally with linked lists because:
+
+Finding the middle is easy using Slow & Fast Pointers.
+Splitting the list is straightforward.
+Merging two sorted linked lists can be done efficiently.
+
+The idea is:
+
+Divide the linked list into two halves
+        ↓
+Recursively sort both halves
+        ↓
+Merge the sorted halves
+Approach
+Step 1: Find the Middle of the Linked List
+
+Use Slow and Fast Pointers.
+
+ListNode slow = head;
+ListNode fast = head.next;
+
+Move:
+
+while (fast != null && fast.next != null) {
+    slow = slow.next;
+    fast = fast.next.next;
+}
+
+At the end:
+
+slow points to the middle node.
+The list can be split into two halves.
+Step 2: Split the List
+ListNode rightHead = slow.next;
+slow.next = null;
+
+Example:
+
+Before:
+4 -> 2 -> 1 -> 3
+
+After:
+Left  = 4 -> 2
+Right = 1 -> 3
+Step 3: Recursively Sort Both Halves
+ListNode left = sortList(head);
+ListNode right = sortList(rightHead);
+
+Each half is recursively divided until only one node remains.
+
+Step 4: Merge Two Sorted Lists
+
+Merge the two sorted halves using the Merge Two Sorted Lists technique.
+
+if (l1.val <= l2.val) {
+    curr.next = l1;
+    l1 = l1.next;
+} else {
+    curr.next = l2;
+    l2 = l2.next;
+}
+
+Continue until all nodes are merged.
+
+Code
+class Solution {
+
+    public ListNode sortList(ListNode head) {
+
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        ListNode slow = head;
+        ListNode fast = head.next;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        ListNode rightHead = slow.next;
+        slow.next = null;
+
+        ListNode left = sortList(head);
+        ListNode right = sortList(rightHead);
+
+        return merge(left, right);
+    }
+
+    private ListNode merge(ListNode l1, ListNode l2) {
+
+        ListNode dummy = new ListNode(-1);
+        ListNode curr = dummy;
+
+        while (l1 != null && l2 != null) {
+
+            if (l1.val <= l2.val) {
+                curr.next = l1;
+                l1 = l1.next;
+            } else {
+                curr.next = l2;
+                l2 = l2.next;
+            }
+
+            curr = curr.next;
+        }
+
+        if (l1 != null) curr.next = l1;
+        if (l2 != null) curr.next = l2;
+
+        return dummy.next;
+    }
+}
+Dry Run
+Input
+4 -> 2 -> 1 -> 3
+Split
+Left  = 4 -> 2
+Right = 1 -> 3
+Further Split
+4 -> 2
+
+becomes
+
+4
+2
+
+Sorted:
+
+2 -> 4
+1 -> 3
+
+becomes
+
+1
+3
+
+Sorted:
+
+1 -> 3
+Merge
+2 -> 4
+1 -> 3
+
+Comparisons:
+
+1
+2
+3
+4
+
+Result:
+
+1 -> 2 -> 3 -> 4
+Complexity Analysis
+Time Complexity
+O(n log n)
+Finding middle: O(n)
+Merging: O(n)
+Number of recursive levels: O(log n)
+
+Overall:
+
+O(n log n)
+Space Complexity
+O(log n)
+
+Due to recursion stack space.
+
+Key Concepts Learned
+Slow & Fast Pointer
+
+Used to find the middle node.
+
+slow = slow.next;
+fast = fast.next.next;
+Splitting a Linked List
+ListNode rightHead = slow.next;
+slow.next = null;
+
+Used to divide the list into two halves.
+
+Merge Two Sorted Lists
+if (l1.val <= l2.val)
+
+Used to combine two sorted linked lists.
+
+Divide and Conquer
+Divide
+↓
+Sort
+↓
+Merge
+
+Core idea behind Merge Sort.
+
+Pattern Learned
+
+Merge Sort on Linked List
+
+Find the middle.
+Split the list.
+Recursively sort both halves.
+Merge the sorted halves.
+
+This pattern is commonly used in:
+
+LeetCode 21 – Merge Two Sorted Lists
+LeetCode 23 – Merge K Sorted Lists
+LeetCode 148 – Sort List
+Takeaway
+
+LeetCode 148 is a classic Merge Sort on Linked List problem that combines:
+
+Slow & Fast Pointer Technique
+Merge Two Sorted Lists
+Divide and Conquer
+
+It achieves:
+
+Time Complexity: O(n log n)
+Space Complexity: O(log n)
+
+and is the optimal solution for sorting a linked list efficiently.
