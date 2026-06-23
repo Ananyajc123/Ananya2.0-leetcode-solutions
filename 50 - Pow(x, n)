@@ -1,0 +1,95 @@
+50 - Pow(x, n)
+Problem Statement
+
+Implement pow(x, n), which calculates x raised to the power n (xⁿ).
+
+Approach: Binary Exponentiation (Fast Power)
+
+Instead of multiplying x by itself n times, we repeatedly divide the exponent by 2 and use recursion to compute smaller powers.
+
+Key Observations
+If n is even:
+x
+n
+=(x
+n/2
+)
+2
+If n is odd:
+x
+n
+=(x
+n/2
+)
+2
+×x
+
+This reduces the number of operations significantly, giving a logarithmic time complexity.
+
+Algorithm
+Convert n to long to handle Integer.MIN_VALUE.
+If n is negative:
+Replace x with 1/x.
+Make n positive.
+Recursively compute x^(n/2).
+If n is even, return half * half.
+If n is odd, return half * half * x.
+Code
+class Solution {
+    public double myPow(double x, int n) {
+        long N = n;
+
+        if (N < 0) {
+            x = 1 / x;
+            N = -N;
+        }
+
+        return power(x, N);
+    }
+
+    private double power(double x, long n) {
+        if (n == 0)
+            return 1;
+
+        double half = power(x, n / 2);
+
+        if (n % 2 == 0)
+            return half * half;
+        else
+            return half * half * x;
+    }
+}
+Dry Run
+Input
+x = 2
+n = 10
+Recursive Calls
+power(2,10)
+    power(2,5)
+        power(2,2)
+            power(2,1)
+                power(2,0)
+Returning Back
+power(2,0) = 1
+power(2,1) = 1 × 1 × 2 = 2
+power(2,2) = 2 × 2 = 4
+power(2,5) = 4 × 4 × 2 = 32
+power(2,10) = 32 × 32 = 1024
+
+Output:
+
+1024
+Complexity Analysis
+Time Complexity
+O(log n)
+
+At each recursive call, the exponent is divided by 2.
+
+Space Complexity
+O(log n)
+
+Due to the recursion call stack.
+
+Key Takeaway
+
+Binary Exponentiation computes powers efficiently by recursively calculating x^(n/2) and reusing the result. This reduces the complexity from O(n) to O(log n), making it suitable for very large exponents.
