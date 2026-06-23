@@ -1,0 +1,119 @@
+216 - Combination Sum III
+Problem Statement
+
+Find all valid combinations of k numbers that add up to n such that:
+
+Only numbers from 1 to 9 are used.
+Each number can be used at most once.
+Return all possible unique combinations.
+Approach: Backtracking
+
+We generate combinations using numbers from 1 to 9.
+
+At each step:
+
+Choose a number and add it to the current combination.
+Reduce the remaining target.
+Move to the next number since a number cannot be reused.
+Backtrack by removing the last chosen number and explore other possibilities.
+
+A combination is valid only when:
+
+The remaining target becomes 0.
+Exactly k numbers have been selected.
+Algorithm
+Start from number 1.
+Recursively try numbers from the current position to 9.
+Add the chosen number to the current combination.
+Reduce the target by the chosen number.
+If target == 0 and current.size() == k, store the combination.
+Stop recursion if:
+target < 0
+current.size() > k
+Backtrack by removing the last added number.
+Continue exploring remaining choices.
+Code
+class Solution {
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> result = new ArrayList<>();
+        backtrack(1, k, n, new ArrayList<>(), result);
+        return result;
+    }
+
+    private void backtrack(int start, int k, int target,
+                           List<Integer> current,
+                           List<List<Integer>> result) {
+
+        if (target == 0 && current.size() == k) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
+
+        if (target < 0 || current.size() > k) {
+            return;
+        }
+
+        for (int i = start; i <= 9; i++) {
+
+            current.add(i);
+
+            backtrack(i + 1,
+                      k,
+                      target - i,
+                      current,
+                      result);
+
+            current.remove(current.size() - 1);
+        }
+    }
+}
+Dry Run
+Input
+k = 3
+n = 7
+
+Start with:
+
+[]
+
+Choose 1:
+
+[1]
+
+Choose 2:
+
+[1,2]
+
+Choose 4:
+
+[1,2,4]
+
+Sum:
+
+1 + 2 + 4 = 7
+
+Number of elements:
+
+3
+
+Valid combination found:
+
+[1,2,4]
+
+Output:
+
+[[1,2,4]]
+Complexity Analysis
+Time Complexity
+O(C(9, k))
+
+We are selecting k numbers from the set {1,2,3,4,5,6,7,8,9}.
+
+Space Complexity
+O(k)
+
+Used by the recursion stack and current combination list.
+
+Key Takeaway
+
+This problem is a classic Backtracking problem where we generate combinations from numbers 1 to 9. Since each number can be used only once, we always recurse with i + 1. The constraints on the target sum and combination size help prune invalid paths early, making the solution efficient.
