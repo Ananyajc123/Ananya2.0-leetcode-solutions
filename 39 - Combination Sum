@@ -1,0 +1,98 @@
+39 - Combination Sum
+Problem Statement
+
+Given an array of distinct integers candidates and a target integer target, return all unique combinations of candidates where the chosen numbers sum to the target.
+
+The same number may be chosen multiple times.
+The order of numbers in a combination does not matter.
+Approach: Backtracking
+
+At each candidate, we have two choices:
+
+Take the current number
+Add it to the current combination.
+Reduce the target by its value.
+Stay at the same index since the number can be reused.
+Skip the current number
+Move to the next index.
+Explore combinations without using the current candidate.
+
+Backtracking helps explore all possible combinations while undoing choices after each recursive call.
+
+Algorithm
+Start from index 0 with an empty combination.
+If target == 0, a valid combination is found.
+If target < 0 or all candidates have been processed, stop recursion.
+Include the current candidate and recurse with the reduced target.
+Backtrack by removing the last added element.
+Exclude the current candidate and move to the next index.
+Collect all valid combinations.
+Code
+class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+        backtrack(candidates, target, 0, new ArrayList<>(), result);
+        return result;
+    }
+
+    private void backtrack(int[] candidates, int target, int index,
+                           List<Integer> current,
+                           List<List<Integer>> result) {
+
+        if (target == 0) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
+
+        if (index == candidates.length || target < 0) {
+            return;
+        }
+
+        // Take current number
+        current.add(candidates[index]);
+        backtrack(candidates, target - candidates[index],
+                  index, current, result);
+
+        current.remove(current.size() - 1);
+
+        // Skip current number
+        backtrack(candidates, target, index + 1,
+                  current, result);
+    }
+}
+Dry Run
+Input
+candidates = [2,3,6,7]
+target = 7
+Recursion Tree (Simplified)
+[]
+|
+|-- Take 2
+|   |
+|   |-- Take 2
+|       |
+|       |-- Take 3
+|           |
+|           --> [2,2,3] ✓
+|
+|-- Skip 2
+    |
+    |-- Take 7
+         |
+         --> [7] ✓
+Output
+[[2,2,3],[7]]
+Complexity Analysis
+Time Complexity
+O(2^Target)
+
+In the worst case, the recursion explores multiple combinations for each target value.
+
+Space Complexity
+O(Target)
+
+Due to the recursion stack and the current combination list.
+
+Key Takeaway
+
+The key observation is that each candidate can be used unlimited times. Therefore, after choosing a number, the recursion continues from the same index. Backtracking efficiently explores all valid combinations by making and undoing choices during recursion.
