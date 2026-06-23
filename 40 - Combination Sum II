@@ -1,0 +1,107 @@
+40 - Combination Sum II
+Problem Statement
+
+Given a collection of candidate numbers candidates (which may contain duplicates) and a target integer target, find all unique combinations where the candidate numbers sum to the target.
+
+Constraints
+Each number may be used at most once in each combination.
+The solution set must not contain duplicate combinations.
+Approach: Backtracking + Sorting
+
+The array is first sorted so that duplicate elements are placed next to each other. This makes it easier to skip duplicate combinations.
+
+At each step:
+
+Choose the current number and reduce the target.
+Move to the next index because each element can only be used once.
+Backtrack by removing the last chosen element.
+Skip duplicate elements at the same recursion level to avoid repeated combinations.
+Algorithm
+Sort the candidates array.
+Start backtracking from index 0.
+If target == 0, a valid combination is found.
+Iterate through the candidates starting from the current index.
+Skip duplicate values using:
+if (i > start && candidates[i] == candidates[i - 1])
+    continue;
+If the current candidate is greater than the remaining target, stop exploring further.
+Include the current candidate and recurse with:
+Reduced target
+Next index (i + 1)
+Backtrack and continue exploring other combinations.
+Code
+class Solution {
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+
+        Arrays.sort(candidates);
+
+        backtrack(candidates, target, 0, new ArrayList<>(), result);
+
+        return result;
+    }
+
+    private void backtrack(int[] candidates, int target,
+                           int start, List<Integer> current,
+                           List<List<Integer>> result) {
+
+        if (target == 0) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
+
+        for (int i = start; i < candidates.length; i++) {
+
+            if (i > start && candidates[i] == candidates[i - 1]) {
+                continue;
+            }
+
+            if (candidates[i] > target) {
+                break;
+            }
+
+            current.add(candidates[i]);
+
+            backtrack(candidates,
+                      target - candidates[i],
+                      i + 1,
+                      current,
+                      result);
+
+            current.remove(current.size() - 1);
+        }
+    }
+}
+Dry Run
+Input
+candidates = [10,1,2,7,6,1,5]
+target = 8
+
+After sorting:
+
+[1,1,2,5,6,7,10]
+
+Valid combinations:
+
+[1,1,6]
+[1,2,5]
+[1,7]
+[2,6]
+
+Output:
+
+[[1,1,6],[1,2,5],[1,7],[2,6]]
+Complexity Analysis
+Time Complexity
+O(2^n)
+
+In the worst case, each element can either be included or excluded.
+
+Space Complexity
+O(n)
+
+For the recursion stack and current combination list.
+
+Key Takeaway
+
+The key idea is to sort the array and use backtracking to explore all possible combinations. Since duplicate values may exist, duplicate combinations are avoided by skipping repeated elements at the same recursion level. Unlike Combination Sum I, each element can be used only once, so the recursion always proceeds with i + 1 after selecting an element.
