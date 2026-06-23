@@ -1,0 +1,101 @@
+22 - Generate Parentheses
+Problem Statement
+
+Given n pairs of parentheses, generate all possible combinations of well-formed (valid) parentheses.
+
+Approach: Backtracking
+
+The idea is to build the parenthesis string one character at a time while ensuring it remains valid.
+
+We keep track of:
+
+open → number of opening parentheses ( used.
+close → number of closing parentheses ) used.
+Rules
+Add an opening parenthesis if:
+open < n
+Add a closing parenthesis if:
+close < open
+
+This guarantees that at no point do we have more closing parentheses than opening parentheses.
+
+When the current string reaches length 2 * n, a valid combination has been formed and is added to the result list.
+
+Algorithm
+Start with an empty string.
+Recursively add ( if the number of opening brackets is less than n.
+Recursively add ) if the number of closing brackets is less than the number of opening brackets.
+When the string length becomes 2 * n, add it to the answer.
+Backtrack and explore all valid possibilities.
+Code
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> result = new ArrayList<>();
+        backtrack(result, "", 0, 0, n);
+        return result;
+    }
+
+    private void backtrack(List<String> result, String current,
+                           int open, int close, int n) {
+
+        if (current.length() == 2 * n) {
+            result.add(current);
+            return;
+        }
+
+        if (open < n) {
+            backtrack(result, current + "(", open + 1, close, n);
+        }
+
+        if (close < open) {
+            backtrack(result, current + ")", open, close + 1, n);
+        }
+    }
+}
+Dry Run
+Input
+n = 2
+
+Start with:
+
+""
+
+Add (:
+
+"("
+
+Add another (:
+
+"(("
+
+Add ):
+
+"(()"
+
+Add ):
+
+"(())"
+
+Valid combination added.
+
+Backtrack and explore:
+
+"()()"
+
+Final Output:
+
+["(())", "()()"]
+Complexity Analysis
+Time Complexity
+O(4^n / √n)
+
+The number of valid combinations is given by the Catalan Number.
+
+Space Complexity
+O(n)
+
+Due to the recursion stack depth.
+
+Key Takeaway
+
+Backtracking allows us to generate only valid parenthesis combinations by maintaining the counts of opening and closing brackets. The condition close < open ensures that the generated strings remain balanced throughout the recursion.
