@@ -1,0 +1,90 @@
+231 – Power of Two
+Problem Statement
+
+Given an integer n, return true if it is a power of two. Otherwise, return false.
+
+A number is a power of two if it can be represented as:
+
+n=2
+x
+
+where x >= 0.
+
+Examples
+Input: n = 1
+Output: true
+Explanation: 2^0 = 1
+
+Input: n = 16
+Output: true
+Explanation: 2^4 = 16
+
+Input: n = 3
+Output: false
+Approach: Check Powers of 2 Iteratively
+
+The idea is to generate powers of 2 from 2^0 to 2^30 and compare each value with n.
+
+Since the maximum positive integer in Java (int) is less than 2^31, checking up to 2^30 is sufficient.
+
+Algorithm
+Iterate from i = 0 to 30.
+Compute 2^i using Math.pow(2, i).
+If the generated value equals n, return true.
+If no match is found after the loop, return false.
+Code
+class Solution {
+    public boolean isPowerOfTwo(int n) {
+        for (int i = 0; i < 31; i++) {
+            if (n == Math.pow(2, i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+Dry Run
+Input
+n = 16
+Execution
+i	2^i	Match with 16?
+0	1	No
+1	2	No
+2	4	No
+3	8	No
+4	16	Yes
+
+Return true.
+
+Complexity Analysis
+Time Complexity
+O(31) ≈ O(1)
+
+The loop runs at most 31 times.
+
+Space Complexity
+O(1)
+
+No extra space is used.
+
+Key Insight
+Powers of two within the integer range are limited (2^0 to 2^30).
+By generating and comparing these values, we can determine whether n is a power of two.
+Although this solution works, a bit manipulation approach is more efficient and is commonly preferred in interviews.
+Optimized Bit Manipulation Solution
+class Solution {
+    public boolean isPowerOfTwo(int n) {
+        return n > 0 && (n & (n - 1)) == 0;
+    }
+}
+
+Why it works?
+
+A power of two has exactly one set bit in its binary representation.
+n & (n - 1) removes the rightmost set bit.
+If the result becomes 0, the number had only one set bit, meaning it is a power of two.
+Optimized Complexity
+Time Complexity: O(1)
+Space Complexity: O(1)
+
+Topic Tags: Math, Bit Manipulation, Simulation, Number Theory
