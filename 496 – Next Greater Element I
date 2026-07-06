@@ -1,0 +1,305 @@
+496 – Next Greater Element I
+
+## Problem Statement
+
+You are given two integer arrays:
+
+* `nums1`
+* `nums2`
+
+`nums1` is a subset of `nums2`.
+
+For each element in `nums1`, find the **first greater element to its right** in `nums2`.
+
+If no greater element exists, return `-1`.
+
+---
+
+## Example
+
+### Input
+
+```text
+nums1 = [4,1,2]
+nums2 = [1,3,4,2]
+```
+
+### Output
+
+```text
+[-1,3,-1]
+```
+
+### Explanation
+
+* Next greater element of `4` → `-1`
+* Next greater element of `1` → `3`
+* Next greater element of `2` → `-1`
+
+---
+
+# Brute Force Approach
+
+For every element in `nums1`:
+
+1. Find its position in `nums2`.
+2. Traverse towards the right.
+3. Return the first greater element.
+4. If no greater element exists, return `-1`.
+
+### Time Complexity
+
+```text
+O(m × n)
+```
+
+where:
+
+* `m` = size of `nums1`
+* `n` = size of `nums2`
+
+This approach is inefficient for large inputs.
+
+---
+
+# Optimized Approach (Monotonic Stack + HashMap)
+
+## Idea
+
+Instead of searching repeatedly:
+
+* Compute the next greater element for every number in `nums2` only once.
+* Store the result in a `HashMap`.
+* Use a **Monotonic Decreasing Stack** to efficiently find the next greater element.
+
+---
+
+## Why Traverse from Right to Left?
+
+For each element, we need information about the elements on its **right**.
+
+By traversing from **right to left**, all right-side elements are already processed.
+
+---
+
+## Monotonic Stack
+
+The stack maintains elements in **decreasing order**.
+
+Before pushing the current element:
+
+* Remove all elements smaller than or equal to the current element.
+* The remaining top element (if any) is the next greater element.
+
+---
+
+## Dry Run
+
+### nums2
+
+```text
+1 3 4 2
+```
+
+### Step 1
+
+Current = `2`
+
+```text
+Stack = []
+
+Map:
+2 → -1
+
+Push 2
+```
+
+---
+
+### Step 2
+
+Current = `4`
+
+```text
+Stack:
+2
+
+4 > 2
+
+Pop 2
+
+Stack becomes empty
+
+Map:
+4 → -1
+
+Push 4
+```
+
+---
+
+### Step 3
+
+Current = `3`
+
+```text
+Stack:
+4
+
+Top = 4
+
+Map:
+3 → 4
+
+Push 3
+```
+
+Stack:
+
+```text
+4
+3
+```
+
+---
+
+### Step 4
+
+Current = `1`
+
+```text
+Stack:
+4
+3
+
+Top = 3
+
+Map:
+1 → 3
+
+Push 1
+```
+
+Final Map
+
+```text
+1 → 3
+3 → 4
+4 → -1
+2 → -1
+```
+
+Now simply look up every element of `nums1` in the map.
+
+---
+
+## Algorithm
+
+1. Create an empty `HashMap`.
+2. Create an empty stack.
+3. Traverse `nums2` from right to left.
+4. Remove all elements from the stack that are smaller than or equal to the current element.
+5. If the stack is empty:
+
+   * Store `-1` in the map.
+6. Otherwise:
+
+   * Store the top of the stack as the next greater element.
+7. Push the current element onto the stack.
+8. Traverse `nums1` and fetch answers directly from the map.
+
+---
+
+## Java Solution
+
+```java
+class Solution {
+
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+
+        HashMap<Integer, Integer> map = new HashMap<>();
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = nums2.length - 1; i >= 0; i--) {
+
+            while (!stack.isEmpty() && stack.peek() <= nums2[i]) {
+                stack.pop();
+            }
+
+            if (stack.isEmpty()) {
+                map.put(nums2[i], -1);
+            } else {
+                map.put(nums2[i], stack.peek());
+            }
+
+            stack.push(nums2[i]);
+        }
+
+        int[] ans = new int[nums1.length];
+
+        for (int i = 0; i < nums1.length; i++) {
+            ans[i] = map.get(nums1[i]);
+        }
+
+        return ans;
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation        | Time Complexity |
+| ---------------- | --------------- |
+| Building HashMap | O(n)            |
+| Processing nums1 | O(m)            |
+
+**Total Time Complexity:** `O(n + m)`
+
+**Space Complexity:** `O(n)`
+
+---
+
+## Key Learning
+
+* A **Monotonic Decreasing Stack** stores elements in decreasing order.
+* Traversing from **right to left** allows us to determine the next greater element efficiently.
+* A `HashMap` stores the next greater element for every value in `nums2`.
+* This avoids repeated searching and reduces the time complexity from **O(m × n)** to **O(n + m)**.
+
+---
+
+## Common Mistakes
+
+❌ Traversing from left to right.
+
+For this problem, we need information about elements on the **right**, so traversing from right to left simplifies the solution.
+
+---
+
+❌ Forgetting to remove smaller elements.
+
+```java
+while (!stack.isEmpty() && stack.peek() <= nums2[i]) {
+    stack.pop();
+}
+```
+
+Removing smaller elements ensures the stack only contains valid candidates for the next greater element.
+
+---
+
+❌ Forgetting to push the current element after processing it.
+
+```java
+stack.push(nums2[i]);
+```
+
+The current element may become the next greater element for elements to its left.
+
+---
+
+## Takeaway
+
+The key idea is to preprocess `nums2` using a **Monotonic Decreasing Stack** and store each element's next greater element in a `HashMap`. Once the map is built, answering queries for `nums1` becomes an **O(1)** lookup, resulting in an overall **O(n + m)** solution.
