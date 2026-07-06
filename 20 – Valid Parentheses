@@ -1,0 +1,232 @@
+20 – Valid Parentheses
+
+## Problem Statement
+
+Given a string `s` containing only the characters:
+
+* `(`
+* `)`
+* `{`
+* `}`
+* `[`
+* `]`
+
+Determine whether the input string is **valid**.
+
+A string is considered valid if:
+
+1. Every opening bracket has a corresponding closing bracket.
+2. Brackets are closed in the correct order.
+3. Every closing bracket matches the most recent unmatched opening bracket.
+
+---
+
+## Examples
+
+### Example 1
+
+```text
+Input: "()"
+Output: true
+```
+
+### Example 2
+
+```text
+Input: "()[]{}"
+Output: true
+```
+
+### Example 3
+
+```text
+Input: "(]"
+Output: false
+```
+
+### Example 4
+
+```text
+Input: "([)]"
+Output: false
+```
+
+### Example 5
+
+```text
+Input: "{[]}"
+Output: true
+```
+
+---
+
+# Approach (Using Stack)
+
+## Idea
+
+A **Stack** follows the **LIFO (Last In, First Out)** principle.
+
+Whenever we encounter an **opening bracket**, we push it into the stack.
+
+Whenever we encounter a **closing bracket**, it must match the **top element** of the stack.
+
+If it doesn't match, the string is invalid.
+
+After processing the entire string, the stack should be empty.
+
+---
+
+## Algorithm
+
+1. Create an empty stack.
+2. Traverse each character in the string.
+3. If the character is an opening bracket (`(`, `{`, `[`):
+
+   * Push it into the stack.
+4. Otherwise, it is a closing bracket:
+
+   * If the stack is empty, return `false`.
+   * Pop the top element.
+   * Check whether the popped opening bracket matches the current closing bracket.
+   * If not, return `false`.
+5. After traversing the string:
+
+   * If the stack is empty, return `true`.
+   * Otherwise, return `false`.
+
+---
+
+## Dry Run
+
+### Input
+
+```text
+{[]}
+```
+
+### Step-by-Step
+
+```text
+Read '{'
+Stack: {
+
+Read '['
+Stack: [ {
+
+Read ']'
+Pop '['
+Matches ']'
+Stack: {
+
+Read '}'
+Pop '{'
+Matches '}'
+Stack: Empty
+```
+
+Result:
+
+```text
+true
+```
+
+---
+
+## Java Solution
+
+```java
+class Solution {
+
+    public boolean isValid(String s) {
+
+        Stack<Character> stack = new Stack<>();
+
+        for(char ch : s.toCharArray()) {
+
+            if(ch == '(' || ch == '{' || ch == '[') {
+
+                stack.push(ch);
+
+            } else {
+
+                if(stack.isEmpty()) {
+                    return false;
+                }
+
+                char top = stack.pop();
+
+                if(ch == ')' && top != '(')
+                    return false;
+
+                if(ch == '}' && top != '{')
+                    return false;
+
+                if(ch == ']' && top != '[')
+                    return false;
+            }
+        }
+
+        return stack.isEmpty();
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation         | Complexity |
+| ----------------- | ---------- |
+| Traversing String | O(n)       |
+| Stack Push        | O(1)       |
+| Stack Pop         | O(1)       |
+
+**Time Complexity:** `O(n)`
+
+**Space Complexity:** `O(n)`
+
+---
+
+## Key Learning
+
+* A **Stack** is the ideal data structure for matching brackets because it always accesses the most recently added element.
+* Push every opening bracket into the stack.
+* Pop and compare whenever a closing bracket is encountered.
+* If the stack becomes empty before finding a matching opening bracket, the string is invalid.
+* After processing all characters, the stack must be empty for the string to be valid.
+
+---
+
+## Common Mistakes
+
+❌ Pushing closing brackets instead of opening brackets.
+
+```java
+if(ch == '(' || ch == '}' || ch == ']')   // Wrong
+```
+
+✅ Correct
+
+```java
+if(ch == '(' || ch == '{' || ch == '[')
+```
+
+---
+
+❌ Comparing the current character with itself.
+
+```java
+if(ch == ')' && ch != '(')    // Wrong
+```
+
+✅ Compare the current closing bracket with the popped opening bracket.
+
+```java
+if(ch == ')' && top != '(')
+```
+
+---
+
+## Takeaway
+
+The key idea is to **remember every opening bracket** using a stack. When a closing bracket appears, it must match the **most recent unmatched opening bracket** (the top of the stack). If every pair matches and the stack is empty at the end, the parentheses are valid.
