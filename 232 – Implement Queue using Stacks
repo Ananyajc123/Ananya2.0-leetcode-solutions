@@ -1,0 +1,196 @@
+232 – Implement Queue using Stacks
+
+## Problem Statement
+
+Implement a **Queue** using only **Stack** operations.
+
+A queue follows the **FIFO (First In, First Out)** principle, whereas a stack follows **LIFO (Last In, First Out)**. The goal is to make stacks behave like a queue.
+
+---
+
+## Queue Operations
+
+* `push(x)` → Insert an element at the rear.
+* `pop()` → Remove and return the front element.
+* `peek()` → Return the front element without removing it.
+* `empty()` → Check whether the queue is empty.
+
+---
+
+## Approach (Using Two Stacks)
+
+### Idea
+
+Use two stacks:
+
+* **stack1** → Used for inserting new elements.
+* **stack2** → Used for removing and peeking elements.
+
+### Why Two Stacks?
+
+* New elements are always pushed into `stack1`.
+* When `stack2` becomes empty and a `pop()` or `peek()` operation is requested, transfer all elements from `stack1` to `stack2`.
+* This reverses the order of elements, making the oldest inserted element appear on top of `stack2`.
+
+As a result, `stack2` behaves exactly like the front of a queue.
+
+---
+
+## Example
+
+### Operations
+
+```text
+push(1)
+push(2)
+push(3)
+```
+
+### Stack State
+
+```text
+stack1
+
+Top
+3
+2
+1
+
+stack2
+
+(empty)
+```
+
+Calling `pop()`:
+
+Transfer all elements from `stack1` to `stack2`.
+
+```text
+stack1
+
+(empty)
+
+stack2
+
+Top
+1
+2
+3
+```
+
+Now:
+
+```text
+pop() → 1
+peek() → 2
+```
+
+The queue order is preserved.
+
+---
+
+## Algorithm
+
+### Push
+
+1. Push the element into `stack1`.
+
+### Pop
+
+1. If `stack2` is empty:
+
+   * Move all elements from `stack1` to `stack2`.
+2. Pop the top element from `stack2`.
+
+### Peek
+
+1. If `stack2` is empty:
+
+   * Transfer all elements from `stack1` to `stack2`.
+2. Return the top element of `stack2`.
+
+### Empty
+
+* Return `true` if both stacks are empty.
+
+---
+
+## Java Solution
+
+```java
+class MyQueue {
+
+    Stack<Integer> stack1 = new Stack<>();
+    Stack<Integer> stack2 = new Stack<>();
+
+    public void push(int x) {
+        stack1.push(x);
+    }
+
+    public int pop() {
+        if (stack2.isEmpty()) {
+            while (!stack1.isEmpty()) {
+                stack2.push(stack1.pop());
+            }
+        }
+        return stack2.pop();
+    }
+
+    public int peek() {
+        if (stack2.isEmpty()) {
+            while (!stack1.isEmpty()) {
+                stack2.push(stack1.pop());
+            }
+        }
+        return stack2.peek();
+    }
+
+    public boolean empty() {
+        return stack1.isEmpty() && stack2.isEmpty();
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation | Time Complexity |
+| --------- | --------------- |
+| push()    | O(1)            |
+| pop()     | O(1) amortized  |
+| peek()    | O(1) amortized  |
+| empty()   | O(1)            |
+
+**Space Complexity:** `O(n)`
+
+---
+
+## What is Amortized O(1)?
+
+The first `pop()` or `peek()` may take **O(n)** because all elements are transferred from `stack1` to `stack2`.
+
+However, each element is transferred **only once** from `stack1` to `stack2`. After the transfer, subsequent `pop()` and `peek()` operations are **O(1)**.
+
+Therefore, the average time per operation over a sequence of operations is **O(1)**, which is called **amortized O(1)**.
+
+---
+
+## Key Learning
+
+* A **Stack** follows **LIFO**.
+* A **Queue** follows **FIFO**.
+* Two stacks can be used to simulate a queue by reversing the order of elements.
+* The transfer from `stack1` to `stack2` is performed **only when needed** (lazy transfer), making the implementation efficient.
+
+---
+
+## Takeaway
+
+The main idea is to separate insertion and removal:
+
+* Insert all new elements into `stack1`.
+* Remove elements from `stack2`.
+* Transfer elements from `stack1` to `stack2` only when `stack2` is empty.
+
+This lazy transfer strategy preserves the FIFO order while keeping most operations efficient.
