@@ -1,0 +1,265 @@
+42 – Trapping Rain Water
+
+## Problem Statement
+
+Given an array `height` where each element represents the height of a building, determine how much rainwater can be trapped after raining.
+
+---
+
+## Example
+
+### Input
+
+```text
+height = [0,1,0,2,1,0,1,3,2,1,2,1]
+```
+
+### Output
+
+```text
+6
+```
+
+---
+
+# Intuition
+
+Water can only be trapped if there is:
+
+* A taller wall on the **left**.
+* A taller wall on the **right**.
+
+The water level at any index is limited by the **shorter** of these two walls.
+
+### Formula
+
+```text
+Water at index i =
+min(leftMax[i], rightMax[i]) - height[i]
+```
+
+If the calculated value is negative, the trapped water is considered **0**.
+
+---
+
+# Brute Force Approach
+
+For every building:
+
+1. Find the tallest building on the left.
+2. Find the tallest building on the right.
+3. Calculate trapped water using the formula.
+4. Add it to the total answer.
+
+### Time Complexity
+
+```text
+O(n²)
+```
+
+This approach repeatedly searches for left and right maximum values, making it inefficient.
+
+---
+
+# Optimized Approach (Prefix & Suffix Arrays)
+
+## Idea
+
+Instead of searching for the tallest wall every time:
+
+* Precompute the tallest wall on the left of every index.
+* Precompute the tallest wall on the right of every index.
+
+This allows the trapped water at every index to be calculated in constant time.
+
+---
+
+## Step 1: Build Left Maximum Array
+
+`leftMax[i]` stores the tallest building from index `0` to `i`.
+
+Example:
+
+```text
+Height
+
+0 1 0 2 1
+```
+
+```text
+LeftMax
+
+0 1 1 2 2
+```
+
+---
+
+## Step 2: Build Right Maximum Array
+
+`rightMax[i]` stores the tallest building from index `i` to the last index.
+
+```text
+RightMax
+
+2 2 2 2 1
+```
+
+---
+
+## Step 3: Calculate Water
+
+For every index:
+
+```text
+water += min(leftMax[i], rightMax[i]) - height[i]
+```
+
+---
+
+## Dry Run
+
+### Height
+
+```text
+0 1 0 2 1
+```
+
+### Left Maximum
+
+```text
+0 1 1 2 2
+```
+
+### Right Maximum
+
+```text
+2 2 2 2 1
+```
+
+### Water Calculation
+
+| Index | Height | Left Max | Right Max | Water |
+| ----: | -----: | -------: | --------: | ----: |
+|     0 |      0 |        0 |         2 |     0 |
+|     1 |      1 |        1 |         2 |     0 |
+|     2 |      0 |        1 |         2 |     1 |
+|     3 |      2 |        2 |         2 |     0 |
+|     4 |      1 |        2 |         1 |     0 |
+
+**Total Water = 1**
+
+---
+
+## Algorithm
+
+1. Create a `leftMax` array.
+2. Traverse from left to right to fill `leftMax`.
+3. Create a `rightMax` array.
+4. Traverse from right to left to fill `rightMax`.
+5. For every index:
+
+   * Find the smaller value between `leftMax[i]` and `rightMax[i]`.
+   * Subtract the current building height.
+   * Add the result to the total trapped water.
+6. Return the total water.
+
+---
+
+## Java Solution
+
+```java
+class Solution {
+
+    public int trap(int[] height) {
+
+        int n = height.length;
+
+        int[] leftMax = new int[n];
+        int[] rightMax = new int[n];
+
+        leftMax[0] = height[0];
+
+        for (int i = 1; i < n; i++) {
+            leftMax[i] = Math.max(leftMax[i - 1], height[i]);
+        }
+
+        rightMax[n - 1] = height[n - 1];
+
+        for (int i = n - 2; i >= 0; i--) {
+            rightMax[i] = Math.max(rightMax[i + 1], height[i]);
+        }
+
+        int water = 0;
+
+        for (int i = 0; i < n; i++) {
+            water += Math.min(leftMax[i], rightMax[i]) - height[i];
+        }
+
+        return water;
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation        | Time Complexity |
+| ---------------- | --------------- |
+| Build `leftMax`  | O(n)            |
+| Build `rightMax` | O(n)            |
+| Calculate Water  | O(n)            |
+
+**Total Time Complexity:** `O(n)`
+
+**Space Complexity:** `O(n)`
+
+Reason:
+
+* Two additional arrays (`leftMax` and `rightMax`) of size `n` are used.
+
+---
+
+## Key Learning
+
+* Water can only be trapped when there is a taller boundary on both the left and right sides.
+* The amount of trapped water depends on the **smaller** of the two boundaries.
+* Precomputing left and right maximum heights avoids repeated searches and improves the time complexity from **O(n²)** to **O(n)**.
+* Prefix and suffix arrays are a common optimization technique for range-based problems.
+
+---
+
+## Common Mistakes
+
+❌ Using the larger boundary instead of the smaller one.
+
+```java
+Math.max(leftMax[i], rightMax[i])   // Incorrect
+```
+
+Always use:
+
+```java
+Math.min(leftMax[i], rightMax[i])   // Correct
+```
+
+---
+
+❌ Forgetting to initialize the first and last values.
+
+```java
+leftMax[0] = height[0];
+rightMax[n - 1] = height[n - 1];
+```
+
+---
+
+❌ Building `rightMax` from left to right.
+
+`rightMax` must always be constructed by traversing **from right to left**.
+
+---
+
+## Takeaway
+
+The key idea is that the water trapped at any index depends on the **shorter of the tallest walls on its left and right**. By precomputing these maximum heights using prefix (`leftMax`) and suffix (`rightMax`) arrays, each index can be processed in constant time, resulting in an efficient **O(n)** solution.
