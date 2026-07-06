@@ -1,0 +1,352 @@
+155 – Min Stack
+
+## Problem Statement
+
+Design a stack that supports the following operations:
+
+* `push(val)` → Push an element onto the stack.
+* `pop()` → Remove the top element.
+* `top()` → Return the top element.
+* `getMin()` → Return the minimum element in the stack.
+
+**Requirement:** All operations must work in **O(1)** time.
+
+---
+
+## Example
+
+### Operations
+
+```text
+push(-2)
+push(0)
+push(-3)
+getMin()
+pop()
+top()
+getMin()
+```
+
+### Output
+
+```text
+-3
+0
+-2
+```
+
+---
+
+# Approach (Using Two Stacks)
+
+## Idea
+
+Maintain two stacks:
+
+### 1. Main Stack
+
+Stores all the elements.
+
+### 2. Min Stack
+
+Stores the minimum element corresponding to each position in the main stack.
+
+Whenever a new element is pushed:
+
+* Push it into the main stack.
+* Push the smaller value between the current element and the current minimum into the min stack.
+
+This ensures that the top of the min stack always contains the minimum element.
+
+---
+
+## Example
+
+### push(5)
+
+```text
+Main Stack
+
+5
+
+Min Stack
+
+5
+```
+
+---
+
+### push(3)
+
+```text
+Main Stack
+
+3
+5
+
+Min Stack
+
+3
+5
+```
+
+---
+
+### push(8)
+
+```text
+Main Stack
+
+8
+3
+5
+
+Min Stack
+
+3
+3
+5
+```
+
+The minimum remains `3`, so `3` is pushed again.
+
+---
+
+### push(2)
+
+```text
+Main Stack
+
+2
+8
+3
+5
+
+Min Stack
+
+2
+3
+3
+5
+```
+
+The new minimum becomes `2`.
+
+---
+
+### pop()
+
+```text
+Main Stack
+
+8
+3
+5
+
+Min Stack
+
+3
+3
+5
+```
+
+The previous minimum is automatically restored.
+
+---
+
+## Algorithm
+
+### Push
+
+1. Push the value into the main stack.
+2. If the min stack is empty, push the value.
+3. Otherwise, push the smaller value between:
+
+   * Current value
+   * Current minimum (`minStack.peek()`)
+
+### Pop
+
+* Pop from both stacks.
+
+### Top
+
+* Return the top element of the main stack.
+
+### getMin
+
+* Return the top element of the min stack.
+
+---
+
+## Java Solution
+
+```java
+class MinStack {
+
+    Stack<Integer> stack = new Stack<>();
+    Stack<Integer> minStack = new Stack<>();
+
+    public MinStack() {
+    }
+
+    public void push(int val) {
+
+        stack.push(val);
+
+        if (minStack.isEmpty()) {
+            minStack.push(val);
+        } else {
+            minStack.push(Math.min(val, minStack.peek()));
+        }
+    }
+
+    public void pop() {
+        stack.pop();
+        minStack.pop();
+    }
+
+    public int top() {
+        return stack.peek();
+    }
+
+    public int getMin() {
+        return minStack.peek();
+    }
+}
+```
+
+---
+
+## Dry Run
+
+### Operations
+
+```text
+push(5)
+push(3)
+push(8)
+push(2)
+```
+
+### Main Stack
+
+```text
+2
+8
+3
+5
+```
+
+### Min Stack
+
+```text
+2
+3
+3
+5
+```
+
+### getMin()
+
+```text
+Returns 2
+```
+
+### pop()
+
+```text
+Remove 2 from both stacks.
+```
+
+### Main Stack
+
+```text
+8
+3
+5
+```
+
+### Min Stack
+
+```text
+3
+3
+5
+```
+
+### getMin()
+
+```text
+Returns 3
+```
+
+---
+
+## Complexity Analysis
+
+| Operation | Time Complexity |
+| --------- | --------------- |
+| push()    | O(1)            |
+| pop()     | O(1)            |
+| top()     | O(1)            |
+| getMin()  | O(1)            |
+
+**Space Complexity:** `O(n)`
+
+Reason:
+
+* One stack stores all elements.
+* Another stack stores the minimum value corresponding to each element.
+
+---
+
+## Key Learning
+
+* A single stack cannot return the minimum element in **O(1)** after multiple pop operations.
+* Using an additional stack allows us to store the minimum value at every level.
+* Whenever an element is removed, the corresponding minimum is also removed.
+* Therefore, the current minimum is always available at the top of the min stack.
+
+---
+
+## Why Store Duplicate Minimum Values?
+
+Example:
+
+```text
+push(5)
+push(3)
+push(8)
+```
+
+### Main Stack
+
+```text
+8
+3
+5
+```
+
+### Min Stack
+
+```text
+3
+3
+5
+```
+
+Although `8` is not the minimum, `3` is pushed again.
+
+This ensures that after removing `8`, the minimum remains `3` without recalculating.
+
+---
+
+## Takeaway
+
+The key idea is to maintain **two synchronized stacks**:
+
+* **Main Stack** stores all elements.
+* **Min Stack** stores the minimum element corresponding to each position.
+
+Because both stacks are updated together, every operation (`push`, `pop`, `top`, and `getMin`) runs in **O(1)** time, satisfying the problem's requirement.
