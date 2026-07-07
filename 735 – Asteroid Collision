@@ -1,0 +1,420 @@
+735 – Asteroid Collision
+
+## Problem Statement
+
+We are given an integer array `asteroids` where:
+
+* The **absolute value** represents the size of the asteroid.
+* The **sign** represents its direction.
+
+  * Positive (`+`) → Moving to the right.
+  * Negative (`-`) → Moving to the left.
+
+When two asteroids moving in opposite directions collide:
+
+* The **smaller asteroid explodes**.
+* If both have the **same size**, both explode.
+* Asteroids moving in the **same direction** never collide.
+
+Return the state of the asteroids after all collisions.
+
+---
+
+## Example 1
+
+### Input
+
+```text id="ixx6sh"
+asteroids = [5,10,-5]
+```
+
+### Output
+
+```text id="vwl4po"
+[5,10]
+```
+
+### Explanation
+
+* `10` and `-5` collide.
+* `10` is larger, so `-5` explodes.
+* Remaining asteroids: `[5,10]`.
+
+---
+
+## Example 2
+
+### Input
+
+```text id="ifm0zl"
+asteroids = [8,-8]
+```
+
+### Output
+
+```text id="czzn0t"
+[]
+```
+
+### Explanation
+
+Both asteroids have the same size, so both explode.
+
+---
+
+## Example 3
+
+### Input
+
+```text id="vyjlwm"
+asteroids = [10,2,-5]
+```
+
+### Output
+
+```text id="ynz2od"
+[10]
+```
+
+### Explanation
+
+* `2` collides with `-5` and explodes.
+* `10` collides with `-5` and survives.
+* Remaining asteroid: `[10]`.
+
+---
+
+# When Does a Collision Happen?
+
+A collision occurs **only** when:
+
+```text id="sh3ms5"
+Positive asteroid (→)
+
+followed by
+
+Negative asteroid (←)
+```
+
+Example:
+
+```text id="ux8j5t"
+5   -3
+
+→   ←
+```
+
+Collision occurs.
+
+---
+
+## No Collision Cases
+
+### Same Direction
+
+```text id="6ctjlwm"
+5 10
+
+→ →
+```
+
+No collision.
+
+---
+
+```text id="8i8glg"
+-5 -8
+
+← ←
+```
+
+No collision.
+
+---
+
+### Moving Away
+
+```text id="pnpqg7"
+-5 8
+
+← →
+```
+
+No collision.
+
+---
+
+# Approach (Using Stack)
+
+## Idea
+
+The stack stores all **surviving asteroids**.
+
+For every new asteroid:
+
+* If no collision is possible, push it into the stack.
+* Otherwise, repeatedly compare it with the top of the stack until:
+
+  * One asteroid is destroyed.
+  * Both are destroyed.
+  * No more collisions are possible.
+
+A `while` loop is required because one asteroid may collide with multiple previous asteroids.
+
+---
+
+## Algorithm
+
+For every asteroid:
+
+### Case 1
+
+If it is moving to the right (`+`):
+
+* Push it into the stack.
+
+### Case 2
+
+If it is moving to the left (`-`):
+
+Keep checking while:
+
+* Stack is not empty.
+* Current asteroid moves left.
+* Top asteroid moves right.
+
+Possible outcomes:
+
+1. Top asteroid is smaller → Pop the stack and continue.
+2. Both are equal → Remove both and stop.
+3. Top asteroid is larger → Current asteroid is destroyed.
+
+If the current asteroid survives all collisions, push it into the stack.
+
+---
+
+## Dry Run
+
+### Input
+
+```text id="wtrf6e"
+[10,2,-5]
+```
+
+---
+
+### Step 1
+
+Current asteroid:
+
+```text id="w8x90j"
+10
+```
+
+Push into stack.
+
+```text id="fdbbd6"
+Stack
+
+10
+```
+
+---
+
+### Step 2
+
+Current asteroid:
+
+```text id="1kpgoq"
+2
+```
+
+Push into stack.
+
+```text id="drx1z8"
+Stack
+
+2
+10
+```
+
+---
+
+### Step 3
+
+Current asteroid:
+
+```text id="y2z2uc"
+-5
+```
+
+Collision:
+
+```text id="r4l75l"
+2 vs -5
+```
+
+`2` explodes.
+
+Stack:
+
+```text id="2kcck9"
+10
+```
+
+Again collision:
+
+```text id="e6vr7y"
+10 vs -5
+```
+
+`-5` explodes.
+
+Final Stack:
+
+```text id="jlwm49"
+10
+```
+
+Answer:
+
+```text id="jlwm4a"
+[10]
+```
+
+---
+
+## Java Solution
+
+```java id="7jlwm4"
+class Solution {
+
+    public int[] asteroidCollision(int[] asteroids) {
+
+        Stack<Integer> stack = new Stack<>();
+
+        for (int asteroid : asteroids) {
+
+            boolean destroyed = false;
+
+            while (!stack.isEmpty() &&
+                   asteroid < 0 &&
+                   stack.peek() > 0) {
+
+                if (stack.peek() < -asteroid) {
+
+                    stack.pop();
+
+                } else if (stack.peek() == -asteroid) {
+
+                    stack.pop();
+                    destroyed = true;
+                    break;
+
+                } else {
+
+                    destroyed = true;
+                    break;
+                }
+            }
+
+            if (!destroyed) {
+                stack.push(asteroid);
+            }
+        }
+
+        int[] ans = new int[stack.size()];
+
+        for (int i = stack.size() - 1; i >= 0; i--) {
+            ans[i] = stack.pop();
+        }
+
+        return ans;
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation            | Time Complexity |
+| -------------------- | --------------- |
+| Traversing the array | O(n)            |
+| Stack Push/Pop       | O(n)            |
+
+**Total Time Complexity:** `O(n)`
+
+**Space Complexity:** `O(n)`
+
+Reason:
+
+* Every asteroid is pushed into the stack at most once.
+* Every asteroid is popped from the stack at most once.
+
+---
+
+## Key Learning
+
+* A stack stores only the asteroids that are still alive.
+* A collision occurs only when a right-moving asteroid meets a left-moving asteroid.
+* A single asteroid can collide with multiple previous asteroids, so a `while` loop is required instead of an `if`.
+* The stack naturally represents the latest surviving asteroid, making it the ideal data structure for this problem.
+
+---
+
+## Common Mistakes
+
+### ❌ Using `if` instead of `while`
+
+```java id="jlwm4b"
+if (...) {
+    ...
+}
+```
+
+A single asteroid may collide with multiple asteroids.
+
+Always use:
+
+```java id="jlwm4c"
+while (...) {
+    ...
+}
+```
+
+---
+
+### ❌ Forgetting the collision condition
+
+Collision occurs **only** when:
+
+```java id="jlwm4d"
+asteroid < 0 && stack.peek() > 0
+```
+
+---
+
+### ❌ Pushing destroyed asteroids
+
+Only push the asteroid if it survives all collisions.
+
+```java id="jlwm4e"
+if (!destroyed) {
+    stack.push(asteroid);
+}
+```
+
+---
+
+### ❌ Forgetting to convert the stack into an array
+
+The final answer should be returned as an array.
+
+Since the stack pops elements in reverse order, fill the answer array from the end.
+
+---
+
+## Takeaway
+
+The key idea is to process asteroids one by one while maintaining a stack of surviving asteroids. Whenever a new left-moving asteroid appears, it repeatedly collides with the latest right-moving asteroid on the stack until one of them survives or both are destroyed. This approach ensures that every asteroid is processed efficiently, resulting in an **O(n)** solution.
