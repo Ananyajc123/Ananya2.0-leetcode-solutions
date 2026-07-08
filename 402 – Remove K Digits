@@ -1,0 +1,492 @@
+402 – Remove K Digits
+Problem Statement
+
+You are given:
+
+A string num representing a non-negative integer.
+An integer k.
+
+Remove exactly k digits from the number so that the remaining number is the smallest possible.
+
+Return the answer as a string.
+
+If all digits are removed, return:
+
+"0"
+Example 1
+num = "1432219"
+k = 3
+
+Output
+
+"1219"
+Example 2
+num = "10200"
+k = 1
+
+Output
+
+"200"
+
+Why not "0200"?
+
+Because leading zeros are removed.
+
+Example 3
+num = "10"
+k = 2
+
+Remove both digits.
+
+Answer
+
+"0"
+First Thought
+
+Suppose
+
+1432219
+
+Need to remove
+
+3 digits
+
+Which digits?
+
+If we remove randomly,
+
+there are many possibilities.
+
+Brute force is impossible.
+
+Important Observation
+
+Suppose
+
+53
+
+Which digit should we remove to make the number smaller?
+
+Option 1
+
+Remove
+
+5
+
+Result
+
+3
+
+Option 2
+
+Remove
+
+3
+
+Result
+
+5
+
+Which is smaller?
+
+3
+
+So remove the bigger digit before a smaller digit.
+
+Another example
+
+41
+
+Remove
+
+4
+
+Result
+
+1
+
+Much smaller.
+
+Again
+
+76
+
+Remove
+
+7
+
+Result
+
+6
+Main Idea
+
+Whenever
+
+Previous Digit > Current Digit
+
+remove the previous digit.
+
+This is exactly what a stack helps us do.
+
+Why Stack?
+
+Suppose
+
+Current number
+
+143
+
+Stack
+
+1
+4
+3 ← current
+
+When 3 arrives,
+
+compare it with the top.
+
+4 > 3
+
+Remove
+
+4
+
+Now
+
+13
+
+is smaller than
+
+14
+Algorithm
+
+For every digit:
+
+While
+
+Stack not empty
+k > 0
+Top digit > Current digit
+
+Pop the stack.
+
+Then
+
+Push current digit.
+
+What if k is still left?
+
+Example
+
+12345
+
+Everything is increasing.
+
+Nothing gets removed.
+
+Suppose
+
+k=2
+
+Answer should be
+
+123
+
+Remove from the end.
+
+Why?
+
+Removing larger digits at the end produces the smallest number.
+
+So
+
+while(k>0){
+    stack.pop();
+    k--;
+}
+Leading Zeros
+
+Suppose
+
+10200
+
+After removing
+
+1
+
+We get
+
+0200
+
+But numbers don't start with zero.
+
+So while building the answer,
+
+remove leading zeros.
+
+Dry Run
+
+Input
+
+num = "1432219"
+
+k = 3
+Read 1
+
+Stack
+
+1
+Read 4
+1 < 4
+
+Push
+
+4
+1
+Read 3
+
+Top
+
+4
+
+Current
+
+3
+
+Since
+
+4>3
+
+Pop
+
+Stack
+
+1
+
+k becomes
+
+2
+
+Push
+
+3
+1
+Read 2
+
+Top
+
+3
+
+3>2
+
+Pop
+
+k
+
+1
+
+Push
+
+2
+1
+Read next 2
+
+Equal.
+
+Push.
+
+Stack
+
+2
+2
+1
+Read 1
+
+Top
+
+2
+
+2>1
+
+Pop
+
+k
+
+0
+
+Push
+
+1
+2
+1
+
+Remaining digits
+
+9
+
+Push.
+
+Final stack
+
+9
+1
+2
+1
+
+Answer
+
+1219
+Java Solution
+class Solution {
+
+    public String removeKdigits(String num, int k) {
+
+        Stack<Character> stack = new Stack<>();
+
+        for(char digit : num.toCharArray()) {
+
+            while(!stack.isEmpty()
+                    && k > 0
+                    && stack.peek() > digit) {
+
+                stack.pop();
+                k--;
+            }
+
+            stack.push(digit);
+        }
+
+        while(k > 0) {
+            stack.pop();
+            k--;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        while(!stack.isEmpty()) {
+            sb.append(stack.pop());
+        }
+
+        sb.reverse();
+
+        while(sb.length() > 1 && sb.charAt(0) == '0') {
+            sb.deleteCharAt(0);
+        }
+
+        return sb.length() == 0 ? "0" : sb.toString();
+    }
+}
+Code Explanation
+Create Stack
+Stack<Character> stack = new Stack<>();
+
+Stores digits of the smallest possible number.
+
+Traverse Digits
+for(char digit : num.toCharArray())
+
+Read one digit at a time.
+
+Remove Bigger Previous Digits
+while(!stack.isEmpty()
+      && k>0
+      && stack.peek()>digit)
+
+Suppose
+
+Stack
+
+5
+
+Current
+
+3
+
+Since
+
+5>3
+
+Remove
+
+5
+
+because
+
+53
+
+is larger than
+
+35
+Push Current Digit
+stack.push(digit);
+Remove Remaining Digits
+
+If
+
+12345
+
+No digit is removed during traversal.
+
+Still
+
+k>0
+
+Remove from end.
+
+Build String
+
+Pop everything.
+
+sb.append(stack.pop());
+
+Reverse it because the stack pops in reverse order.
+
+Remove Leading Zeros
+
+Example
+
+0200
+
+becomes
+
+200
+Return
+
+If nothing remains,
+
+return
+
+"0"
+Complexity
+Operation	Complexity
+Traversal	O(n)
+Stack Operations	O(n)
+Build Answer	O(n)
+
+Time Complexity: O(n)
+
+Space Complexity: O(n)
+
+Why This Works
+
+The greedy decision is:
+
+Whenever a larger digit appears before a smaller digit, remove the larger digit if you still have removals left (k > 0).
+
+This always makes the number smaller from the most significant position, which has the greatest impact on the final value.
+
+Interview Pattern
+
+Whenever you see:
+
+Remove digits
+Build the smallest/largest number
+Compare adjacent digits
+Greedy removal
+
+Think:
+
+Monotonic Stack + Greedy
+
+This is one of the most common patterns in stack-based interview questions and is worth mastering before moving on to harder greedy problems.
