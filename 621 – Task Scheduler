@@ -1,0 +1,400 @@
+621 – Task Scheduler
+
+## Problem Statement
+
+You are given:
+
+* An array of tasks represented by capital letters (`A` to `Z`).
+* An integer `n` representing the cooling time.
+
+Each task takes **1 unit of time** to execute.
+
+After executing a task, the **same task cannot be executed again for the next `n` units of time**.
+
+If no other task is available, the CPU remains **idle**.
+
+Return the **minimum time** required to complete all the tasks.
+
+---
+
+## Example
+
+### Input
+
+```text id="a8l1qv"
+tasks = [A,A,A,B,B,B]
+n = 2
+```
+
+### Output
+
+```text id="j0x2er"
+8
+```
+
+### One Possible Schedule
+
+```text id="u5r3nc"
+Time : 1 2 3 4 5 6 7 8
+
+Task : A B idle A B idle A B
+```
+
+Total Time = **8**
+
+---
+
+# Understanding the Cooling Time
+
+If
+
+```text id="cwzyzq"
+n = 2
+```
+
+and we execute
+
+```text id="m3mfqx"
+A
+```
+
+then the next `A` can only be executed after **2 time units**.
+
+Example:
+
+```text id="slmkgw"
+A _ _ A
+```
+
+There must be **2 spaces** between two consecutive `A`s.
+
+---
+
+# Brute Force Approach
+
+Simulate every second:
+
+* Choose an available task.
+* If no task is available, insert an idle slot.
+
+This requires repeatedly searching for the next valid task and becomes inefficient.
+
+---
+
+# Optimized Approach (Greedy + Math)
+
+## Key Observation
+
+The task with the **highest frequency** determines the minimum possible schedule length.
+
+Other tasks are used to fill the cooling gaps.
+
+---
+
+## Step 1: Count Task Frequencies
+
+Example:
+
+```text id="8kgdzl"
+tasks = [A,A,A,B,B,B,C]
+```
+
+Frequency:
+
+```text id="zqz8qb"
+A = 3
+B = 3
+C = 1
+```
+
+---
+
+## Step 2: Find the Maximum Frequency
+
+```text id="lq5um4"
+maxFreq = 3
+```
+
+The most frequent task creates the schedule structure.
+
+---
+
+## Step 3: Create Frames
+
+Suppose
+
+```text id="10v4ir"
+A A A
+```
+
+Arrange only the most frequent task first.
+
+```text id="0uwv4k"
+A _ _
+
+A _ _
+
+A
+```
+
+Notice:
+
+* Number of gaps = `maxFreq - 1`
+* Each gap must have `n` cooling spaces.
+
+Each row has length:
+
+```text id="o81q5g"
+n + 1
+```
+
+Therefore,
+
+```text id="vjlwm0"
+(maxFreq - 1) × (n + 1)
+```
+
+---
+
+## Step 4: Add Tasks Having the Same Maximum Frequency
+
+Example:
+
+```text id="hfc54k"
+A A A
+
+B B B
+```
+
+Both appear **3** times.
+
+The last row becomes:
+
+```text id="42h4do"
+A B
+```
+
+instead of
+
+```text id="tq7jn8"
+A
+```
+
+Therefore,
+
+```text id="b9mb2x"
++ countMax
+```
+
+where `countMax` is the number of tasks having the maximum frequency.
+
+---
+
+## Final Formula
+
+```text id="xq0msp"
+Answer =
+(maxFreq - 1) × (n + 1) + countMax
+```
+
+---
+
+## Why `Math.max()`?
+
+Sometimes there are enough different tasks to fill all idle slots.
+
+Example:
+
+```text id="kzjlwm"
+tasks = [A,A,B,B,C,C,D,D]
+```
+
+Total tasks:
+
+```text id="jlwm49"
+8
+```
+
+The formula may produce a value smaller than `8`.
+
+However, every task takes **1 unit of time**, so the answer can never be less than the total number of tasks.
+
+Therefore,
+
+```java id="jlwm4a"
+Math.max(tasks.length, calculatedAnswer)
+```
+
+---
+
+## Dry Run
+
+### Input
+
+```text id="jlwm4b"
+tasks = [A,A,A,B,B,B]
+n = 2
+```
+
+Frequency:
+
+```text id="jlwm4c"
+A = 3
+B = 3
+```
+
+Maximum Frequency:
+
+```text id="jlwm4d"
+3
+```
+
+Number of Tasks with Maximum Frequency:
+
+```text id="jlwm4e"
+2
+```
+
+Formula:
+
+```text id="jlwm4f"
+(3 - 1) × (2 + 1) + 2
+
+= 2 × 3 + 2
+
+= 8
+```
+
+Answer:
+
+```text id="jlwm4g"
+8
+```
+
+---
+
+## Java Solution
+
+```java id="jlwm4h"
+class Solution {
+
+    public int leastInterval(char[] tasks, int n) {
+
+        int[] freq = new int[26];
+
+        for (char task : tasks) {
+            freq[task - 'A']++;
+        }
+
+        int maxFreq = 0;
+
+        for (int f : freq) {
+            maxFreq = Math.max(maxFreq, f);
+        }
+
+        int countMax = 0;
+
+        for (int f : freq) {
+            if (f == maxFreq) {
+                countMax++;
+            }
+        }
+
+        int ans = (maxFreq - 1) * (n + 1) + countMax;
+
+        return Math.max(tasks.length, ans);
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation                     | Time Complexity |
+| ----------------------------- | --------------- |
+| Count Frequencies             | O(n)            |
+| Find Maximum Frequency        | O(26)           |
+| Count Maximum Frequency Tasks | O(26)           |
+
+**Total Time Complexity:** `O(n)`
+
+**Space Complexity:** `O(1)`
+
+Reason:
+
+* Frequency array has a fixed size of **26**.
+
+---
+
+## Key Learning
+
+* The most frequent task determines the schedule length.
+* Think of the schedule as **frames** created by the most frequent task.
+* Other tasks fill the cooling gaps.
+* If multiple tasks have the same maximum frequency, all of them occupy the last frame.
+* The final answer is:
+
+```text id="jlwm4i"
+max(tasks.length,
+    (maxFreq - 1) × (n + 1) + countMax)
+```
+
+---
+
+## Common Mistakes
+
+❌ Forgetting to count tasks with the same maximum frequency.
+
+Example:
+
+```text id="jlwm4j"
+A A A
+
+B B B
+```
+
+Both `A` and `B` must be included in the last frame.
+
+---
+
+❌ Returning only the formula.
+
+Always return:
+
+```java id="jlwm4k"
+Math.max(tasks.length, ans)
+```
+
+because the total time cannot be less than the total number of tasks.
+
+---
+
+❌ Thinking this problem always requires a Heap.
+
+The optimal solution is actually **Greedy + Math**.
+
+A Heap solution exists but has a higher time complexity.
+
+---
+
+## Pattern Recognition
+
+Whenever a problem involves:
+
+* Cooling period
+* Scheduling tasks
+* Minimizing idle time
+* Most frequent element determining the answer
+
+Think:
+
+```text id="jlwm4l"
+Greedy + Frequency Counting + Mathematical Formula
+```
+
+---
+
+## Takeaway
+
+The key idea is that the **most frequent task creates the framework of the schedule**. By arranging this task first, calculating the number of required frames, and then filling the remaining gaps with other tasks, we can compute the minimum execution time using a simple mathematical formula instead of simulating the entire scheduling process.
