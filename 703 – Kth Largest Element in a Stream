@@ -1,0 +1,497 @@
+703 – Kth Largest Element in a Stream
+
+## Problem Statement
+
+Design a class `KthLargest` that supports the following operations:
+
+* Initialize the class with:
+
+  * An integer `k`
+  * An integer array `nums`
+* Every time a new number is added, return the **kth largest element** among all numbers seen so far.
+
+---
+
+## What is a Stream?
+
+A **stream** means data arrives **one element at a time**.
+
+Example:
+
+Initially:
+
+```text id="kt6j4i"
+4 5 8 2
+```
+
+Then new numbers arrive:
+
+```text id="zwjtk2"
+3
+5
+10
+9
+4
+```
+
+After every new number, we must immediately return the **kth largest element**.
+
+---
+
+## Example
+
+### Input
+
+```text id="mgjww8"
+k = 3
+
+nums = [4,5,8,2]
+```
+
+### Operations
+
+```text id="2n9nli"
+add(3)
+add(5)
+add(10)
+add(9)
+add(4)
+```
+
+### Output
+
+```text id="fjlwmn"
+4
+5
+5
+8
+8
+```
+
+---
+
+# Understanding Kth Largest
+
+Suppose:
+
+```text id="dgf3w2"
+Numbers:
+
+2 4 5 8
+```
+
+Sorted in descending order:
+
+```text id="taqqjk"
+8 5 4 2
+```
+
+| k | Kth Largest |
+| - | ----------- |
+| 1 | 8           |
+| 2 | 5           |
+| 3 | 4           |
+| 4 | 2           |
+
+---
+
+# Brute Force Approach
+
+Whenever a new number arrives:
+
+1. Add it to the array.
+2. Sort the entire array.
+3. Return the kth largest element.
+
+### Time Complexity
+
+Sorting every time:
+
+```text id="vcyvgq"
+O(n log n)
+```
+
+Too slow.
+
+---
+
+# Optimized Approach (Min Heap)
+
+## Key Observation
+
+We **do not need all the numbers**.
+
+To find the **kth largest element**, we only need to keep the **largest k numbers**.
+
+Example:
+
+```text id="kjbrmq"
+k = 3
+
+Numbers:
+
+100 90 80 70 60
+```
+
+We only need:
+
+```text id="hjlwm4"
+100
+90
+80
+```
+
+The remaining numbers can be ignored.
+
+---
+
+# Why Min Heap?
+
+Maintain a **Min Heap of size k**.
+
+Example:
+
+```text id="r5f59n"
+Heap:
+
+8
+9
+10
+```
+
+The smallest element in the heap is:
+
+```text id="g6r17o"
+8
+```
+
+Since the heap stores only the **largest 3 elements**, the smallest among them is the **3rd largest element**.
+
+Therefore,
+
+> The **root of the Min Heap is always the kth largest element**.
+
+---
+
+# Algorithm
+
+### Constructor
+
+1. Create a Min Heap.
+2. Insert every element from `nums`.
+3. If the heap size becomes greater than `k`, remove the smallest element.
+
+This ensures the heap always contains only the **largest k elements**.
+
+---
+
+### add(val)
+
+1. Insert the new number.
+2. If heap size becomes greater than `k`, remove the smallest element.
+3. Return the root of the Min Heap.
+
+---
+
+## Dry Run
+
+### Input
+
+```text id="jlwm4o"
+k = 3
+
+nums = [4,5,8,2]
+```
+
+---
+
+### Insert 4
+
+Heap:
+
+```text id="jlwm4p"
+4
+```
+
+---
+
+### Insert 5
+
+Heap:
+
+```text id="jlwm4q"
+4
+5
+```
+
+---
+
+### Insert 8
+
+Heap:
+
+```text id="jlwm4r"
+4
+5
+8
+```
+
+Size = 3
+
+---
+
+### Insert 2
+
+Heap:
+
+```text id="jlwm4s"
+2
+4
+8
+5
+```
+
+Size = 4
+
+Remove smallest:
+
+```text id="jlwm4t"
+2
+```
+
+Heap becomes:
+
+```text id="jlwm4u"
+4
+5
+8
+```
+
+Root:
+
+```text id="jlwm4v"
+4
+```
+
+3rd largest = **4**
+
+---
+
+### add(3)
+
+Insert:
+
+```text id="jlwm4w"
+3
+4
+8
+5
+```
+
+Remove smallest:
+
+```text id="jlwm4x"
+3
+```
+
+Heap:
+
+```text id="jlwm4y"
+4
+5
+8
+```
+
+Return:
+
+```text id="jlwm4z"
+4
+```
+
+---
+
+### add(5)
+
+Heap:
+
+```text id="jlwm50"
+4
+5
+8
+5
+```
+
+Remove smallest:
+
+```text id="jlwm51"
+4
+```
+
+Heap:
+
+```text id="jlwm52"
+5
+5
+8
+```
+
+Return:
+
+```text id="jlwm53"
+5
+```
+
+---
+
+## Java Solution
+
+```java id="jlwm54"
+class KthLargest {
+
+    PriorityQueue<Integer> minHeap;
+    int k;
+
+    public KthLargest(int k, int[] nums) {
+
+        this.k = k;
+        minHeap = new PriorityQueue<>();
+
+        for (int num : nums) {
+
+            minHeap.offer(num);
+
+            if (minHeap.size() > k) {
+                minHeap.poll();
+            }
+        }
+    }
+
+    public int add(int val) {
+
+        minHeap.offer(val);
+
+        if (minHeap.size() > k) {
+            minHeap.poll();
+        }
+
+        return minHeap.peek();
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation   | Time Complexity |
+| ----------- | --------------- |
+| Constructor | O(n log k)      |
+| add()       | O(log k)        |
+| peek()      | O(1)            |
+
+**Space Complexity:** `O(k)`
+
+Reason:
+
+The heap stores at most **k elements**.
+
+---
+
+## Why Does This Work?
+
+Suppose:
+
+```text id="jlwm55"
+k = 3
+```
+
+Numbers:
+
+```text id="jlwm56"
+2 4 5 8 10 15
+```
+
+We only keep:
+
+```text id="jlwm57"
+8
+10
+15
+```
+
+The smallest among these is:
+
+```text id="jlwm58"
+8
+```
+
+Which is exactly the **3rd largest element**.
+
+---
+
+## Key Learning
+
+* Use a **Min Heap** to maintain only the largest `k` elements.
+* If the heap size exceeds `k`, remove the smallest element.
+* The root of the Min Heap always represents the **kth largest element**.
+* This avoids sorting the entire array after every insertion.
+
+---
+
+## Common Mistakes
+
+❌ Using a Max Heap.
+
+A Max Heap always gives the **largest** element, not the **kth largest**.
+
+Use a **Min Heap** instead.
+
+---
+
+❌ Keeping every element in the heap.
+
+The heap should always contain **at most `k` elements**.
+
+Always check:
+
+```java id="’wini59"
+if(minHeap.size() > k){
+    minHeap.poll();
+}
+```
+
+---
+
+❌ Returning `poll()` instead of `peek()`.
+
+Use:
+
+```java id="jlwm60"
+minHeap.peek();
+```
+
+because we only want to **view** the kth largest element, not remove it.
+
+---
+
+## Pattern Recognition
+
+Whenever a problem asks for:
+
+* Kth Largest Element
+* Kth Smallest Element
+* Top K Elements
+* Stream of data
+* Maintain only the best K values
+
+Think:
+
+```text id="jlwm61"
+Min Heap of Size K
+```
+
+---
+
+## Takeaway
+
+The key idea is to maintain a **Min Heap of size `k`** containing only the largest `k` elements seen so far. Whenever a new number arrives, it is inserted into the heap, and if the heap grows beyond size `k`, the smallest element is removed. This guarantees that the root of the Min Heap is always the **kth largest element**, giving an efficient solution with **O(log k)** time per insertion.
