@@ -1,0 +1,485 @@
+846 – Hand of Straights
+
+## Problem Statement
+
+You are given:
+
+* An integer array `hand`, where each number represents a card.
+* An integer `groupSize`.
+
+You need to divide all the cards into groups such that:
+
+* Every group contains exactly `groupSize` cards.
+* The cards in each group are **consecutive numbers**.
+* Every card must be used exactly once.
+
+Return:
+
+* `true` if it is possible.
+* `false` otherwise.
+
+---
+
+## Example 1
+
+### Input
+
+```text
+hand = [1,2,3,6,2,3,4,7,8]
+groupSize = 3
+```
+
+### Output
+
+```text
+true
+```
+
+### Explanation
+
+After sorting:
+
+```text
+1 2 2 3 3 4 6 7 8
+```
+
+Possible groups:
+
+```text
+1 2 3
+
+2 3 4
+
+6 7 8
+```
+
+Every card is used exactly once.
+
+---
+
+## Example 2
+
+### Input
+
+```text
+hand = [1,2,3,4,5]
+groupSize = 4
+```
+
+### Output
+
+```text
+false
+```
+
+### Explanation
+
+Possible first group:
+
+```text
+1 2 3 4
+```
+
+Remaining card:
+
+```text
+5
+```
+
+Cannot form another group of size 4.
+
+---
+
+# Brute Force Approach
+
+Generate groups by repeatedly searching for consecutive cards.
+
+This involves checking many possibilities and becomes inefficient.
+
+---
+
+# Optimized Approach (Sorting + HashMap + Greedy)
+
+## Key Observation
+
+The **smallest unused card must always start a new group**.
+
+Why?
+
+Suppose:
+
+```text
+1 2 3 4
+```
+
+If we skip `1` and start with:
+
+```text
+2 3 4
+```
+
+then `1` can never be placed in any valid consecutive group later.
+
+Therefore,
+
+> Always start from the **smallest available card**.
+
+---
+
+# Algorithm
+
+### Step 1
+
+If the total number of cards is not divisible by `groupSize`, return `false`.
+
+```java
+if(hand.length % groupSize != 0)
+    return false;
+```
+
+---
+
+### Step 2
+
+Sort the array.
+
+```java
+Arrays.sort(hand);
+```
+
+Example:
+
+```text
+Before:
+
+1 2 3 6 2 3 4 7 8
+
+After:
+
+1 2 2 3 3 4 6 7 8
+```
+
+Sorting allows us to always process the smallest card first.
+
+---
+
+### Step 3
+
+Count the frequency of every card.
+
+Example:
+
+```text
+1 → 1
+2 → 2
+3 → 2
+4 → 1
+6 → 1
+7 → 1
+8 → 1
+```
+
+---
+
+### Step 4
+
+Traverse every card in sorted order.
+
+If the current card has already been used:
+
+```java
+if(map.get(card) == 0)
+    continue;
+```
+
+Skip it.
+
+---
+
+### Step 5
+
+Try to build one complete consecutive group.
+
+Suppose:
+
+```text
+card = 2
+groupSize = 3
+```
+
+Required group:
+
+```text
+2
+3
+4
+```
+
+Loop:
+
+```java
+for(int i = 0; i < groupSize; i++)
+```
+
+Current required card:
+
+```java
+int current = card + i;
+```
+
+---
+
+### Step 6
+
+Check whether the required card exists.
+
+```java
+if(map.getOrDefault(current,0) == 0)
+    return false;
+```
+
+If any required card is missing,
+
+forming a valid consecutive group is impossible.
+
+---
+
+### Step 7
+
+Use the card.
+
+```java
+map.put(current, map.get(current) - 1);
+```
+
+Decrease its frequency because it has been placed into a group.
+
+---
+
+### Step 8
+
+If all cards are successfully grouped,
+
+return:
+
+```java
+return true;
+```
+
+---
+
+## Dry Run
+
+### Input
+
+```text
+hand = [1,2,2,3,3,4]
+groupSize = 3
+```
+
+Sorted:
+
+```text
+1 2 2 3 3 4
+```
+
+Frequency Map:
+
+```text
+1 → 1
+2 → 2
+3 → 2
+4 → 1
+```
+
+---
+
+### Start with card = 1
+
+Need:
+
+```text
+1 2 3
+```
+
+Decrease frequencies:
+
+```text
+1 → 0
+2 → 1
+3 → 1
+4 → 1
+```
+
+---
+
+### Next unused card = 2
+
+Need:
+
+```text
+2 3 4
+```
+
+Decrease frequencies:
+
+```text
+1 → 0
+2 → 0
+3 → 0
+4 → 0
+```
+
+All cards are used.
+
+Answer:
+
+```text
+true
+```
+
+---
+
+## Java Solution
+
+```java
+class Solution {
+
+    public boolean isNStraightHand(int[] hand, int groupSize) {
+
+        if (hand.length % groupSize != 0)
+            return false;
+
+        Arrays.sort(hand);
+
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        for (int card : hand) {
+            map.put(card, map.getOrDefault(card, 0) + 1);
+        }
+
+        for (int card : hand) {
+
+            if (map.get(card) == 0)
+                continue;
+
+            for (int i = 0; i < groupSize; i++) {
+
+                int current = card + i;
+
+                if (map.getOrDefault(current, 0) == 0)
+                    return false;
+
+                map.put(current, map.get(current) - 1);
+            }
+        }
+
+        return true;
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation           | Time Complexity |
+| ------------------- | --------------- |
+| Sorting             | O(n log n)      |
+| Build Frequency Map | O(n)            |
+| Form Groups         | O(n)            |
+
+**Total Time Complexity:** `O(n log n)`
+
+**Space Complexity:** `O(n)`
+
+Reason:
+
+* HashMap stores the frequency of every card.
+
+---
+
+## Why Does This Greedy Approach Work?
+
+The smallest unused card **cannot belong to any previous group**.
+
+Therefore,
+
+it **must** be the first card of a new consecutive group.
+
+If we cannot form a complete group starting from it, then no valid arrangement exists.
+
+This greedy choice guarantees the correct answer.
+
+---
+
+## Key Learning
+
+* Always sort the cards first.
+* Use a **HashMap** to count frequencies.
+* Always begin forming groups from the **smallest unused card**.
+* Decrease frequencies as cards are used.
+* If any required consecutive card is missing, immediately return `false`.
+
+---
+
+## Common Mistakes
+
+❌ Forgetting to check:
+
+```java
+if(hand.length % groupSize != 0)
+```
+
+If the total number of cards is not divisible by `groupSize`, forming equal groups is impossible.
+
+---
+
+❌ Not sorting the array.
+
+Without sorting, you cannot reliably start from the smallest unused card.
+
+---
+
+❌ Not skipping already used cards.
+
+Always write:
+
+```java
+if(map.get(card) == 0)
+    continue;
+```
+
+Otherwise, you'll try to create duplicate groups from cards that have already been used.
+
+---
+
+❌ Forgetting to decrease the frequency after using a card.
+
+Always update:
+
+```java
+map.put(current, map.get(current) - 1);
+```
+
+---
+
+## Pattern Recognition
+
+Whenever a problem asks you to:
+
+* Form consecutive groups
+* Use every element exactly once
+* Always process the smallest available element
+
+Think:
+
+```text
+Sorting + HashMap + Greedy
+```
+
+---
+
+## Takeaway
+
+The key idea is to sort the cards and always start a new group with the **smallest unused card**. Using a frequency map ensures each card is used exactly once, while the greedy strategy guarantees that if a valid grouping exists, it will be found. This leads to an efficient **O(n log n)** solution.
