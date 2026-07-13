@@ -1,0 +1,445 @@
+347 – Top K Frequent Elements
+
+## Problem Statement
+
+Given an integer array `nums` and an integer `k`, return the **k most frequent elements**.
+
+You may return the answer in **any order**.
+
+---
+
+## Example 1
+
+### Input
+
+```text
+nums = [1,1,1,2,2,3]
+k = 2
+```
+
+### Output
+
+```text
+[1,2]
+```
+
+### Explanation
+
+Frequency of each element:
+
+```text
+1 → 3
+2 → 2
+3 → 1
+```
+
+The two most frequent elements are:
+
+```text
+1
+2
+```
+
+---
+
+## Example 2
+
+### Input
+
+```text
+nums = [1]
+k = 1
+```
+
+### Output
+
+```text
+[1]
+```
+
+---
+
+# Brute Force Approach
+
+1. Count the frequency of every element.
+2. Sort all elements according to their frequencies.
+3. Return the first `k` elements.
+
+### Time Complexity
+
+```text
+O(n log n)
+```
+
+Sorting all elements is unnecessary when we only need the top `k`.
+
+---
+
+# Optimized Approach (HashMap + Min Heap)
+
+## Key Observation
+
+We only need the **top `k` frequent elements**, not all of them.
+
+Instead of sorting every element:
+
+* Count frequencies using a **HashMap**.
+* Maintain a **Min Heap of size `k`**.
+
+The heap always stores the **top `k` most frequent elements**.
+
+---
+
+# Why Min Heap?
+
+Suppose:
+
+```text
+k = 2
+```
+
+Current frequencies:
+
+```text
+1 → 20
+2 → 15
+```
+
+Heap:
+
+```text
+15
+20
+```
+
+Now another element appears:
+
+```text
+3 → 18
+```
+
+Insert it:
+
+```text
+15
+20
+18
+```
+
+Heap size becomes **3**.
+
+Remove the smallest frequency:
+
+```text
+15
+```
+
+Remaining:
+
+```text
+18
+20
+```
+
+The heap always contains only the **top `k` frequencies**.
+
+---
+
+# Algorithm
+
+### Step 1
+
+Count the frequency of every element.
+
+Example:
+
+```text
+nums = [1,1,1,2,2,3]
+```
+
+Frequency Map:
+
+```text
+1 → 3
+2 → 2
+3 → 1
+```
+
+---
+
+### Step 2
+
+Create a Min Heap.
+
+Each heap element stores:
+
+```text
+[number, frequency]
+```
+
+---
+
+### Step 3
+
+Traverse the frequency map.
+
+For every entry:
+
+* Insert it into the heap.
+* If heap size becomes greater than `k`, remove the smallest frequency.
+
+---
+
+### Step 4
+
+After processing all entries,
+
+the heap contains exactly the **top `k` frequent elements**.
+
+Extract them into the answer array.
+
+---
+
+## Dry Run
+
+### Input
+
+```text
+nums = [1,1,1,2,2,3]
+k = 2
+```
+
+Frequency Map:
+
+```text
+1 → 3
+2 → 2
+3 → 1
+```
+
+---
+
+Insert:
+
+```text
+(1,3)
+```
+
+Heap:
+
+```text
+(1,3)
+```
+
+---
+
+Insert:
+
+```text
+(2,2)
+```
+
+Heap:
+
+```text
+(2,2)
+(1,3)
+```
+
+---
+
+Insert:
+
+```text
+(3,1)
+```
+
+Heap:
+
+```text
+(3,1)
+(2,2)
+(1,3)
+```
+
+Heap size becomes **3**.
+
+Remove smallest frequency:
+
+```text
+(3,1)
+```
+
+Remaining Heap:
+
+```text
+(2,2)
+(1,3)
+```
+
+These are the **top 2 frequent elements**.
+
+---
+
+## Java Solution
+
+```java
+class Solution {
+
+    public int[] topKFrequent(int[] nums, int k) {
+
+        HashMap<Integer, Integer> freqMap = new HashMap<>();
+
+        for (int num : nums) {
+            freqMap.put(num, freqMap.getOrDefault(num, 0) + 1);
+        }
+
+        PriorityQueue<int[]> minHeap =
+                new PriorityQueue<>((a, b) -> a[1] - b[1]);
+
+        for (Map.Entry<Integer, Integer> entry : freqMap.entrySet()) {
+
+            minHeap.offer(new int[]{entry.getKey(), entry.getValue()});
+
+            if (minHeap.size() > k) {
+                minHeap.poll();
+            }
+        }
+
+        int[] ans = new int[k];
+
+        for (int i = k - 1; i >= 0; i--) {
+            ans[i] = minHeap.poll()[0];
+        }
+
+        return ans;
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation           | Time Complexity |
+| ------------------- | --------------- |
+| Build Frequency Map | O(n)            |
+| Heap Operations     | O(m log k)      |
+
+Where:
+
+* `n` = Total number of elements.
+* `m` = Number of unique elements.
+
+Overall:
+
+**Time Complexity:** `O(n log k)`
+
+**Space Complexity:** `O(n)`
+
+Reason:
+
+* HashMap stores frequencies.
+* Heap stores at most `k` elements.
+
+---
+
+## Why Does This Work?
+
+The Min Heap always stores only the **top `k` frequencies**.
+
+Whenever a new element is inserted:
+
+* If it belongs to the top `k`, it remains in the heap.
+* Otherwise, it is removed immediately.
+
+Thus, after processing all elements, the heap contains exactly the required answer.
+
+---
+
+## Key Learning
+
+* Use a **HashMap** to count frequencies.
+* Use a **Min Heap of size `k`**.
+* Store `(number, frequency)` pairs inside the heap.
+* Whenever the heap size exceeds `k`, remove the smallest frequency.
+* The heap finally contains the **k most frequent elements**.
+
+---
+
+## Common Mistakes
+
+❌ Sorting all elements.
+
+Sorting is unnecessary because only the top `k` elements are required.
+
+---
+
+❌ Using a Max Heap.
+
+A Max Heap stores all elements.
+
+A **Min Heap of size `k`** is more efficient because it discards unnecessary elements.
+
+---
+
+❌ Comparing numbers instead of frequencies.
+
+Always compare:
+
+```java
+(a, b) -> a[1] - b[1]
+```
+
+because `a[1]` and `b[1]` represent frequencies.
+
+---
+
+❌ Forgetting to remove extra elements.
+
+Always write:
+
+```java
+if(minHeap.size() > k){
+    minHeap.poll();
+}
+```
+
+This keeps the heap size equal to `k`.
+
+---
+
+## Pattern Recognition
+
+Whenever a problem asks for:
+
+* Top K Frequent Elements
+* Top K Largest
+* Top K Smallest
+* Most Frequent Items
+* Least Frequent Items
+
+Think:
+
+```text
+HashMap + Min Heap of Size K
+```
+
+---
+
+## Difference Between LeetCode 703 and 347
+
+| LeetCode 703                    | LeetCode 347                    |
+| ------------------------------- | ------------------------------- |
+| Kth Largest Element in a Stream | Top K Frequent Elements         |
+| Heap stores numbers             | Heap stores (number, frequency) |
+| Compare values                  | Compare frequencies             |
+| Min Heap of size `k`            | Min Heap of size `k`            |
+
+Both problems use the same **Top K Heap Pattern**.
+
+---
+
+## Takeaway
+
+The key idea is to first count the frequency of every element using a **HashMap**. Then, maintain a **Min Heap of size `k`** that stores only the `k` most frequent elements. Whenever the heap grows larger than `k`, remove the element with the smallest frequency. This ensures an efficient **O(n log k)** solution without sorting all elements.
