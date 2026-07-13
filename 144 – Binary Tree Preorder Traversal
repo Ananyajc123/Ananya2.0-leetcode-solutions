@@ -1,0 +1,411 @@
+144 – Binary Tree Preorder Traversal
+
+## Problem Statement
+
+Given the **root** of a binary tree, return the **preorder traversal** of its nodes' values.
+
+Preorder Traversal follows the order:
+
+```text id="0khz4n"
+Root
+↓
+
+Left
+↓
+
+Right
+```
+
+or simply:
+
+```text id="4l53hr"
+Node → Left → Right
+```
+
+---
+
+## Example
+
+### Input
+
+```text id="meqbf5"
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+### Output
+
+```text id="9tw0rl"
+[1,2,4,5,3]
+```
+
+### Explanation
+
+Visit the root first:
+
+```text id="vngbqi"
+1
+```
+
+Go to the left subtree:
+
+```text id="es2ftq"
+2 → 4 → 5
+```
+
+Finally, visit the right subtree:
+
+```text id="l0itva"
+3
+```
+
+Final traversal:
+
+```text id="9zwcrk"
+1 2 4 5 3
+```
+
+---
+
+# Approach (Recursive DFS)
+
+## Key Idea
+
+For every node:
+
+1. Visit the current node.
+2. Traverse the left subtree.
+3. Traverse the right subtree.
+
+The same process is repeated recursively for every subtree.
+
+---
+
+## Algorithm
+
+### Step 1
+
+If the current node is `null`, return immediately.
+
+```java id="2v52lr"
+if(root == null)
+    return;
+```
+
+---
+
+### Step 2
+
+Visit the current node.
+
+```java id="i0dlou"
+ans.add(root.val);
+```
+
+Store the node's value in the answer list.
+
+---
+
+### Step 3
+
+Traverse the left subtree.
+
+```java id="je0klo"
+preorder(root.left);
+```
+
+---
+
+### Step 4
+
+Traverse the right subtree.
+
+```java id="xvprwl"
+preorder(root.right);
+```
+
+---
+
+## Dry Run
+
+### Input Tree
+
+```text id="x3zy0p"
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+Initially:
+
+```text id="n2iwpn"
+ans = []
+```
+
+---
+
+Visit **1**
+
+```text id="tpccxh"
+ans = [1]
+```
+
+Go left.
+
+---
+
+Visit **2**
+
+```text id="a7qbo7"
+ans = [1,2]
+```
+
+Go left.
+
+---
+
+Visit **4**
+
+```text id="lbmr80"
+ans = [1,2,4]
+```
+
+Both children are `null`.
+
+Return.
+
+---
+
+Back to **2**
+
+Visit right child **5**
+
+```text id="agjlwm"
+ans = [1,2,4,5]
+```
+
+Return.
+
+---
+
+Back to **1**
+
+Visit right child **3**
+
+```text id="jlwm0b"
+ans = [1,2,4,5,3]
+```
+
+Traversal complete.
+
+---
+
+## Java Solution
+
+```java id="jlwm0c"
+class Solution {
+
+    List<Integer> ans = new ArrayList<>();
+
+    public List<Integer> preorderTraversal(TreeNode root) {
+
+        preorder(root);
+
+        return ans;
+    }
+
+    public void preorder(TreeNode root){
+
+        if(root == null)
+            return;
+
+        ans.add(root.val);
+
+        preorder(root.left);
+
+        preorder(root.right);
+    }
+}
+```
+
+---
+
+## Recursion Flow
+
+Consider the tree:
+
+```text id="jlwm0d"
+        1
+       / \
+      2   3
+```
+
+Function calls happen like this:
+
+```text id="jlwm0e"
+preorder(1)
+
+│
+├── Visit 1
+│
+├── preorder(2)
+│      ├── Visit 2
+│      ├── preorder(null)
+│      └── preorder(null)
+│
+└── preorder(3)
+       ├── Visit 3
+       ├── preorder(null)
+       └── preorder(null)
+```
+
+Every recursive call performs the **same three steps**:
+
+1. Visit current node.
+2. Traverse left.
+3. Traverse right.
+
+---
+
+## Complexity Analysis
+
+| Operation             | Time Complexity |
+| --------------------- | --------------- |
+| Visit every node once | O(n)            |
+
+**Time Complexity:** `O(n)`
+
+Reason:
+
+* Every node is visited exactly once.
+
+---
+
+**Space Complexity:** `O(h)`
+
+Where `h` is the height of the tree.
+
+* Balanced Tree:
+
+```text id="jlwm0f"
+O(log n)
+```
+
+* Skewed Tree:
+
+```text id="jlwm0g"
+O(n)
+```
+
+The extra space is used by the recursion call stack.
+
+---
+
+## Key Learning
+
+* Preorder follows:
+
+```text id="jlwm0h"
+Node → Left → Right
+```
+
+* Visit the current node **before** visiting its children.
+* Recursion naturally handles traversing each subtree.
+* The base case is when the current node becomes `null`.
+
+---
+
+## Common Mistakes
+
+❌ Forgetting the base case.
+
+Always write:
+
+```java id="jlwm0i"
+if(root == null)
+    return;
+```
+
+Otherwise, recursion will continue indefinitely.
+
+---
+
+❌ Visiting the node after the recursive calls.
+
+For preorder, always visit first:
+
+```java id="jlwm0j"
+ans.add(root.val);
+
+preorder(root.left);
+
+preorder(root.right);
+```
+
+Changing the order changes the traversal type.
+
+---
+
+❌ Forgetting to initialize the answer list.
+
+Always create:
+
+```java id="jlwm0k"
+List<Integer> ans = new ArrayList<>();
+```
+
+to store the traversal result.
+
+---
+
+## Pattern Recognition
+
+Whenever a problem asks for:
+
+* Preorder Traversal
+* Root before children
+* Copying or serializing a tree
+* DFS where the parent must be processed first
+
+Think:
+
+```text id="jlwm0l"
+Preorder DFS
+```
+
+Rule:
+
+```text id="jlwm0m"
+Node
+
+↓
+
+Left
+
+↓
+
+Right
+```
+
+---
+
+## Difference Between DFS Traversals
+
+| Traversal | Order               |
+| --------- | ------------------- |
+| Preorder  | Node → Left → Right |
+| Inorder   | Left → Node → Right |
+| Postorder | Left → Right → Node |
+
+The only difference is **where you process (visit) the current node**.
+
+---
+
+## Takeaway
+
+The key idea of Preorder Traversal is to **process the current node before exploring its children**. Using recursion, every subtree is treated as a smaller binary tree that follows the same **Node → Left → Right** pattern. This makes the solution simple, elegant, and runs in **O(n)** time.
