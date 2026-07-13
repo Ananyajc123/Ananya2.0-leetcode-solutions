@@ -1,0 +1,434 @@
+94 – Binary Tree Inorder Traversal
+
+## Problem Statement
+
+Given the **root** of a binary tree, return the **inorder traversal** of its nodes' values.
+
+Inorder Traversal follows the order:
+
+```text id="0ryp9m"
+Left
+↓
+
+Root
+↓
+
+Right
+```
+
+or simply:
+
+```text id="iq2kvr"
+Left → Node → Right
+```
+
+---
+
+## Example
+
+### Input
+
+```text id="b1xy3s"
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+### Output
+
+```text id="wwmjlwm"
+[4,2,5,1,3]
+```
+
+### Explanation
+
+Start from the leftmost node:
+
+```text id="jlwm94a"
+4
+```
+
+Return to its parent:
+
+```text id="jlwm94b"
+2
+```
+
+Visit the right child:
+
+```text id="jlwm94c"
+5
+```
+
+Return to the root:
+
+```text id="jlwm94d"
+1
+```
+
+Finally, visit the right subtree:
+
+```text id="jlwm94e"
+3
+```
+
+Final traversal:
+
+```text id="jlwm94f"
+4 2 5 1 3
+```
+
+---
+
+# Approach (Recursive DFS)
+
+## Key Idea
+
+For every node:
+
+1. Traverse the left subtree.
+2. Visit the current node.
+3. Traverse the right subtree.
+
+The same process is repeated recursively for every subtree.
+
+---
+
+## Algorithm
+
+### Step 1
+
+If the current node is `null`, return immediately.
+
+```java id="jlwm94g"
+if(root == null)
+    return;
+```
+
+---
+
+### Step 2
+
+Traverse the left subtree.
+
+```java id="’wini94h"
+inorder(root.left);
+```
+
+---
+
+### Step 3
+
+Visit the current node.
+
+```java id="jlwm94i"
+ans.add(root.val);
+```
+
+Store the node's value in the answer list.
+
+---
+
+### Step 4
+
+Traverse the right subtree.
+
+```java id="jlwm94j"
+inorder(root.right);
+```
+
+---
+
+## Dry Run
+
+### Input Tree
+
+```text id="jlwm94k"
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+Initially:
+
+```text id="’wini94l"
+ans = []
+```
+
+---
+
+Go to the leftmost node.
+
+Visit **4**
+
+```text id="jlwm94m"
+ans = [4]
+```
+
+Return to **2**
+
+Visit **2**
+
+```text id="񎵂94n"
+ans = [4,2]
+```
+
+Visit right child **5**
+
+```text id="’wini94o"
+ans = [4,2,5]
+```
+
+Return to **1**
+
+Visit **1**
+
+```text id="’wini94p"
+ans = [4,2,5,1]
+```
+
+Visit right child **3**
+
+```text id="’wini94q"
+ans = [4,2,5,1,3]
+```
+
+Traversal complete.
+
+---
+
+## Java Solution
+
+```java id="’wini94r"
+class Solution {
+
+    List<Integer> ans = new ArrayList<>();
+
+    public List<Integer> inorderTraversal(TreeNode root) {
+
+        inorder(root);
+
+        return ans;
+    }
+
+    public void inorder(TreeNode root){
+
+        if(root == null)
+            return;
+
+        inorder(root.left);
+
+        ans.add(root.val);
+
+        inorder(root.right);
+    }
+}
+```
+
+---
+
+## Recursion Flow
+
+Consider the tree:
+
+```text id="’wini94s"
+        1
+       / \
+      2   3
+```
+
+Function calls happen like this:
+
+```text id="’wini94t"
+inorder(1)
+
+│
+├── inorder(2)
+│      ├── inorder(null)
+│      ├── Visit 2
+│      └── inorder(null)
+│
+├── Visit 1
+│
+└── inorder(3)
+       ├── inorder(null)
+       ├── Visit 3
+       └── inorder(null)
+```
+
+Every recursive call performs the **same three steps**:
+
+1. Traverse left.
+2. Visit current node.
+3. Traverse right.
+
+---
+
+## Complexity Analysis
+
+| Operation             | Time Complexity |
+| --------------------- | --------------- |
+| Visit every node once | O(n)            |
+
+**Time Complexity:** `O(n)`
+
+Reason:
+
+* Every node is visited exactly once.
+
+---
+
+**Space Complexity:** `O(h)`
+
+Where `h` is the height of the tree.
+
+* Balanced Tree:
+
+```text id="’wini94u"
+O(log n)
+```
+
+* Skewed Tree:
+
+```text id="’wini94v"
+O(n)
+```
+
+The extra space is used by the recursion call stack.
+
+---
+
+## Why is Inorder Important?
+
+For a **Binary Search Tree (BST)**:
+
+```text id="’wini94w"
+Inorder Traversal always produces the nodes in sorted order.
+```
+
+Example BST:
+
+```text id="’wini94x"
+        4
+       / \
+      2   6
+     / \ / \
+    1 3 5 7
+```
+
+Inorder traversal:
+
+```text id="’wini94y"
+1 2 3 4 5 6 7
+```
+
+This property is heavily used in BST interview questions.
+
+---
+
+## Key Learning
+
+* Inorder follows:
+
+```text id="’wini94z"
+Left → Node → Right
+```
+
+* Visit the current node **after finishing the left subtree**.
+* Recursion naturally processes every subtree.
+* In a **BST**, inorder traversal always gives a **sorted sequence**.
+
+---
+
+## Common Mistakes
+
+❌ Forgetting the base case.
+
+Always write:
+
+```java id="’wini94aa"
+if(root == null)
+    return;
+```
+
+---
+
+❌ Visiting the node before the left subtree.
+
+For inorder, always follow:
+
+```java id="’wini94ab"
+inorder(root.left);
+
+ans.add(root.val);
+
+inorder(root.right);
+```
+
+Changing this order changes the traversal type.
+
+---
+
+❌ Forgetting that inorder is special for BSTs.
+
+Remember:
+
+```text id="’wini94ac"
+BST + Inorder = Sorted Order
+```
+
+This is one of the most important properties in tree interviews.
+
+---
+
+## Pattern Recognition
+
+Whenever a problem asks for:
+
+* Inorder Traversal
+* Binary Search Tree
+* Sorted order from a tree
+* Validate BST
+* Kth Smallest Element in BST
+
+Think:
+
+```text id="’wini94ad"
+Inorder DFS
+```
+
+Rule:
+
+```text id="’wini94ae"
+Left
+
+↓
+
+Node
+
+↓
+
+Right
+```
+
+---
+
+## Difference Between DFS Traversals
+
+| Traversal | Order               |
+| --------- | ------------------- |
+| Preorder  | Node → Left → Right |
+| Inorder   | Left → Node → Right |
+| Postorder | Left → Right → Node |
+
+The only difference is **where the current node is visited**.
+
+---
+
+## Takeaway
+
+The key idea of Inorder Traversal is to **completely process the left subtree before visiting the current node**, and then process the right subtree. This recursive **Left → Node → Right** pattern visits every node exactly once and is especially important because **it returns the nodes in sorted order for a Binary Search Tree (BST)**.
