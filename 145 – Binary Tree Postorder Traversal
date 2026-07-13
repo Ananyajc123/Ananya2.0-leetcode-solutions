@@ -1,0 +1,429 @@
+145 – Binary Tree Postorder Traversal
+
+## Problem Statement
+
+Given the **root** of a binary tree, return the **postorder traversal** of its nodes' values.
+
+Postorder Traversal follows the order:
+
+```text id="post145a"
+Left
+↓
+
+Right
+↓
+
+Root
+```
+
+or simply:
+
+```text id="post145b"
+Left → Right → Node
+```
+
+---
+
+## Example
+
+### Input
+
+```text id="post145c"
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+### Output
+
+```text id="post145d"
+[4,5,2,3,1]
+```
+
+### Explanation
+
+First traverse the left subtree:
+
+```text id="post145e"
+4 → 5 → 2
+```
+
+Then traverse the right subtree:
+
+```text id="post145f"
+3
+```
+
+Finally visit the root:
+
+```text id="post145g"
+1
+```
+
+Final traversal:
+
+```text id="post145h"
+4 5 2 3 1
+```
+
+---
+
+# Approach (Recursive DFS)
+
+## Key Idea
+
+For every node:
+
+1. Traverse the left subtree.
+2. Traverse the right subtree.
+3. Visit the current node.
+
+The node is processed **only after both children are completely processed**.
+
+---
+
+## Algorithm
+
+### Step 1
+
+If the current node is `null`, return immediately.
+
+```java id="post145i"
+if(root == null)
+    return;
+```
+
+---
+
+### Step 2
+
+Traverse the left subtree.
+
+```java id="post145j"
+postorder(root.left);
+```
+
+---
+
+### Step 3
+
+Traverse the right subtree.
+
+```java id="post145k"
+postorder(root.right);
+```
+
+---
+
+### Step 4
+
+Visit the current node.
+
+```java id="post145l"
+ans.add(root.val);
+```
+
+Store the node's value after both recursive calls finish.
+
+---
+
+## Dry Run
+
+### Input Tree
+
+```text id="post145m"
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+Initially:
+
+```text id="post145n"
+ans = []
+```
+
+---
+
+Go to the leftmost node.
+
+Visit **4**
+
+```text id="post145o"
+ans = [4]
+```
+
+Return.
+
+---
+
+Visit **5**
+
+```text id="post145p"
+ans = [4,5]
+```
+
+Return.
+
+---
+
+Both children of **2** are processed.
+
+Visit **2**
+
+```text id="post145q"
+ans = [4,5,2]
+```
+
+---
+
+Visit **3**
+
+```text id="post145r"
+ans = [4,5,2,3]
+```
+
+---
+
+Finally visit the root **1**
+
+```text id="post145s"
+ans = [4,5,2,3,1]
+```
+
+Traversal complete.
+
+---
+
+## Java Solution
+
+```java id="post145t"
+class Solution {
+
+    List<Integer> ans = new ArrayList<>();
+
+    public List<Integer> postorderTraversal(TreeNode root) {
+
+        postorder(root);
+
+        return ans;
+    }
+
+    public void postorder(TreeNode root){
+
+        if(root == null)
+            return;
+
+        postorder(root.left);
+
+        postorder(root.right);
+
+        ans.add(root.val);
+    }
+}
+```
+
+---
+
+## Recursion Flow
+
+Consider the tree:
+
+```text id="post145u"
+        1
+       / \
+      2   3
+```
+
+Function calls happen like this:
+
+```text id="post145v"
+postorder(1)
+
+│
+├── postorder(2)
+│      ├── postorder(null)
+│      ├── postorder(null)
+│      └── Visit 2
+│
+├── postorder(3)
+│      ├── postorder(null)
+│      ├── postorder(null)
+│      └── Visit 3
+│
+└── Visit 1
+```
+
+Every recursive call performs the same three steps:
+
+1. Traverse left.
+2. Traverse right.
+3. Visit current node.
+
+---
+
+## Complexity Analysis
+
+| Operation             | Time Complexity |
+| --------------------- | --------------- |
+| Visit every node once | O(n)            |
+
+**Time Complexity:** `O(n)`
+
+Reason:
+
+* Every node is visited exactly once.
+
+---
+
+**Space Complexity:** `O(h)`
+
+Where `h` is the height of the tree.
+
+* Balanced Tree:
+
+```text id="post145w"
+O(log n)
+```
+
+* Skewed Tree:
+
+```text id="post145x"
+O(n)
+```
+
+The extra space is used by the recursion call stack.
+
+---
+
+## Why is Postorder Important?
+
+Postorder is used when a node depends on the results of its children.
+
+Examples:
+
+* Delete a Binary Tree
+* Calculate Tree Height
+* Diameter of Binary Tree
+* Balanced Binary Tree
+* Maximum Path Sum
+* Dynamic Programming on Trees
+
+Reason:
+
+The parent is processed **after** both children.
+
+---
+
+## Key Learning
+
+* Postorder follows:
+
+```text id="post145y"
+Left → Right → Node
+```
+
+* Visit the current node **only after** both left and right subtrees are completely processed.
+* Recursion naturally processes child nodes before their parent.
+
+---
+
+## Common Mistakes
+
+❌ Forgetting the base case.
+
+Always write:
+
+```java id="post145z"
+if(root == null)
+    return;
+```
+
+---
+
+❌ Visiting the node before the recursive calls.
+
+For postorder, always follow:
+
+```java id="post145aa"
+postorder(root.left);
+
+postorder(root.right);
+
+ans.add(root.val);
+```
+
+Otherwise, it becomes preorder or inorder traversal.
+
+---
+
+❌ Confusing inorder and postorder.
+
+Remember:
+
+* Inorder → Visit between left and right.
+* Postorder → Visit after both children.
+
+---
+
+## Pattern Recognition
+
+Whenever a problem asks for:
+
+* Postorder Traversal
+* Delete Tree
+* Compute answer from children
+* Height or Diameter
+* Parent depends on children
+
+Think:
+
+```text id="post145ab"
+Postorder DFS
+```
+
+Rule:
+
+```text id="post145ac"
+Left
+
+↓
+
+Right
+
+↓
+
+Node
+```
+
+---
+
+## Difference Between DFS Traversals
+
+| Traversal | Order               |
+| --------- | ------------------- |
+| Preorder  | Node → Left → Right |
+| Inorder   | Left → Node → Right |
+| Postorder | Left → Right → Node |
+
+The only difference is **where the current node is visited**.
+
+---
+
+## Memory Trick
+
+Imagine you're standing at each node.
+
+* **Preorder:** Visit when you **arrive**.
+* **Inorder:** Visit after finishing the **left** subtree.
+* **Postorder:** Visit when you're **leaving** the node after finishing both children.
+
+---
+
+## Takeaway
+
+The key idea of Postorder Traversal is to **completely process both the left and right subtrees before visiting the current node**. This **Left → Right → Node** pattern is especially useful when the parent's answer depends on information from its children, making it the foundation for many important binary tree interview problems.
