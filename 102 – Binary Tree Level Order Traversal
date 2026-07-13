@@ -1,0 +1,520 @@
+102 – Binary Tree Level Order Traversal
+
+## Problem Statement
+
+Given the **root** of a binary tree, return the **level order traversal** of its nodes' values.
+
+Return the answer as a **list of lists**, where each inner list contains all the nodes at the same level.
+
+---
+
+## Example
+
+### Input
+
+```text id="102a"
+        3
+       / \
+      9   20
+         /  \
+        15   7
+```
+
+### Output
+
+```text id="102b"
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+```
+
+### Explanation
+
+Level 0:
+
+```text id="102c"
+3
+```
+
+Level 1:
+
+```text id="102d"
+9 20
+```
+
+Level 2:
+
+```text id="102e"
+15 7
+```
+
+Each level is stored as a separate list.
+
+---
+
+# Approach (BFS + Queue)
+
+## Key Idea
+
+Instead of going deep into the tree (DFS),
+
+visit the tree **level by level**.
+
+To achieve this, we use a **Queue** because it follows the **FIFO (First In First Out)** principle.
+
+---
+
+# Why Queue?
+
+Suppose we have:
+
+```text id="102f"
+        1
+       / \
+      2   3
+```
+
+Initially:
+
+```text id="102g"
+Queue:
+
+1
+```
+
+Process `1`.
+
+Add its children:
+
+```text id="102h"
+Queue:
+
+2 3
+```
+
+Process `2`.
+
+Process `3`.
+
+The queue naturally processes nodes level by level.
+
+---
+
+# Most Important Trick ⭐
+
+Before processing each level, store:
+
+```java id="102i"
+int size = queue.size();
+```
+
+`size` tells us exactly **how many nodes belong to the current level**.
+
+This prevents nodes from the next level from being mixed with the current one.
+
+---
+
+# Algorithm
+
+### Step 1
+
+If the tree is empty, return an empty list.
+
+```java id="102j"
+if(root == null)
+    return ans;
+```
+
+---
+
+### Step 2
+
+Create a Queue and insert the root node.
+
+```java id="102k"
+queue.offer(root);
+```
+
+---
+
+### Step 3
+
+Repeat while the queue is not empty.
+
+```java id="102l"
+while(!queue.isEmpty())
+```
+
+---
+
+### Step 4
+
+Store the current queue size.
+
+```java id="102m"
+int size = queue.size();
+```
+
+This is the number of nodes in the current level.
+
+---
+
+### Step 5
+
+Create a list to store the current level.
+
+```java id="102n"
+List<Integer> level = new ArrayList<>();
+```
+
+---
+
+### Step 6
+
+Process exactly `size` nodes.
+
+```java id="102o"
+for(int i = 0; i < size; i++)
+```
+
+For every node:
+
+* Remove it from the queue.
+* Store its value.
+* Add its left child.
+* Add its right child.
+
+---
+
+### Step 7
+
+After processing all nodes of one level,
+
+store the level inside the answer.
+
+```java id="102p"
+ans.add(level);
+```
+
+---
+
+## Dry Run
+
+### Input Tree
+
+```text id="102q"
+        3
+       / \
+      9   20
+         /  \
+        15   7
+```
+
+Initially:
+
+```text id="102r"
+Queue = [3]
+
+Answer = []
+```
+
+---
+
+### First Level
+
+Queue size:
+
+```text id="102s"
+1
+```
+
+Process:
+
+```text id="102t"
+3
+```
+
+Level:
+
+```text id="102u"
+[3]
+```
+
+Add children:
+
+```text id="102v"
+9
+
+20
+```
+
+Queue:
+
+```text id="102w"
+9 20
+```
+
+Answer:
+
+```text id="102x"
+[
+ [3]
+]
+```
+
+---
+
+### Second Level
+
+Queue size:
+
+```text id="102y"
+2
+```
+
+Process:
+
+```text id="102z"
+9
+
+20
+```
+
+Level:
+
+```text id="102aa"
+[9,20]
+```
+
+Add children of `20`:
+
+```text id="102ab"
+15
+
+7
+```
+
+Queue:
+
+```text id="102ac"
+15 7
+```
+
+Answer:
+
+```text id="102ad"
+[
+ [3],
+ [9,20]
+]
+```
+
+---
+
+### Third Level
+
+Queue size:
+
+```text id="102ae"
+2
+```
+
+Process:
+
+```text id="102af"
+15
+
+7
+```
+
+Level:
+
+```text id="102ag"
+[15,7]
+```
+
+Queue becomes empty.
+
+Final Answer:
+
+```text id="102ah"
+[
+ [3],
+ [9,20],
+ [15,7]
+]
+```
+
+---
+
+## Java Solution
+
+```java id="102ai"
+class Solution {
+
+    public List<List<Integer>> levelOrder(TreeNode root) {
+
+        List<List<Integer>> ans = new ArrayList<>();
+
+        if(root == null)
+            return ans;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+
+        queue.offer(root);
+
+        while(!queue.isEmpty()){
+
+            int size = queue.size();
+
+            List<Integer> level = new ArrayList<>();
+
+            for(int i = 0; i < size; i++){
+
+                TreeNode current = queue.poll();
+
+                level.add(current.val);
+
+                if(current.left != null)
+                    queue.offer(current.left);
+
+                if(current.right != null)
+                    queue.offer(current.right);
+            }
+
+            ans.add(level);
+        }
+
+        return ans;
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation             | Time Complexity |
+| --------------------- | --------------- |
+| Visit every node once | O(n)            |
+
+**Time Complexity:** `O(n)`
+
+Reason:
+
+* Every node is inserted into the queue exactly once.
+* Every node is removed from the queue exactly once.
+
+---
+
+**Space Complexity:** `O(n)`
+
+Reason:
+
+* In the worst case, the queue stores all nodes of one level.
+
+---
+
+## Key Learning
+
+* BFS uses a **Queue**.
+* Queue follows **FIFO (First In First Out)**.
+* Process the tree **level by level**.
+* The line:
+
+```java
+int size = queue.size();
+```
+
+is the key to separating one level from the next.
+
+* Each level is stored as a separate list.
+
+---
+
+## Common Mistakes
+
+❌ Forgetting to handle an empty tree.
+
+Always write:
+
+```java id="102aj"
+if(root == null)
+    return ans;
+```
+
+---
+
+❌ Not storing the queue size before the loop.
+
+Wrong:
+
+```java id="102ak"
+while(!queue.isEmpty()){
+    ...
+}
+```
+
+If you don't store the size first, newly added child nodes will also be processed in the same level.
+
+Always write:
+
+```java id="102al"
+int size = queue.size();
+```
+
+---
+
+❌ Using recursion (DFS).
+
+This problem specifically requires **level-by-level traversal**, so **BFS + Queue** is the most natural approach.
+
+---
+
+❌ Forgetting to check for null children.
+
+Always write:
+
+```java id="102am"
+if(current.left != null)
+    queue.offer(current.left);
+
+if(current.right != null)
+    queue.offer(current.right);
+```
+
+---
+
+## Pattern Recognition
+
+Whenever a problem asks for:
+
+* Level Order Traversal
+* Level by Level processing
+* Breadth First Search
+* Shortest distance in an unweighted tree/graph
+* Nodes at each level
+
+Think:
+
+```text id="102an"
+Queue + BFS
+```
+
+---
+
+## Difference Between DFS and BFS
+
+| DFS                          | BFS                   |
+| ---------------------------- | --------------------- |
+| Uses Recursion / Stack       | Uses Queue            |
+| Goes deep first              | Goes level by level   |
+| Preorder, Inorder, Postorder | Level Order Traversal |
+
+---
+
+## Takeaway
+
+The key idea of Level Order Traversal is to use **Breadth-First Search (BFS)** with a **Queue**. Before processing each level, store the current queue size to know exactly how many nodes belong to that level. Process those nodes, add their children to the queue, and store each level separately. This results in an efficient **O(n)** solution and forms the foundation for many BFS-based Binary Tree interview problems.
