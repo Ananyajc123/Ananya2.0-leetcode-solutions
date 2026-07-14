@@ -1,0 +1,509 @@
+543 – Diameter of Binary Tree
+
+## Problem Statement
+
+Given the **root** of a binary tree, return the **diameter** of the tree.
+
+The **diameter** of a binary tree is the **length of the longest path between any two nodes** in the tree.
+
+> **Note:** The length of a path is measured by the **number of edges**, not the number of nodes.
+
+The longest path **may or may not pass through the root**.
+
+---
+
+## Example 1
+
+### Input
+
+```text
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+### Output
+
+```text
+3
+```
+
+### Explanation
+
+The longest path is:
+
+```text
+4 → 2 → 1 → 3
+```
+
+Edges:
+
+```text
+4 → 2 = 1
+2 → 1 = 1
+1 → 3 = 1
+```
+
+Total edges:
+
+```text
+3
+```
+
+---
+
+## Example 2
+
+### Input
+
+```text
+    1
+```
+
+### Output
+
+```text
+0
+```
+
+A single node has no edges, so the diameter is **0**.
+
+---
+
+# Understanding Diameter
+
+Many students confuse **Maximum Depth** and **Diameter**.
+
+### Maximum Depth
+
+Measures:
+
+```text
+Root → Deepest Leaf
+```
+
+Example:
+
+```text
+        1
+       /
+      2
+     /
+    3
+```
+
+Maximum Depth:
+
+```text
+3 nodes
+```
+
+---
+
+### Diameter
+
+Measures:
+
+```text
+Any Node → Any Node
+```
+
+The path does **not** have to pass through the root.
+
+Example:
+
+```text
+          1
+         /
+        2
+       / \
+      4   5
+     /
+    6
+```
+
+Longest path:
+
+```text
+6 → 4 → 2 → 5
+```
+
+Notice that the root (**1**) is **not** part of the diameter.
+
+---
+
+# Approach (Bottom-Up Recursion)
+
+## Key Observation
+
+For every node:
+
+* Find the height of the left subtree.
+* Find the height of the right subtree.
+
+The longest path passing through that node is:
+
+```text
+Left Height + Right Height
+```
+
+So for every node:
+
+```text
+Diameter Through Current Node
+
+=
+
+Left Height + Right Height
+```
+
+We calculate this for every node and keep track of the maximum value.
+
+---
+
+# Algorithm
+
+### Step 1
+
+Create a global variable to store the maximum diameter.
+
+```java
+int diameter = 0;
+```
+
+---
+
+### Step 2
+
+If the current node is `null`, return height `0`.
+
+```java
+if(root == null)
+    return 0;
+```
+
+---
+
+### Step 3
+
+Recursively calculate the height of the left subtree.
+
+```java
+int left = height(root.left);
+```
+
+---
+
+### Step 4
+
+Recursively calculate the height of the right subtree.
+
+```java
+int right = height(root.right);
+```
+
+---
+
+### Step 5
+
+Update the maximum diameter.
+
+```java
+diameter = Math.max(diameter, left + right);
+```
+
+---
+
+### Step 6
+
+Return the height of the current subtree.
+
+```java
+return 1 + Math.max(left, right);
+```
+
+---
+
+## Dry Run
+
+### Input Tree
+
+```text
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+---
+
+### Node 4
+
+Left Height = 0
+
+Right Height = 0
+
+Diameter through node:
+
+```text
+0
+```
+
+Return height:
+
+```text
+1
+```
+
+---
+
+### Node 5
+
+Return height:
+
+```text
+1
+```
+
+---
+
+### Node 2
+
+Left Height = 1
+
+Right Height = 1
+
+Diameter through node:
+
+```text
+1 + 1 = 2
+```
+
+Maximum diameter:
+
+```text
+2
+```
+
+Return height:
+
+```text
+2
+```
+
+---
+
+### Node 3
+
+Return height:
+
+```text
+1
+```
+
+---
+
+### Node 1
+
+Left Height = 2
+
+Right Height = 1
+
+Diameter through node:
+
+```text
+2 + 1 = 3
+```
+
+Maximum diameter:
+
+```text
+3
+```
+
+Return height:
+
+```text
+3
+```
+
+Final Answer:
+
+```text
+3
+```
+
+---
+
+## Java Solution
+
+```java
+class Solution {
+
+    int diameter = 0;
+
+    public int diameterOfBinaryTree(TreeNode root) {
+
+        height(root);
+
+        return diameter;
+    }
+
+    public int height(TreeNode root){
+
+        if(root == null)
+            return 0;
+
+        int left = height(root.left);
+
+        int right = height(root.right);
+
+        diameter = Math.max(diameter, left + right);
+
+        return 1 + Math.max(left, right);
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation             | Time Complexity |
+| --------------------- | --------------- |
+| Visit every node once | O(n)            |
+
+**Time Complexity:** `O(n)`
+
+Reason:
+
+* Every node is visited exactly once.
+
+---
+
+**Space Complexity:** `O(h)`
+
+Where `h` is the height of the tree.
+
+* Balanced Tree → `O(log n)`
+* Skewed Tree → `O(n)`
+
+The extra space is due to the recursion call stack.
+
+---
+
+## Relationship with Previous Problems
+
+| Problem                           | Returns | Extra Work              |
+| --------------------------------- | ------- | ----------------------- |
+| **104 – Maximum Depth**           | Height  | None                    |
+| **110 – Balanced Binary Tree**    | Height  | Check height difference |
+| **543 – Diameter of Binary Tree** | Height  | Update maximum diameter |
+
+Notice that all three problems use the **same recursive template**.
+
+---
+
+## Why Do We Return Height Instead of Diameter?
+
+The parent node needs to know:
+
+* Height of the left subtree
+* Height of the right subtree
+
+Using these two heights, the parent computes its own diameter.
+
+Therefore, every recursive call **returns height**, while the diameter is updated using a global variable.
+
+---
+
+## Key Learning
+
+* Diameter is the **longest path between any two nodes**.
+* The path may or may not pass through the root.
+* For every node:
+
+```text
+Diameter Through Node = Left Height + Right Height
+```
+
+* Return the subtree height, but update the global diameter separately.
+* This is another example of **Bottom-Up Recursion**.
+
+---
+
+## Common Mistakes
+
+❌ Confusing diameter with maximum depth.
+
+* Maximum Depth → Root to deepest leaf.
+* Diameter → Longest path between any two nodes.
+
+---
+
+❌ Returning:
+
+```java
+left + right;
+```
+
+The recursive function should return **height**, not diameter.
+
+Always return:
+
+```java
+1 + Math.max(left, right);
+```
+
+---
+
+❌ Forgetting to update the global diameter.
+
+Always write:
+
+```java
+diameter = Math.max(diameter, left + right);
+```
+
+Otherwise, you'll only calculate heights.
+
+---
+
+❌ Measuring diameter using nodes instead of edges.
+
+The problem asks for the **number of edges**.
+
+Using `left + right` automatically gives the correct edge count.
+
+---
+
+## Pattern Recognition
+
+Whenever a tree problem asks you to:
+
+* Find the longest path
+* Compute information from left and right subtrees
+* Return height while maintaining another answer
+
+Think:
+
+```java
+left = solve(root.left);
+
+right = solve(root.right);
+
+// Update global answer
+
+return 1 + Math.max(left, right);
+```
+
+This is the **Bottom-Up Tree Recursion Pattern**.
+
+---
+
+## Takeaway
+
+The key idea is that the **longest path passing through any node is equal to the height of its left subtree plus the height of its right subtree**. By computing subtree heights recursively and updating a global diameter at every node, we solve the problem efficiently in **O(n)** time. This problem is another excellent example of the **Bottom-Up Recursion Pattern**, which is widely used in Binary Tree interview questions.
