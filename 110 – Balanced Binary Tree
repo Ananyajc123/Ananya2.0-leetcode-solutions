@@ -1,0 +1,489 @@
+110 – Balanced Binary Tree
+
+## Problem Statement
+
+Given the **root** of a binary tree, determine whether it is **height-balanced**.
+
+Return:
+
+* `true` if the tree is balanced.
+* `false` otherwise.
+
+A binary tree is **height-balanced** if, for **every node**, the difference between the heights of its left and right subtrees is **at most 1**.
+
+Mathematically,
+
+```text
+|Left Height - Right Height| ≤ 1
+```
+
+---
+
+## Example 1
+
+### Input
+
+```text
+        3
+       / \
+      9   20
+         /  \
+        15   7
+```
+
+### Output
+
+```text
+true
+```
+
+### Explanation
+
+For every node:
+
+* Node 9 → Difference = 0
+* Node 20 → Difference = 0
+* Node 3 → Difference = 1
+
+Since every node satisfies the condition, the tree is balanced.
+
+---
+
+## Example 2
+
+### Input
+
+```text
+        1
+       /
+      2
+     /
+    3
+   /
+  4
+```
+
+### Output
+
+```text
+false
+```
+
+### Explanation
+
+At node **2**:
+
+* Left Height = 2
+* Right Height = 0
+
+Difference:
+
+```text
+2
+```
+
+Since the difference is greater than **1**, the tree is **not balanced**.
+
+---
+
+# Brute Force Approach
+
+For every node:
+
+1. Calculate the height of the left subtree.
+2. Calculate the height of the right subtree.
+3. Check whether the height difference is at most 1.
+4. Recursively check the left and right subtrees.
+
+### Problem
+
+The height of the same subtree is calculated multiple times.
+
+Example:
+
+```text
+        1
+       /
+      2
+     /
+    3
+```
+
+The height of node **3** is recalculated for multiple nodes.
+
+**Time Complexity:** `O(n²)`
+
+Too slow.
+
+---
+
+# Optimized Approach (Bottom-Up Recursion)
+
+## Key Idea
+
+Instead of calculating the height separately for every node,
+
+calculate the **height and balance information together** in a single recursive call.
+
+### Trick
+
+Normally, height is always:
+
+```text
+0, 1, 2, 3, ...
+```
+
+Use:
+
+```text
+-1
+```
+
+to indicate that a subtree is **not balanced**.
+
+Since height can never be negative, `-1` is a perfect special value.
+
+---
+
+# Recursive Rule
+
+For every subtree:
+
+* Return its height if it is balanced.
+* Return `-1` if it is not balanced.
+
+The parent immediately knows whether one of its subtrees has already failed.
+
+---
+
+## Algorithm
+
+### Step 1
+
+If the current node is `null`, return height `0`.
+
+```java
+if(root == null)
+    return 0;
+```
+
+---
+
+### Step 2
+
+Recursively calculate the height of the left subtree.
+
+```java
+int left = height(root.left);
+```
+
+If the left subtree is not balanced:
+
+```java
+if(left == -1)
+    return -1;
+```
+
+Immediately stop.
+
+---
+
+### Step 3
+
+Recursively calculate the height of the right subtree.
+
+```java
+int right = height(root.right);
+```
+
+If the right subtree is not balanced:
+
+```java
+if(right == -1)
+    return -1;
+```
+
+Immediately stop.
+
+---
+
+### Step 4
+
+Check the height difference.
+
+```java
+if(Math.abs(left - right) > 1)
+    return -1;
+```
+
+If the difference is greater than 1,
+
+the current subtree is not balanced.
+
+---
+
+### Step 5
+
+Otherwise,
+
+return the height of the current subtree.
+
+```java
+return 1 + Math.max(left, right);
+```
+
+---
+
+## Dry Run
+
+### Input Tree
+
+```text
+        1
+       / \
+      2   3
+     /
+    4
+```
+
+---
+
+### Node 4
+
+Left Height = 0
+
+Right Height = 0
+
+```text
+Height = 1
+```
+
+---
+
+### Node 2
+
+Left Height = 1
+
+Right Height = 0
+
+Difference = 1
+
+```text
+Height = 2
+```
+
+---
+
+### Node 3
+
+Left Height = 0
+
+Right Height = 0
+
+```text
+Height = 1
+```
+
+---
+
+### Node 1
+
+Left Height = 2
+
+Right Height = 1
+
+Difference = 1
+
+```text
+Height = 3
+```
+
+The recursion never returns `-1`.
+
+Final Answer:
+
+```text
+true
+```
+
+---
+
+## Java Solution
+
+```java
+class Solution {
+
+    public boolean isBalanced(TreeNode root) {
+
+        return height(root) != -1;
+    }
+
+    public int height(TreeNode root){
+
+        if(root == null)
+            return 0;
+
+        int left = height(root.left);
+
+        if(left == -1)
+            return -1;
+
+        int right = height(root.right);
+
+        if(right == -1)
+            return -1;
+
+        if(Math.abs(left - right) > 1)
+            return -1;
+
+        return 1 + Math.max(left, right);
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation             | Time Complexity |
+| --------------------- | --------------- |
+| Visit every node once | O(n)            |
+
+**Time Complexity:** `O(n)`
+
+Reason:
+
+* Every node is visited exactly once.
+
+---
+
+**Space Complexity:** `O(h)`
+
+Where `h` is the height of the tree.
+
+* Balanced Tree → `O(log n)`
+* Skewed Tree → `O(n)`
+
+The extra space comes from the recursion call stack.
+
+---
+
+## Relationship with LeetCode 104
+
+LeetCode **104 (Maximum Depth)** returns:
+
+```java
+return 1 + Math.max(left, right);
+```
+
+LeetCode **110** uses the same idea but adds one extra condition:
+
+```java
+if(Math.abs(left - right) > 1)
+    return -1;
+```
+
+So, **110 is an extension of 104**.
+
+---
+
+## Key Learning
+
+* A balanced tree means every node satisfies:
+
+```text
+|Left Height - Right Height| ≤ 1
+```
+
+* Calculate height and balance **together**.
+* Use `-1` as a special value to represent an unbalanced subtree.
+* This avoids recalculating heights multiple times.
+
+---
+
+## Common Mistakes
+
+❌ Solving using `maxDepth()` for every node.
+
+This leads to repeated calculations and **O(n²)** complexity.
+
+---
+
+❌ Forgetting early termination.
+
+Always write:
+
+```java
+if(left == -1)
+    return -1;
+
+if(right == -1)
+    return -1;
+```
+
+If a subtree is already unbalanced, there is no need to continue.
+
+---
+
+❌ Forgetting to check the height difference.
+
+Always write:
+
+```java
+if(Math.abs(left - right) > 1)
+    return -1;
+```
+
+---
+
+❌ Returning height even when the subtree is unbalanced.
+
+Return:
+
+```java
+-1
+```
+
+to indicate failure.
+
+---
+
+## Pattern Recognition
+
+Whenever a tree problem asks you to:
+
+* Compute height
+* Compare left and right subtree
+* Return information from child nodes
+* Stop early when a condition fails
+
+Think:
+
+```java
+left = solve(root.left);
+
+right = solve(root.right);
+
+if(condition fails)
+    return specialValue;
+
+return combine(left, right);
+```
+
+This is the **Bottom-Up Recursion Pattern**.
+
+---
+
+## Difference Between Top-Down and Bottom-Up
+
+| Top-Down                                    | Bottom-Up                       |
+| ------------------------------------------- | ------------------------------- |
+| Recalculates subtree heights multiple times | Computes each subtree only once |
+| O(n²)                                       | O(n)                            |
+| Less efficient                              | Interview-preferred solution    |
+
+---
+
+## Takeaway
+
+The key idea is to compute the **height and balance status together** using a single recursive function. Every subtree returns either its height or `-1` if it is already unbalanced. This allows the parent to stop immediately when an imbalance is detected, resulting in an efficient **O(n)** solution. This **Bottom-Up Recursion Pattern** is one of the most important techniques for Binary Tree interview problems.
