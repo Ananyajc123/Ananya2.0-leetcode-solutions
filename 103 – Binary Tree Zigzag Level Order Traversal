@@ -1,0 +1,540 @@
+103 – Binary Tree Zigzag Level Order Traversal
+
+## Problem Statement
+
+Given the **root** of a binary tree, return the **zigzag level order traversal** of its nodes' values.
+
+Unlike normal level order traversal:
+
+* Level 0 → Left to Right
+* Level 1 → Right to Left
+* Level 2 → Left to Right
+* Level 3 → Right to Left
+
+The direction alternates after every level.
+
+---
+
+## Example
+
+### Input
+
+```text id="103a"
+        3
+       / \
+      9   20
+         /  \
+        15   7
+```
+
+### Output
+
+```text id="103b"
+[
+  [3],
+  [20,9],
+  [15,7]
+]
+```
+
+### Explanation
+
+Level 0:
+
+```text id="103c"
+3
+```
+
+(Level traversed from Left → Right)
+
+Level 1:
+
+```text id="103d"
+20 9
+```
+
+(Level traversed from Right → Left)
+
+Level 2:
+
+```text id="103e"
+15 7
+```
+
+(Level traversed from Left → Right)
+
+---
+
+# Approach (BFS + Queue)
+
+## Key Idea
+
+This problem is almost identical to **LeetCode 102 (Level Order Traversal)**.
+
+The only difference is:
+
+* Instead of always storing values from left to right,
+* We alternate the insertion direction after every level.
+
+We still use:
+
+* **Queue** for BFS.
+* **Level-by-level traversal**.
+
+---
+
+## Why LinkedList?
+
+Normally we use:
+
+```java id="103f"
+ArrayList<Integer>
+```
+
+But inserting at the beginning of an `ArrayList` takes `O(n)` time.
+
+Instead, use:
+
+```java id="103g"
+LinkedList<Integer>
+```
+
+It supports:
+
+```java id="103h"
+addFirst()
+
+addLast()
+```
+
+Both operations are efficient.
+
+---
+
+# Algorithm
+
+### Step 1
+
+If the tree is empty, return an empty list.
+
+```java id="103i"
+if(root == null)
+    return ans;
+```
+
+---
+
+### Step 2
+
+Create a Queue and insert the root.
+
+```java id="103j"
+queue.offer(root);
+```
+
+---
+
+### Step 3
+
+Maintain a boolean variable.
+
+```java id="103k"
+boolean leftToRight = true;
+```
+
+Initially, traverse from left to right.
+
+---
+
+### Step 4
+
+While the queue is not empty:
+
+* Store the current queue size.
+* Create a list for the current level.
+
+```java id="103l"
+int size = queue.size();
+
+LinkedList<Integer> level = new LinkedList<>();
+```
+
+---
+
+### Step 5
+
+Process exactly `size` nodes.
+
+For every node:
+
+* Remove it from the queue.
+* If traversing left to right:
+
+```java id="103m"
+level.addLast(current.val);
+```
+
+Otherwise:
+
+```java id="103n"
+level.addFirst(current.val);
+```
+
+---
+
+### Step 6
+
+Insert the left and right children into the queue.
+
+```java id="103o"
+if(current.left != null)
+    queue.offer(current.left);
+
+if(current.right != null)
+    queue.offer(current.right);
+```
+
+---
+
+### Step 7
+
+Store the current level.
+
+```java id="103p"
+ans.add(level);
+```
+
+---
+
+### Step 8
+
+Reverse the direction for the next level.
+
+```java id="103q"
+leftToRight = !leftToRight;
+```
+
+---
+
+## Dry Run
+
+### Input Tree
+
+```text id="103r"
+        3
+       / \
+      9   20
+         /  \
+        15   7
+```
+
+Initially:
+
+```text id="103s"
+Queue = [3]
+
+Direction = Left → Right
+```
+
+---
+
+### Level 0
+
+Process:
+
+```text id="103t"
+3
+```
+
+Store:
+
+```text id="103u"
+[3]
+```
+
+Queue:
+
+```text id="103v"
+9 20
+```
+
+Toggle direction.
+
+---
+
+### Level 1
+
+Direction:
+
+```text id="103w"
+Right → Left
+```
+
+Process:
+
+```text id="103x"
+9
+```
+
+Insert at front:
+
+```text id="103y"
+[9]
+```
+
+Process:
+
+```text id="103z"
+20
+```
+
+Insert at front:
+
+```text id="103aa"
+[20,9]
+```
+
+Queue:
+
+```text id="103ab"
+15 7
+```
+
+Toggle direction.
+
+---
+
+### Level 2
+
+Direction:
+
+```text id="103ac"
+Left → Right
+```
+
+Process:
+
+```text id="103ad"
+15
+
+7
+```
+
+Store:
+
+```text id="103ae"
+[15,7]
+```
+
+Final Answer:
+
+```text id="103af"
+[
+ [3],
+ [20,9],
+ [15,7]
+]
+```
+
+---
+
+## Java Solution
+
+```java id="103ag"
+class Solution {
+
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+
+        List<List<Integer>> ans = new ArrayList<>();
+
+        if(root == null)
+            return ans;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+
+        queue.offer(root);
+
+        boolean leftToRight = true;
+
+        while(!queue.isEmpty()){
+
+            int size = queue.size();
+
+            LinkedList<Integer> level = new LinkedList<>();
+
+            for(int i = 0; i < size; i++){
+
+                TreeNode current = queue.poll();
+
+                if(leftToRight)
+                    level.addLast(current.val);
+                else
+                    level.addFirst(current.val);
+
+                if(current.left != null)
+                    queue.offer(current.left);
+
+                if(current.right != null)
+                    queue.offer(current.right);
+            }
+
+            ans.add(level);
+
+            leftToRight = !leftToRight;
+        }
+
+        return ans;
+    }
+}
+```
+
+---
+
+## Complexity Analysis
+
+| Operation             | Time Complexity |
+| --------------------- | --------------- |
+| Visit every node once | O(n)            |
+
+**Time Complexity:** `O(n)`
+
+Reason:
+
+* Every node is inserted into the queue once.
+* Every node is removed from the queue once.
+
+---
+
+**Space Complexity:** `O(n)`
+
+Reason:
+
+* The queue may contain all nodes of one level.
+* The answer list also stores all nodes.
+
+---
+
+## Relationship with LeetCode 102
+
+| LeetCode 102               | LeetCode 103                               |
+| -------------------------- | ------------------------------------------ |
+| Level Order Traversal      | Zigzag Level Order Traversal               |
+| Always Left → Right        | Alternate directions                       |
+| Queue + BFS                | Queue + BFS                                |
+| `ArrayList` for each level | `LinkedList` for efficient front insertion |
+
+The BFS traversal remains exactly the same.
+
+Only the order of inserting values into the current level changes.
+
+---
+
+## Key Learning
+
+* Use **BFS + Queue**.
+* Process one level at a time.
+* Maintain a direction flag:
+
+```java id="103ah"
+boolean leftToRight;
+```
+
+* Use:
+
+```java id="103ai"
+addLast()
+```
+
+for left-to-right traversal.
+
+* Use:
+
+```java id="103aj"
+addFirst()
+```
+
+for right-to-left traversal.
+
+* Toggle the direction after every level.
+
+---
+
+## Common Mistakes
+
+❌ Forgetting to insert the root into the queue.
+
+Always write:
+
+```java id="103ak"
+queue.offer(root);
+```
+
+Otherwise, the BFS loop will never start.
+
+---
+
+❌ Forgetting to toggle the direction.
+
+Always write:
+
+```java id="103al"
+leftToRight = !leftToRight;
+```
+
+after processing each level.
+
+---
+
+❌ Using `ArrayList` with insertion at index `0`.
+
+```java id="103am"
+level.add(0, value);
+```
+
+This works but takes **O(n)** time for each insertion.
+
+Using `LinkedList` with `addFirst()` is cleaner and more efficient.
+
+---
+
+❌ Forgetting to process exactly one level.
+
+Always store:
+
+```java id="103an"
+int size = queue.size();
+```
+
+before the `for` loop.
+
+---
+
+## Pattern Recognition
+
+Whenever a problem asks for:
+
+* Zigzag Traversal
+* Spiral Traversal
+* Alternate Level Traversal
+
+Think:
+
+```text id="103ao"
+Queue + BFS
+
++
+
+Direction Flag
+
++
+
+LinkedList
+```
+
+The BFS logic stays the same; only the insertion order changes.
+
+---
+
+## Takeaway
+
+The key idea is to perform a normal **Level Order BFS** while alternating the insertion direction at every level. A boolean flag determines whether to insert values at the **front** or the **back** of the current level list. This simple modification transforms a standard level order traversal into a zigzag traversal while maintaining an efficient **O(n)** time complexity.
