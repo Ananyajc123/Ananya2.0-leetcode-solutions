@@ -1,0 +1,766 @@
+662 – Maximum Width of Binary Tree
+
+## Problem Statement
+
+Given the **root** of a binary tree, return the **maximum width** of the tree.
+
+The width of a level is the length between the **leftmost** and **rightmost** non-null nodes, **including the null positions between them**.
+
+---
+
+## Example
+
+### Input
+
+```text
+        1
+       / \
+      3   2
+     / \   \
+    5   3   9
+```
+
+### Output
+
+```text
+4
+```
+
+### Explanation
+
+Level 0
+
+```text
+1
+```
+
+Width = **1**
+
+---
+
+Level 1
+
+```text
+3   2
+```
+
+Width = **2**
+
+---
+
+Level 2
+
+```text
+5   3   null   9
+```
+
+Although only **3 nodes** exist, the missing (`null`) position is also counted.
+
+Width = **4**
+
+Therefore,
+
+```text
+Maximum Width = 4
+```
+
+---
+
+# Why Can't We Simply Count Nodes?
+
+Many beginners think:
+
+```text
+Level 2 has:
+
+5   3   9
+
+So width = 3
+```
+
+❌ Wrong.
+
+The problem counts the **positions**, not just the existing nodes.
+
+The missing (`null`) positions between the leftmost and rightmost nodes are also included.
+
+---
+
+# Key Idea
+
+Imagine every node is stored like a **Complete Binary Tree**.
+
+Assign an index to every node.
+
+```text
+                 0
+               /   \
+              1     2
+             / \     \
+            3   4     6
+```
+
+Notice that the missing node occupies index **5**.
+
+Now,
+
+Level 2 contains nodes at indices:
+
+```text
+3   4   6
+```
+
+Width
+
+```text
+= lastIndex - firstIndex + 1
+
+= 6 - 3 + 1
+
+= 4
+```
+
+---
+
+# Complete Binary Tree Indexing
+
+If a node has index:
+
+```text
+i
+```
+
+Then,
+
+Left Child
+
+```text
+2 * i + 1
+```
+
+Right Child
+
+```text
+2 * i + 2
+```
+
+Example
+
+```text
+Root = 0
+
+Left Child = 1
+
+Right Child = 2
+
+Left Child of 1 = 3
+
+Right Child of 1 = 4
+
+Left Child of 2 = 5
+
+Right Child of 2 = 6
+```
+
+---
+
+# Approach (BFS + Queue + Index)
+
+Instead of storing only the node in the queue,
+
+store
+
+* TreeNode
+* Index
+
+Each queue element becomes a pair.
+
+```java
+class Pair{
+
+    TreeNode node;
+
+    int index;
+
+    Pair(TreeNode node,int index){
+
+        this.node=node;
+
+        this.index=index;
+    }
+}
+```
+
+---
+
+# Why Normalize the Index?
+
+Suppose the tree is very deep.
+
+Indexes become extremely large.
+
+Example
+
+```text
+100000
+
+100001
+
+100002
+```
+
+Instead of using these values,
+
+subtract the first index of the level.
+
+```text
+0
+
+1
+
+2
+```
+
+The width remains the same.
+
+This avoids integer overflow for deep trees.
+
+---
+
+# Algorithm
+
+### Step 1
+
+If the tree is empty,
+
+return `0`.
+
+---
+
+### Step 2
+
+Create a queue.
+
+Insert
+
+```java
+(root, 0)
+```
+
+where `0` is the index of the root.
+
+---
+
+### Step 3
+
+While the queue is not empty,
+
+process one level at a time.
+
+---
+
+### Step 4
+
+Store
+
+```java
+int size = queue.size();
+```
+
+---
+
+### Step 5
+
+Normalize the indexes.
+
+```java
+int min = queue.peek().index;
+```
+
+Subtract this value from every index in the current level.
+
+---
+
+### Step 6
+
+For every node,
+
+store
+
+```java
+curIndex = current.index - min;
+```
+
+---
+
+### Step 7
+
+Remember
+
+* First index
+* Last index
+
+```java
+if(i == 0)
+    first = curIndex;
+
+if(i == size - 1)
+    last = curIndex;
+```
+
+---
+
+### Step 8
+
+Insert children.
+
+Left Child
+
+```java
+2 * curIndex + 1
+```
+
+Right Child
+
+```java
+2 * curIndex + 2
+```
+
+---
+
+### Step 9
+
+Calculate width.
+
+```java
+last - first + 1
+```
+
+Update the maximum width.
+
+---
+
+# Dry Run
+
+Tree
+
+```text
+        1
+       / \
+      3   2
+     / \   \
+    5   3   9
+```
+
+---
+
+Initially
+
+```text
+Queue
+
+(1,0)
+```
+
+Maximum Width
+
+```text
+1
+```
+
+---
+
+## Level 0
+
+Indexes
+
+```text
+0
+```
+
+Width
+
+```text
+0 - 0 + 1 = 1
+```
+
+Insert
+
+```text
+(3,1)
+
+(2,2)
+```
+
+---
+
+## Level 1
+
+Indexes
+
+```text
+1
+
+2
+```
+
+Width
+
+```text
+2
+```
+
+Insert
+
+```text
+(5,3)
+
+(3,4)
+
+(9,6)
+```
+
+---
+
+## Level 2
+
+Indexes
+
+```text
+3
+
+4
+
+6
+```
+
+Width
+
+```text
+6 - 3 + 1 = 4
+```
+
+Maximum Width
+
+```text
+4
+```
+
+Answer
+
+```text
+4
+```
+
+---
+
+# Java Solution
+
+```java
+class Pair{
+
+    TreeNode node;
+    int index;
+
+    Pair(TreeNode node, int index){
+        this.node = node;
+        this.index = index;
+    }
+}
+
+class Solution {
+
+    public int widthOfBinaryTree(TreeNode root) {
+
+        if(root == null)
+            return 0;
+
+        int ans = 0;
+
+        Queue<Pair> queue = new LinkedList<>();
+
+        queue.offer(new Pair(root, 0));
+
+        while(!queue.isEmpty()){
+
+            int size = queue.size();
+
+            int min = queue.peek().index;
+
+            int first = 0;
+            int last = 0;
+
+            for(int i = 0; i < size; i++){
+
+                Pair current = queue.poll();
+
+                int curIndex = current.index - min;
+
+                if(i == 0)
+                    first = curIndex;
+
+                if(i == size - 1)
+                    last = curIndex;
+
+                if(current.node.left != null)
+                    queue.offer(new Pair(current.node.left, 2 * curIndex + 1));
+
+                if(current.node.right != null)
+                    queue.offer(new Pair(current.node.right, 2 * curIndex + 2));
+            }
+
+            ans = Math.max(ans, last - first + 1);
+        }
+
+        return ans;
+    }
+}
+```
+
+---
+
+# Line-by-Line Explanation
+
+### Pair Class
+
+```java
+class Pair
+```
+
+Stores
+
+* TreeNode
+* Index
+
+This helps us calculate the width.
+
+---
+
+### Queue
+
+```java
+Queue<Pair> queue
+```
+
+Instead of storing only nodes,
+
+store both the node and its index.
+
+---
+
+### Root
+
+```java
+queue.offer(new Pair(root,0));
+```
+
+The root always starts at index **0**.
+
+---
+
+### Normalize Index
+
+```java
+int min = queue.peek().index;
+```
+
+Stores the first index of the current level.
+
+---
+
+### Current Index
+
+```java
+int curIndex = current.index - min;
+```
+
+Normalizes the indexes to avoid very large values.
+
+---
+
+### First Node
+
+```java
+if(i == 0)
+    first = curIndex;
+```
+
+Stores the leftmost index of the current level.
+
+---
+
+### Last Node
+
+```java
+if(i == size - 1)
+    last = curIndex;
+```
+
+Stores the rightmost index of the current level.
+
+---
+
+### Left Child
+
+```java
+2 * curIndex + 1
+```
+
+Assigns the correct complete binary tree index.
+
+---
+
+### Right Child
+
+```java
+2 * curIndex + 2
+```
+
+Assigns the correct complete binary tree index.
+
+---
+
+### Width
+
+```java
+last - first + 1
+```
+
+Calculates the width of the current level.
+
+---
+
+### Maximum Width
+
+```java
+ans = Math.max(ans, last - first + 1);
+```
+
+Updates the maximum width found so far.
+
+---
+
+# Complexity Analysis
+
+### Time Complexity
+
+```text
+O(n)
+```
+
+Every node is visited exactly once.
+
+---
+
+### Space Complexity
+
+```text
+O(n)
+```
+
+The queue may store all the nodes of one level.
+
+---
+
+# Common Mistakes
+
+### ❌ Mistake 1
+
+Counting only the existing nodes.
+
+The problem asks you to count the **positions**, including missing (`null`) nodes.
+
+---
+
+### ❌ Mistake 2
+
+Forgetting to normalize the indexes.
+
+```java
+curIndex = current.index - min;
+```
+
+Without normalization, indexes can become extremely large for deep trees.
+
+---
+
+### ❌ Mistake 3
+
+Using
+
+```java
+2 * current.index + 1
+```
+
+after normalization.
+
+Always generate child indexes using the **normalized index (`curIndex`)**.
+
+---
+
+### ❌ Mistake 4
+
+Calculating width using
+
+```java
+queue.size()
+```
+
+The width is **not** the number of nodes.
+
+Always calculate
+
+```java
+last - first + 1
+```
+
+---
+
+# Pattern Recognition
+
+Whenever a tree problem asks about:
+
+* Maximum Width
+* Width including missing nodes
+* Complete Binary Tree positions
+
+Think:
+
+```text
+Level Order BFS
+
++
+
+Assign Index to Every Node
+
++
+
+Width = lastIndex - firstIndex + 1
+```
+
+---
+
+# Relationship with Previous Problems
+
+| Problem | BFS Logic                         | Extra Information     |
+| ------- | --------------------------------- | --------------------- |
+| **102** | Store every node of a level       | Level Order Traversal |
+| **103** | Alternate insertion direction     | Zigzag Traversal      |
+| **199** | Store the last node of each level | Right Side View       |
+| **662** | Store node index                  | Maximum Width         |
+
+All four problems use the same **Level Order BFS** template.
+
+The only difference is **what extra information you store** for each node.
+
+---
+
+# Takeaway
+
+The key idea is to treat the binary tree as a **Complete Binary Tree** by assigning an index to every node. During **Level Order BFS**, record the index of the first and last node in each level. The width of that level is calculated as:
+
+```text
+lastIndex - firstIndex + 1
+```
+
+To avoid integer overflow in deep trees, normalize the indexes at each level by subtracting the first index before processing child nodes. This approach efficiently computes the maximum width in **O(n)** time.
