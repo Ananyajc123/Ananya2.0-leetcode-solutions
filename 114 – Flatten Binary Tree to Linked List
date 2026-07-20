@@ -1,0 +1,450 @@
+114 – Flatten Binary Tree to Linked List
+
+## Problem Statement
+
+Given the root of a binary tree, flatten the tree into a linked list **in-place**.
+
+Rules:
+
+* Use only the **right** pointer to form the linked list.
+* Every **left** pointer should be `null`.
+* The order of nodes should be the same as **Preorder Traversal (Root → Left → Right)**.
+
+---
+
+# Example
+
+### Input
+
+```text
+        1
+       / \
+      2   5
+     / \   \
+    3   4   6
+```
+
+### Output
+
+```text
+1
+ \
+  2
+   \
+    3
+     \
+      4
+       \
+        5
+         \
+          6
+```
+
+---
+
+# Key Observation ⭐
+
+The flattened linked list follows the **Preorder Traversal**.
+
+Preorder of the above tree:
+
+```text
+1 → 2 → 3 → 4 → 5 → 6
+```
+
+This is exactly the required linked list.
+
+---
+
+# Intuition
+
+For every node:
+
+1. If there is no left child, move to the right child.
+2. If there is a left child:
+
+   * Find the **rightmost node** of the left subtree.
+   * Connect the original right subtree to this rightmost node.
+   * Move the left subtree to the right.
+   * Make the left pointer `null`.
+3. Move to the next node.
+
+---
+
+# Why Do We Find the Rightmost Node?
+
+Consider:
+
+```text
+      1
+     / \
+    2   5
+   / \
+  3   4
+```
+
+If we directly move the left subtree to the right:
+
+```java
+current.right = current.left;
+```
+
+The original right subtree (`5`) is lost.
+
+To avoid losing it:
+
+1. Find the last node of the left subtree.
+
+```text
+      2
+     / \
+    3   4
+         ^
+```
+
+2. Attach the original right subtree.
+
+```text
+      2
+     / \
+    3   4
+         \
+          5
+```
+
+3. Move the left subtree.
+
+```text
+1
+ \
+  2
+ / \
+3   4
+     \
+      5
+```
+
+4. Set
+
+```java
+current.left = null;
+```
+
+Repeat the same process for every node.
+
+---
+
+# Algorithm
+
+For every node:
+
+* If the left child exists:
+
+  * Find the rightmost node of the left subtree.
+  * Connect its right pointer to the current node's right subtree.
+  * Move the left subtree to the right.
+  * Set the left pointer to `null`.
+* Move to the right child.
+
+Repeat until `current` becomes `null`.
+
+---
+
+# Java Solution
+
+```java
+class Solution {
+    public void flatten(TreeNode root) {
+
+        TreeNode current = root;
+
+        while (current != null) {
+
+            if (current.left != null) {
+
+                TreeNode predecessor = current.left;
+
+                // Find rightmost node of left subtree
+                while (predecessor.right != null) {
+                    predecessor = predecessor.right;
+                }
+
+                // Attach original right subtree
+                predecessor.right = current.right;
+
+                // Move left subtree to right
+                current.right = current.left;
+
+                // Remove left child
+                current.left = null;
+            }
+
+            // Move to next node
+            current = current.right;
+        }
+    }
+}
+```
+
+---
+
+# Dry Run
+
+### Initial Tree
+
+```text
+        1
+       / \
+      2   5
+     / \   \
+    3   4   6
+```
+
+### Step 1
+
+Current = 1
+
+Find the rightmost node of the left subtree.
+
+```text
+4
+```
+
+Attach:
+
+```text
+4 → 5
+```
+
+Move left subtree to right.
+
+```text
+1
+ \
+  2
+ / \
+3   4
+     \
+      5
+       \
+        6
+```
+
+Set
+
+```text
+1.left = null
+```
+
+---
+
+### Step 2
+
+Current = 2
+
+Find the rightmost node of the left subtree.
+
+```text
+3
+```
+
+Attach:
+
+```text
+3 → 4
+```
+
+Move the left subtree to the right.
+
+Tree becomes:
+
+```text
+1
+ \
+ 2
+  \
+   3
+    \
+     4
+      \
+       5
+        \
+         6
+```
+
+Continue until `current` becomes `null`.
+
+---
+
+# Code Explanation
+
+### Initialize Pointer
+
+```java
+TreeNode current = root;
+```
+
+Starts traversal from the root.
+
+---
+
+### Traverse the Tree
+
+```java
+while(current != null)
+```
+
+Visit every node.
+
+---
+
+### Check Left Subtree
+
+```java
+if(current.left != null)
+```
+
+Only rearrange pointers if a left subtree exists.
+
+---
+
+### Find Rightmost Node
+
+```java
+TreeNode predecessor = current.left;
+
+while(predecessor.right != null){
+    predecessor = predecessor.right;
+}
+```
+
+Find the last node in the left subtree.
+
+---
+
+### Attach Original Right Subtree
+
+```java
+predecessor.right = current.right;
+```
+
+Prevents losing the original right subtree.
+
+---
+
+### Move Left Subtree
+
+```java
+current.right = current.left;
+```
+
+The left subtree becomes the new right subtree.
+
+---
+
+### Remove Left Pointer
+
+```java
+current.left = null;
+```
+
+The final linked list must use only right pointers.
+
+---
+
+### Move Forward
+
+```java
+current = current.right;
+```
+
+Continue processing the next node.
+
+---
+
+# Complexity Analysis
+
+### Time Complexity
+
+* Each node is processed a constant number of times.
+
+**Time:** `O(n)`
+
+### Space Complexity
+
+No recursion or extra data structures are used.
+
+**Space:** `O(1)`
+
+---
+
+# Common Mistakes
+
+### ❌ Mistake 1
+
+```java
+while(current.right != null)
+```
+
+**Correct**
+
+```java
+while(predecessor.right != null)
+```
+
+Reason:
+
+We must find the **rightmost node of the left subtree**, not check the current node's right child.
+
+---
+
+### ❌ Mistake 2
+
+Forgetting:
+
+```java
+current = current.right;
+```
+
+This causes an infinite loop because `current` never moves.
+
+---
+
+# Pattern Recognition
+
+Whenever a tree problem asks for:
+
+* Flatten Tree
+* In-place modification
+* Constant extra space
+
+Think:
+
+1. Find the rightmost node of the left subtree.
+2. Attach the original right subtree.
+3. Move the left subtree to the right.
+4. Set the left pointer to `null`.
+5. Continue.
+
+---
+
+# Relationship with Previous Problems
+
+* **104** – Tree traversal.
+* **105 & 106** – Constructing trees.
+* **114** – Rearranging tree pointers without creating new nodes.
+
+---
+
+# Interview Tips
+
+* The final linked list follows **Preorder Traversal**.
+* Never lose the original right subtree.
+* Always attach the original right subtree to the **rightmost node** of the left subtree.
+* After rearranging, move to `current.right`.
+
+---
+
+# One-Line Memory Trick ⭐
+
+> **Find the rightmost node of the left subtree → Attach the original right subtree → Move the left subtree to the right → Set `left = null` → Move to the next node.**
