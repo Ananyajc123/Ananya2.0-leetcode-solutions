@@ -1,0 +1,276 @@
+106 – Construct Binary Tree from Inorder and Postorder Traversal
+
+## Problem Statement
+
+Given the **inorder** and **postorder** traversals of a binary tree, construct and return the binary tree.
+
+---
+
+# Intuition
+
+* **Inorder Traversal:** Left → Root → Right
+* **Postorder Traversal:** Left → Right → Root
+
+### Key Observation
+
+* In **postorder**, the **last element is always the root**.
+* Once the root is found, use the inorder array to divide the tree into left and right subtrees.
+* Since we process the postorder array **from the end**, we must build the **right subtree first**, followed by the left subtree.
+
+---
+
+# Example
+
+```text
+Inorder   = [9,3,15,20,7]
+
+Postorder = [9,15,7,20,3]
+```
+
+### Step 1
+
+Root = Last element of postorder
+
+```text
+Root = 3
+```
+
+Tree
+
+```text
+    3
+```
+
+---
+
+### Step 2
+
+Find `3` in inorder.
+
+```text
+9 |3| 15 20 7
+```
+
+Left subtree
+
+```text
+9
+```
+
+Right subtree
+
+```text
+15 20 7
+```
+
+---
+
+### Step 3
+
+Move backwards in postorder.
+
+```text
+9 15 7 20 3
+         ^
+```
+
+After removing `3`, the next root is `20`.
+
+Since we are reading postorder backwards, we must build the **right subtree first**.
+
+---
+
+### Final Tree
+
+```text
+        3
+       / \
+      9   20
+         / \
+        15  7
+```
+
+---
+
+# Algorithm
+
+1. Store every value and its index from the inorder array in a HashMap.
+2. Initialize `postIndex` to the last index of the postorder array.
+3. Pick the current postorder element as the root.
+4. Find the root's position in the inorder array.
+5. Recursively build the **right subtree**.
+6. Recursively build the **left subtree**.
+7. Return the root.
+
+---
+
+# Java Solution
+
+```java
+class Solution {
+
+    int postIndex;
+    HashMap<Integer, Integer> map = new HashMap<>();
+
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+
+        postIndex = postorder.length - 1;
+
+        for (int i = 0; i < inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+
+        return helper(postorder, 0, inorder.length - 1);
+    }
+
+    private TreeNode helper(int[] postorder, int left, int right) {
+
+        if (left > right) {
+            return null;
+        }
+
+        int rootValue = postorder[postIndex--];
+        TreeNode root = new TreeNode(rootValue);
+
+        int mid = map.get(rootValue);
+
+        // Build right subtree first
+        root.right = helper(postorder, mid + 1, right);
+
+        // Build left subtree
+        root.left = helper(postorder, left, mid - 1);
+
+        return root;
+    }
+}
+```
+
+---
+
+# Code Explanation
+
+### `postIndex`
+
+```java
+int postIndex = postorder.length - 1;
+```
+
+* Points to the current root in the postorder array.
+* Starts from the last element because the last element is always the root.
+
+---
+
+### HashMap
+
+```java
+map.put(inorder[i], i);
+```
+
+Stores:
+
+```text
+Node Value → Index in Inorder
+```
+
+This helps find the root position in **O(1)** time.
+
+---
+
+### Base Case
+
+```java
+if(left > right)
+    return null;
+```
+
+`left` and `right` represent the current range of the inorder array.
+
+If `left > right`, there are no elements left to construct a subtree, so return `null`.
+
+---
+
+### Create Root
+
+```java
+int rootValue = postorder[postIndex--];
+```
+
+Take the current root from the end of the postorder array and move the pointer backward.
+
+---
+
+### Find Root Position
+
+```java
+int mid = map.get(rootValue);
+```
+
+Find the root's index in the inorder array.
+
+---
+
+### Build Right Subtree
+
+```java
+root.right = helper(postorder, mid + 1, right);
+```
+
+Since we are traversing the postorder array backwards, the right subtree appears before the left subtree.
+
+---
+
+### Build Left Subtree
+
+```java
+root.left = helper(postorder, left, mid - 1);
+```
+
+Construct the left subtree after the right subtree.
+
+---
+
+# Complexity Analysis
+
+**Time Complexity:** `O(n)`
+
+* Building the HashMap: `O(n)`
+* Visiting each node once: `O(n)`
+
+**Overall:** `O(n)`
+
+---
+
+**Space Complexity:** `O(n)`
+
+* HashMap: `O(n)`
+* Recursive call stack: `O(h)` (worst case `O(n)`)
+
+---
+
+# Pattern Recognition
+
+### LeetCode 105 (Preorder + Inorder)
+
+* Root comes from the **beginning** of the preorder array.
+* Build **Left → Right**.
+
+### LeetCode 106 (Postorder + Inorder)
+
+* Root comes from the **end** of the postorder array.
+* Build **Right → Left**.
+
+---
+
+# Interview Tips
+
+* **Preorder:** First element is the root.
+* **Postorder:** Last element is the root.
+* **Inorder:** Splits the tree into left and right subtrees.
+* `left` and `right` are **indexes of the inorder array**, not tree children.
+* In Problem 106, always build the **right subtree first**, then the left subtree.
+
+---
+
+# One-Line Memory Trick ⭐
+
+> **Preorder starts with the root → Build Left first. Postorder ends with the root → Build Right first. Inorder always tells you where to split the tree.**
