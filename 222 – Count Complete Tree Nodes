@@ -1,0 +1,596 @@
+222 – Count Complete Tree Nodes
+
+## Problem Statement
+
+Given the **root** of a **Complete Binary Tree**, return the total number of nodes in the tree.
+
+A **Complete Binary Tree** is a binary tree where:
+
+* Every level is completely filled except possibly the last.
+* The last level is filled from **left to right**.
+
+---
+
+## Example
+
+### Input
+
+```text
+        1
+       / \
+      2   3
+     / \  /
+    4  5 6
+```
+
+### Output
+
+```text
+6
+```
+
+---
+
+# Brute Force Approach (DFS)
+
+The simplest approach is to visit every node and count it.
+
+### Formula
+
+```java
+countNodes(root) =
+1 + countNodes(root.left) + countNodes(root.right)
+```
+
+### Java Code
+
+```java
+class Solution {
+
+    public int countNodes(TreeNode root) {
+
+        if(root == null)
+            return 0;
+
+        return 1 + countNodes(root.left) + countNodes(root.right);
+    }
+}
+```
+
+### Complexity
+
+| Complexity | Value    |
+| ---------- | -------- |
+| Time       | **O(n)** |
+| Space      | **O(h)** |
+
+where `h` is the height of the tree.
+
+---
+
+# Why Can We Do Better?
+
+The problem specifically says the tree is a **Complete Binary Tree**.
+
+This property allows us to recognize when a subtree is actually a **Perfect Binary Tree**, so we can count all its nodes using a formula instead of visiting every node.
+
+---
+
+# What is a Perfect Binary Tree?
+
+A Perfect Binary Tree is one where:
+
+* Every level is completely filled.
+* All leaf nodes are at the same depth.
+
+Example
+
+```text
+        1
+       / \
+      2   3
+     / \ / \
+    4 5 6 7
+```
+
+Number of nodes in a perfect binary tree:
+
+| Height | Nodes |
+| ------ | ----: |
+| 1      |     1 |
+| 2      |     3 |
+| 3      |     7 |
+| 4      |    15 |
+
+### Formula
+
+```text
+Nodes = 2^height - 1
+```
+
+---
+
+# Key Observation
+
+For every subtree:
+
+* Compute the **left height** (always move left).
+* Compute the **right height** (always move right).
+
+If both heights are equal,
+
+```text
+Left Height == Right Height
+```
+
+then the subtree is a **Perfect Binary Tree**.
+
+Instead of visiting every node,
+
+use the formula:
+
+```text
+2^height - 1
+```
+
+Otherwise,
+
+recursively count the left and right subtrees.
+
+---
+
+# Algorithm
+
+### Step 1
+
+If the current node is `null`, return `0`.
+
+---
+
+### Step 2
+
+Compute the left height.
+
+---
+
+### Step 3
+
+Compute the right height.
+
+---
+
+### Step 4
+
+If both heights are equal,
+
+return
+
+```java
+(1 << height) - 1
+```
+
+---
+
+### Step 5
+
+Otherwise,
+
+return
+
+```java
+1 + countNodes(root.left) + countNodes(root.right)
+```
+
+---
+
+# Helper Functions
+
+### Left Height
+
+```java
+private int leftHeight(TreeNode node){
+
+    int height = 0;
+
+    while(node != null){
+        height++;
+        node = node.left;
+    }
+
+    return height;
+}
+```
+
+---
+
+### Right Height
+
+```java
+private int rightHeight(TreeNode node){
+
+    int height = 0;
+
+    while(node != null){
+        height++;
+        node = node.right;
+    }
+
+    return height;
+}
+```
+
+---
+
+# Dry Run
+
+Tree
+
+```text
+        1
+       / \
+      2   3
+     / \  /
+    4 5 6
+```
+
+### Root
+
+Left Height = **3**
+
+Right Height = **2**
+
+Not equal.
+
+So,
+
+```text
+1 + count(left) + count(right)
+```
+
+---
+
+### Left Subtree
+
+```text
+      2
+     / \
+    4   5
+```
+
+Left Height = **2**
+
+Right Height = **2**
+
+Equal.
+
+Perfect Binary Tree.
+
+Return
+
+```text
+2² - 1 = 3
+```
+
+---
+
+### Right Subtree
+
+```text
+    3
+   /
+  6
+```
+
+Left Height = **2**
+
+Right Height = **1**
+
+Not equal.
+
+Continue recursion.
+
+Final Answer = **6**
+
+---
+
+# Optimized Java Solution
+
+```java
+class Solution {
+
+    public int countNodes(TreeNode root) {
+
+        if(root == null)
+            return 0;
+
+        int lh = leftHeight(root);
+        int rh = rightHeight(root);
+
+        if(lh == rh)
+            return (1 << lh) - 1;
+
+        return 1 + countNodes(root.left) + countNodes(root.right);
+    }
+
+    private int leftHeight(TreeNode node){
+
+        int height = 0;
+
+        while(node != null){
+            height++;
+            node = node.left;
+        }
+
+        return height;
+    }
+
+    private int rightHeight(TreeNode node){
+
+        int height = 0;
+
+        while(node != null){
+            height++;
+            node = node.right;
+        }
+
+        return height;
+    }
+}
+```
+
+---
+
+# Line-by-Line Explanation
+
+### Base Case
+
+```java
+if(root == null)
+    return 0;
+```
+
+If the tree is empty, there are no nodes.
+
+---
+
+### Compute Heights
+
+```java
+int lh = leftHeight(root);
+int rh = rightHeight(root);
+```
+
+Calculate:
+
+* Height by moving only to the left.
+* Height by moving only to the right.
+
+---
+
+### Perfect Tree Check
+
+```java
+if(lh == rh)
+```
+
+If both heights are equal, the subtree is a **Perfect Binary Tree**.
+
+---
+
+### Count Nodes Using Formula
+
+```java
+return (1 << lh) - 1;
+```
+
+This calculates:
+
+```text
+2^height - 1
+```
+
+without using `Math.pow()`.
+
+Example:
+
+```text
+lh = 3
+
+1 << 3 = 8
+
+8 - 1 = 7
+```
+
+---
+
+### Recursive Case
+
+```java
+return 1 + countNodes(root.left) + countNodes(root.right);
+```
+
+If the subtree is not perfect, count:
+
+* Current node
+* Left subtree
+* Right subtree
+
+---
+
+# Why Use `(1 << lh)`?
+
+Many beginners write:
+
+```java
+2 ^ lh
+```
+
+❌ This is incorrect.
+
+In Java,
+
+```java
+^
+```
+
+is the **Bitwise XOR operator**, **not** the power operator.
+
+Example:
+
+```java
+2 ^ 3
+```
+
+returns
+
+```text
+1
+```
+
+instead of
+
+```text
+8
+```
+
+Correct ways to compute `2^n` are:
+
+```java
+(1 << n)
+```
+
+or
+
+```java
+(int)Math.pow(2, n)
+```
+
+The bit shift version is preferred because it is faster and avoids floating-point calculations.
+
+---
+
+# Complexity Analysis
+
+### Time Complexity
+
+At every recursive call:
+
+* Left height → `O(log n)`
+* Right height → `O(log n)`
+
+The recursion depth is also `O(log n)`.
+
+Overall:
+
+```text
+O((log n)²)
+```
+
+---
+
+### Space Complexity
+
+```text
+O(log n)
+```
+
+due to the recursion stack.
+
+---
+
+# Common Mistakes
+
+### ❌ Mistake 1
+
+Using
+
+```java
+return (2 ^ lh) - 1;
+```
+
+`^` means XOR, **not** exponentiation.
+
+Correct:
+
+```java
+return (1 << lh) - 1;
+```
+
+---
+
+### ❌ Mistake 2
+
+Using `Math.pow()` without casting.
+
+```java
+Math.pow()
+```
+
+returns a `double`.
+
+If you use it, cast it:
+
+```java
+(int)Math.pow(2, lh)
+```
+
+---
+
+### ❌ Mistake 3
+
+Applying this optimization to any binary tree.
+
+This solution works because the tree is **Complete**.
+
+For a general binary tree, use the normal DFS counting approach.
+
+---
+
+# Pattern Recognition
+
+Whenever the problem mentions:
+
+* Complete Binary Tree
+* Perfect Binary Tree
+* Count Nodes Efficiently
+
+Think:
+
+```text
+Compute Left Height
+
++
+
+Compute Right Height
+
+↓
+
+Equal?
+
+Yes → Perfect Tree → Use Formula
+
+No → Recurse on Left and Right
+```
+
+---
+
+# Relationship with Previous Problems
+
+| Problem | Main Concept                                                                           |
+| ------- | -------------------------------------------------------------------------------------- |
+| **104** | Find tree height                                                                       |
+| **110** | Compare left and right heights for balance                                             |
+| **543** | Use height to compute diameter                                                         |
+| **222** | Use left and right heights to detect a perfect subtree and count nodes using a formula |
+
+---
+
+# Takeaway
+
+The key idea is to use the **Complete Binary Tree** property. If the leftmost and rightmost heights of a subtree are equal, it is a **Perfect Binary Tree**, and the number of nodes can be calculated directly using:
+
+```text
+2^height - 1
+```
+
+Otherwise, recursively count the left and right subtrees. This optimization improves the time complexity from **O(n)** to **O((log n)²)**.
