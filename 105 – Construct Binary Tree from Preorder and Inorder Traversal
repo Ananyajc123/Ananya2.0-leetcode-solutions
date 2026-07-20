@@ -1,0 +1,271 @@
+105 – Construct Binary Tree from Preorder and Inorder Traversal
+
+## Most Important Concept
+
+### What do `left` and `right` mean?
+
+❌ They **do NOT** mean the left child and right child of a tree.
+
+✅ They are **indexes of the inorder array**.
+
+They define the current portion of the inorder array that belongs to the subtree we are building.
+
+---
+
+## Example
+
+```text
+Preorder = [3, 9, 20, 15, 7]
+
+Inorder  = [9, 3, 15, 20, 7]
+
+Indexes:   0   1   2   3   4
+```
+
+Initial call:
+
+```java
+helper(preorder, 0, 4);
+```
+
+Meaning:
+
+> Build a tree using the inorder array from index **0** to **4**.
+
+Current inorder portion:
+
+```text
+[9, 3, 15, 20, 7]
+```
+
+---
+
+## Step 1: Find the Root
+
+Preorder always follows:
+
+```text
+Root → Left → Right
+```
+
+So the first unused preorder element is always the root.
+
+```text
+Root = 3
+```
+
+---
+
+## Step 2: Find Root in Inorder
+
+```text
+Index:    0   1   2   3   4
+Inorder: [9,  3, 15, 20,  7]
+              ^
+            mid = 1
+```
+
+Everything before `mid` belongs to the left subtree.
+
+Everything after `mid` belongs to the right subtree.
+
+---
+
+## Step 3: Recursive Calls
+
+Left subtree:
+
+```java
+helper(preorder, 0, 0);
+```
+
+Right subtree:
+
+```java
+helper(preorder, 2, 4);
+```
+
+Notice that only the inorder index range changes.
+
+---
+
+## Meaning of `helper(left, right)`
+
+```java
+helper(preorder, left, right)
+```
+
+means:
+
+> Build a subtree using only the inorder elements between index `left` and index `right`.
+
+Examples:
+
+```java
+helper(preorder, 0, 4)
+```
+
+Uses:
+
+```text
+[9, 3, 15, 20, 7]
+```
+
+```java
+helper(preorder, 2, 4)
+```
+
+Uses:
+
+```text
+[15, 20, 7]
+```
+
+```java
+helper(preorder, 2, 2)
+```
+
+Uses:
+
+```text
+[15]
+```
+
+---
+
+## Why Do We Check?
+
+```java
+if (left > right)
+    return null;
+```
+
+Suppose we call:
+
+```java
+helper(preorder, 0, -1);
+```
+
+There is no valid inorder portion from index `0` to `-1`.
+
+This means:
+
+* No elements
+* No node
+* No subtree
+
+So we return:
+
+```java
+null
+```
+
+This is the stopping condition (base case) of the recursion.
+
+---
+
+## Why Is `preIndex` Needed?
+
+```java
+int preIndex = 0;
+```
+
+It always points to the next root in the preorder array.
+
+Example:
+
+```text
+Preorder
+
+3 → 9 → 20 → 15 → 7
+↑
+preIndex
+```
+
+After creating node `3`:
+
+```text
+3 ✓
+
+9 → 20 → 15 → 7
+↑
+preIndex
+```
+
+After creating node `9`:
+
+```text
+3 ✓ 9 ✓
+
+20 → 15 → 7
+↑
+preIndex
+```
+
+The pointer only moves forward because preorder visits nodes in Root → Left → Right order.
+
+---
+
+## Why Use a HashMap?
+
+Instead of searching every time:
+
+```text
+9 3 15 20 7
+```
+
+Store:
+
+```text
+9  → 0
+3  → 1
+15 → 2
+20 → 3
+7  → 4
+```
+
+Now we can find the root's position in O(1) time.
+
+---
+
+## Algorithm
+
+1. Store every inorder value and its index in a HashMap.
+2. Take the next preorder element as the root.
+3. Find the root's index (`mid`) in inorder.
+4. Recursively build the left subtree using `left` to `mid - 1`.
+5. Recursively build the right subtree using `mid + 1` to `right`.
+6. Return the root.
+
+---
+
+## Time Complexity
+
+* Build HashMap: **O(n)**
+* Build Tree: **O(n)**
+
+**Overall:** `O(n)`
+
+---
+
+## Space Complexity
+
+* HashMap: **O(n)**
+* Recursive stack: **O(h)**
+
+Worst case: **O(n)**
+
+Balanced tree: **O(log n)**
+
+---
+
+## Interview Tips
+
+* **Preorder tells you the root.**
+* **Inorder tells you where to split.**
+* **`left` and `right` are inorder array indexes, not tree children.**
+* **`left > right` means the current inorder portion is empty, so return `null`.**
+
+### One-Line Memory Trick ⭐
+
+> **Preorder chooses the root, inorder divides the tree, and `left`/`right` simply mark the current inorder range being used.**
