@@ -1,0 +1,352 @@
+701 – Insert into a Binary Search Tree
+
+## Problem Statement
+
+Given the root of a **Binary Search Tree (BST)** and an integer `val`, insert `val` into the BST and return the root of the updated tree.
+
+The tree must still satisfy the **Binary Search Tree property** after insertion.
+
+---
+
+# Intuition
+
+A Binary Search Tree follows the property:
+
+```text
+Left Subtree < Root < Right Subtree
+```
+
+To insert a new value:
+
+* If the value is smaller than the current node, move to the left subtree.
+* If the value is greater than the current node, move to the right subtree.
+* Continue until you reach a `null` position.
+* Create a new node there.
+
+Think of this problem as **Search in BST (LeetCode 700)** with one extra step: **instead of returning `null`, create a new node when a `null` position is found.**
+
+---
+
+# Example
+
+### Input
+
+```text
+        4
+      /   \
+     2     7
+    / \
+   1   3
+
+Insert = 5
+```
+
+### Output
+
+```text
+        4
+      /   \
+     2     7
+    / \   /
+   1   3 5
+```
+
+Explanation:
+
+* `5 > 4` → Move Right
+* `5 < 7` → Move Left
+* Left child is `null` → Insert `5`
+
+---
+
+# Algorithm
+
+1. If the current node is `null`, create a new node and return it.
+2. If `val < root.val`, recursively insert into the left subtree.
+3. Otherwise, recursively insert into the right subtree.
+4. Return the current root.
+
+---
+
+# Recursive Solution
+
+```java
+class Solution {
+
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+
+        if (root == null)
+            return new TreeNode(val);
+
+        if (val < root.val)
+            root.left = insertIntoBST(root.left, val);
+        else
+            root.right = insertIntoBST(root.right, val);
+
+        return root;
+    }
+}
+```
+
+---
+
+# Iterative Solution
+
+```java
+class Solution {
+
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+
+        if (root == null)
+            return new TreeNode(val);
+
+        TreeNode curr = root;
+
+        while (true) {
+
+            if (val < curr.val) {
+
+                if (curr.left == null) {
+                    curr.left = new TreeNode(val);
+                    break;
+                }
+
+                curr = curr.left;
+
+            } else {
+
+                if (curr.right == null) {
+                    curr.right = new TreeNode(val);
+                    break;
+                }
+
+                curr = curr.right;
+            }
+        }
+
+        return root;
+    }
+}
+```
+
+---
+
+# Dry Run
+
+Tree:
+
+```text
+        8
+      /   \
+     3     10
+    / \
+   1   6
+```
+
+Insert `7`
+
+### Step 1
+
+Current node = `8`
+
+```text
+7 < 8
+```
+
+Move left.
+
+---
+
+### Step 2
+
+Current node = `3`
+
+```text
+7 > 3
+```
+
+Move right.
+
+---
+
+### Step 3
+
+Current node = `6`
+
+```text
+7 > 6
+```
+
+Move right.
+
+---
+
+### Step 4
+
+Right child is `null`
+
+Create:
+
+```java
+new TreeNode(7)
+```
+
+Final Tree:
+
+```text
+        8
+      /   \
+     3     10
+    / \
+   1   6
+        \
+         7
+```
+
+---
+
+# Why do we write?
+
+```java
+root.left = insertIntoBST(root.left, val);
+```
+
+Instead of
+
+```java
+insertIntoBST(root.left, val);
+```
+
+The recursive call returns the **updated subtree**.
+
+We must reconnect that updated subtree back to the current node.
+
+Example:
+
+Before insertion:
+
+```text
+    5
+   /
+ null
+```
+
+Insert `3`
+
+Recursive call returns:
+
+```text
+3
+```
+
+Now connect it:
+
+```java
+root.left = returnedNode;
+```
+
+Result:
+
+```text
+    5
+   /
+  3
+```
+
+Without assigning it back to `root.left`, the newly created node would not become part of the tree.
+
+---
+
+# Complexity Analysis
+
+### Time Complexity
+
+* Average Case (Balanced BST): **O(log n)**
+* Worst Case (Skewed BST): **O(n)**
+
+### Space Complexity
+
+**Recursive Solution**
+
+* **O(h)** (recursion stack), where `h` is the height of the tree.
+
+**Iterative Solution**
+
+* **O(1)**
+
+---
+
+# Pattern Recognition
+
+This problem follows the same traversal pattern as **LeetCode 700 – Search in BST**.
+
+```text
+Compare Value
+
+↓
+
+Go Left or Go Right
+
+↓
+
+Reach null
+
+↓
+
+Insert New Node
+```
+
+Only one path is explored because of the BST property.
+
+---
+
+# Relationship with Previous Problem (700)
+
+| LeetCode 700             | LeetCode 701                        |
+| ------------------------ | ----------------------------------- |
+| Search for a value       | Find the correct insertion position |
+| Stop when value is found | Stop when `null` is found           |
+| Return the node          | Create a new node                   |
+| No tree modification     | Tree is updated                     |
+
+Both problems use the same BST traversal logic.
+
+---
+
+# Interview Tips
+
+* A new node is **always inserted at a leaf position** (`null`).
+* Never violate the BST property (`Left < Root < Right`).
+* In recursion, always reconnect the updated subtree:
+
+```java
+root.left = insertIntoBST(root.left, val);
+```
+
+or
+
+```java
+root.right = insertIntoBST(root.right, val);
+```
+
+* Always return the current root after insertion.
+
+---
+
+# Memory Trick
+
+```text
+Target < Root
+      ↓
+Go Left
+
+Target > Root
+      ↓
+Go Right
+
+Reached null
+      ↓
+Create New Node
+```
+
+Think of this problem as **"Search until you find an empty place, then insert the new node."**
