@@ -1,0 +1,505 @@
+450 – Delete Node in a Binary Search Tree
+
+## Problem Statement
+
+Given the root of a **Binary Search Tree (BST)** and an integer `key`, delete the node with value `key` while maintaining the BST property.
+
+Return the root of the updated BST.
+
+---
+
+# Intuition
+
+Deleting a node from a BST is more complicated than inserting because removing a node may break the BST structure.
+
+The BST property must always remain valid:
+
+```text
+Left Subtree < Root < Right Subtree
+```
+
+The solution has two parts:
+
+1. Search for the node to delete.
+2. Handle one of the three deletion cases.
+
+---
+
+# Step 1: Search for the Node
+
+Searching is exactly the same as **LeetCode 700**.
+
+* If `key < root.val`, search the left subtree.
+* If `key > root.val`, search the right subtree.
+* Otherwise, the current node is the node to delete.
+
+---
+
+# Case 1: Node has No Children (Leaf Node)
+
+Example:
+
+```text
+    5
+   /
+  3
+```
+
+Delete `3`.
+
+Result:
+
+```text
+    5
+```
+
+Return:
+
+```java
+return null;
+```
+
+Since the node has no children.
+
+---
+
+# Case 2: Node has One Child
+
+### Only Right Child
+
+```text
+    5
+     \
+      8
+```
+
+Delete `5`.
+
+Return:
+
+```java
+return root.right;
+```
+
+Result:
+
+```text
+8
+```
+
+---
+
+### Only Left Child
+
+```text
+    5
+   /
+  3
+```
+
+Delete `5`.
+
+Return:
+
+```java
+return root.left;
+```
+
+Result:
+
+```text
+3
+```
+
+The existing child replaces the deleted node.
+
+---
+
+# Case 3: Node has Two Children ⭐
+
+This is the most important case.
+
+Example:
+
+```text
+        5
+      /   \
+     3     8
+    / \   / \
+   2   4 6   9
+```
+
+Delete `5`.
+
+Instead of deleting everything, we reconnect the tree.
+
+## Striver's Approach
+
+### Step 1
+
+Save the right subtree.
+
+```java
+TreeNode rightChild = root.right;
+```
+
+Saved subtree:
+
+```text
+      8
+     / \
+    6   9
+```
+
+---
+
+### Step 2
+
+Find the rightmost node of the left subtree.
+
+Left subtree:
+
+```text
+      3
+     / \
+    2   4
+```
+
+Rightmost node = `4`
+
+---
+
+### Step 3
+
+Attach the saved right subtree.
+
+```java
+lastRight.right = rightChild;
+```
+
+Tree becomes:
+
+```text
+      3
+     / \
+    2   4
+         \
+          8
+         / \
+        6   9
+```
+
+---
+
+### Step 4
+
+Return the left subtree.
+
+```java
+return root.left;
+```
+
+Final tree:
+
+```text
+        3
+      /   \
+     2     4
+             \
+              8
+             / \
+            6   9
+```
+
+The BST property is still maintained.
+
+---
+
+# Why Does This Work?
+
+The **rightmost node of the left subtree** is the **largest value** in that subtree.
+
+Every value in the right subtree is greater than that node.
+
+So attaching the right subtree to the rightmost node preserves:
+
+```text
+Left < Root < Right
+```
+
+---
+
+# Algorithm
+
+1. If the tree is empty, return `null`.
+2. Search for the node using BST property.
+3. When found:
+
+   * If left child is `null`, return right child.
+   * If right child is `null`, return left child.
+   * Otherwise:
+
+     * Save the right subtree.
+     * Find the rightmost node of the left subtree.
+     * Attach the right subtree to it.
+     * Return the left subtree.
+
+---
+
+# Java Solution
+
+```java
+class Solution {
+
+    public TreeNode deleteNode(TreeNode root, int key) {
+
+        if (root == null)
+            return null;
+
+        if (key < root.val)
+            root.left = deleteNode(root.left, key);
+
+        else if (key > root.val)
+            root.right = deleteNode(root.right, key);
+
+        else {
+
+            if (root.left == null)
+                return root.right;
+
+            if (root.right == null)
+                return root.left;
+
+            TreeNode rightChild = root.right;
+            TreeNode lastRight = findLastRight(root.left);
+
+            lastRight.right = rightChild;
+
+            return root.left;
+        }
+
+        return root;
+    }
+
+    private TreeNode findLastRight(TreeNode node) {
+
+        while (node.right != null)
+            node = node.right;
+
+        return node;
+    }
+}
+```
+
+---
+
+# Dry Run
+
+Tree:
+
+```text
+        5
+      /   \
+     3     8
+    / \   / \
+   2   4 6   9
+```
+
+Delete `5`
+
+### Step 1
+
+Found node `5`.
+
+Both children exist.
+
+---
+
+### Step 2
+
+Save right subtree.
+
+```text
+rightChild = 8
+```
+
+---
+
+### Step 3
+
+Find rightmost node of left subtree.
+
+```text
+lastRight = 4
+```
+
+---
+
+### Step 4
+
+Attach:
+
+```java
+4.right = 8;
+```
+
+---
+
+### Step 5
+
+Return left subtree.
+
+Final Tree:
+
+```text
+        3
+      /   \
+     2     4
+             \
+              8
+             / \
+            6   9
+```
+
+---
+
+# Common Mistake ⭐
+
+Many students write:
+
+```java
+lastRight.right = rightChild;
+
+return root;
+```
+
+This is **wrong**.
+
+The deleted node (`root`) still remains in the tree.
+
+The correct statement is:
+
+```java
+return root.left;
+```
+
+because the left subtree becomes the new root of the updated subtree.
+
+---
+
+# Complexity Analysis
+
+### Time Complexity
+
+* Average (Balanced BST): **O(log n)**
+* Worst (Skewed BST): **O(n)**
+
+### Space Complexity
+
+* **O(h)** due to recursion stack (`h` = height of tree).
+
+---
+
+# Pattern Recognition
+
+```text
+Search
+    ↓
+Found Node
+    ↓
+No Child?
+    ↓
+Return null
+
+One Child?
+    ↓
+Return existing child
+
+Two Children?
+    ↓
+Save right subtree
+    ↓
+Find rightmost node of left subtree
+    ↓
+Attach right subtree
+    ↓
+Return left subtree
+```
+
+---
+
+# Relationship with Previous Problems
+
+| Problem | Main Idea                                             |
+| ------- | ----------------------------------------------------- |
+| 700     | Search a node using BST property                      |
+| 701     | Find the correct `null` position and insert           |
+| 450     | Search the node and reconnect the tree after deletion |
+
+All three problems use the same BST traversal:
+
+```text
+Compare
+
+↓
+
+Go Left or Go Right
+```
+
+The difference is what happens **after the target node is found**.
+
+---
+
+# Interview Tips
+
+* Always search using the BST property.
+* Deletion has **three cases**:
+
+  * No child
+  * One child
+  * Two children
+* In Striver's approach:
+
+  * Save the right subtree.
+  * Find the rightmost node of the left subtree.
+  * Attach the right subtree.
+  * Return the left subtree.
+* Do **not** return the original root after deleting a node with two children.
+
+---
+
+# Memory Trick
+
+```text
+Delete Node
+
+↓
+
+0 Child → return null
+
+↓
+
+1 Child → return existing child
+
+↓
+
+2 Children
+
+↓
+
+Save Right Subtree
+
+↓
+
+Find Rightmost of Left Subtree
+
+↓
+
+Attach Right Subtree
+
+↓
+
+Return Left Subtree
+```
+
+Think of the two-child case as **"Move the right subtree under the largest node of the left subtree, then promote the left subtree."**
